@@ -1,0 +1,2237 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head th:replace="fragments/header :: header('Reportes de Ventas')">
+</head>
+<body>
+    <div th:replace="fragments/header :: navigation"></div>
+
+    <style>        :root {
+            --primary-gradient: linear-gradient(135deg, #3a506b 0%, #5d89ba 100%);
+            --card-shadow: 0 4px 20px rgba(58, 80, 107, 0.1);
+            --hover-shadow: 0 10px 30px rgba(58, 80, 107, 0.2);
+            --primary-color: #3a506b;
+            --accent-color: #5d89ba;
+            --success-color: #28a745;
+            --danger-color: #dc3545;
+            --warning-color: #ffc107;
+            --info-color: #17a2b8;
+            --text-color: #495057;
+            --border-radius: 12px;
+            --transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        * {
+            transition: var(--transition);
+        }
+        
+        .main-container {
+            animation: containerSlide 0.6s ease-out;
+        }
+        
+        @keyframes containerSlide {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .page-title {
+            color: var(--primary-color);
+            font-weight: 700;
+            margin-bottom: 2rem;
+            position: relative;
+            animation: slideInUp 0.8s ease-out;
+        }
+        
+        .page-title::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 0;
+            width: 100px;
+            height: 4px;
+            background: var(--primary-gradient);
+            border-radius: 2px;
+            animation: expandWidth 1s ease-out 0.5s both;
+        }
+        
+        @keyframes expandWidth {
+            from { width: 0; }
+            to { width: 100px; }
+        }
+        
+        .stats-cards {
+            margin-bottom: 2rem;
+        }
+        
+        .stat-card {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--card-shadow);
+            padding: 1.5rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            transition: var(--transition);
+            animation: slideInUp 0.6s ease-out;
+            animation-fill-mode: both;
+        }
+        
+        .stat-card:nth-child(1) { animation-delay: 0.1s; }
+        .stat-card:nth-child(2) { animation-delay: 0.2s; }
+        .stat-card:nth-child(3) { animation-delay: 0.3s; }
+        .stat-card:nth-child(4) { animation-delay: 0.4s; }
+        
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.6s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: var(--hover-shadow);
+        }
+        
+        .stat-card:hover::before {
+            left: 100%;
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-label {
+            color: var(--text-color);
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+        
+        .stat-icon {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            font-size: 2rem;
+            color: var(--accent-color);
+            opacity: 0.3;
+            animation: iconPulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes iconPulse {
+            0%, 100% { transform: scale(1); opacity: 0.3; }
+            50% { transform: scale(1.1); opacity: 0.5; }
+        }
+        
+        .report-section {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--card-shadow);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+            animation: fadeInBackground 0.8s ease-out;
+        }
+        
+        @keyframes fadeInBackground {
+            from {
+                opacity: 0;
+                background-color: rgba(255, 255, 255, 0.5);
+            }
+            to {
+                opacity: 1;
+                background-color: white;
+            }
+        }
+        
+        .section-title {
+            color: var(--primary-color);
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .section-title i {
+            color: var(--accent-color);
+            animation: iconPulse 2s ease-in-out infinite;
+        }
+        
+        .form-control-custom, .form-select-custom {
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            transition: var(--transition);
+            background-color: #fafbfc;
+        }
+        
+        .form-control-custom:focus, .form-select-custom:focus {
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 0.2rem rgba(93, 137, 186, 0.25);
+            transform: translateY(-2px);
+            background-color: white;
+        }
+        
+        .btn-custom {
+            border-radius: 8px;
+            font-weight: 500;
+            padding: 0.75rem 1.5rem;
+            position: relative;
+            overflow: hidden;
+            transition: var(--transition);
+            border: none;
+        }
+        
+        .btn-custom::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.3s ease, height 0.3s ease;
+        }
+        
+        .btn-custom:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+        
+        .btn-custom:hover::after {
+            width: 300px;
+            height: 300px;
+        }
+        
+        .btn-export {
+            background: var(--primary-gradient);
+            color: white;
+        }
+        
+        .btn-export:hover {
+            background: linear-gradient(135deg, #2d3e52 0%, #4a739e 100%);
+            color: white;
+        }
+        
+        .btn-info-custom {
+            background: linear-gradient(135deg, var(--info-color) 0%, #20c997 100%);
+            color: white;
+        }
+          .btn-info-custom:hover {
+            background: linear-gradient(135deg, #138496 0%, #1a9e7e 100%);
+            color: white;
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, #ffc107 0%, #ff8f00 100%);
+            color: #000;
+            border: none;
+        }
+        
+        .btn-warning:hover {
+            background: linear-gradient(135deg, #e0a800 0%, #e67c00 100%);
+            color: #000;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(255, 193, 7, 0.3);
+        }
+
+        /* Estilos para modales de correo masivo */
+        .modal-content {
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .modal-header {
+            border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .modal-body {
+            padding: 2rem;
+        }
+
+        .modal-footer {
+            border-top: 1px solid #e9ecef;
+            padding: 1rem 2rem;
+        }
+
+        /* Estilos para los campos de correo */
+        .input-group {
+            margin-bottom: 0.5rem;
+        }
+
+        .input-group .form-control {
+            border-right: none;
+        }
+
+        .input-group .btn {
+            border-left: none;
+            z-index: 3;
+        }
+
+        /* Animaciones para los botones de envío */
+        .btn[onclick*="abrirModalCorreo"] {
+            transition: all 0.3s ease;
+        }
+
+        .btn[onclick*="abrirModalCorreo"]:hover {
+            transform: translateY(-2px) scale(1.05);
+            box-shadow: 0 8px 25px rgba(255, 193, 7, 0.4);
+        }
+        
+        .table-responsive {
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--card-shadow);
+            animation: slideInUp 0.8s ease-out;
+        }
+        
+        .table-custom {
+            margin-bottom: 0;
+            background: white;
+        }
+        
+        .table-custom thead th {
+            background: var(--primary-gradient);
+            color: white;
+            font-weight: 600;
+            border: none;
+            padding: 1rem 0.75rem;
+            position: relative;
+        }
+        
+        .table-custom tbody td {
+            padding: 1rem 0.75rem;
+            vertical-align: middle;
+            border-color: #f1f3f4;
+        }
+        
+        .table-custom tbody tr {
+            animation: fadeInRow 0.6s ease-out;
+            animation-fill-mode: both;
+        }
+        
+        .table-custom tbody tr:nth-child(odd) { animation-delay: 0.1s; }
+        .table-custom tbody tr:nth-child(even) { animation-delay: 0.2s; }
+        
+        .table-custom tbody tr:hover {
+            background-color: rgba(93, 137, 186, 0.05);
+            transform: scale(1.01);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        }
+        
+        @keyframes fadeInRow {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .chart-container {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            box-shadow: var(--card-shadow);
+            animation: fadeInBackground 1s ease-out;
+        }
+        
+        .alert-custom {
+            border-radius: 8px;
+            border: none;
+            padding: 1rem 1.25rem;
+            margin-bottom: 1.5rem;
+            animation: slideInUp 0.6s ease-out;
+        }
+        
+        .alert-success-custom {
+            background: linear-gradient(135deg, rgba(40, 167, 69, 0.1) 0%, rgba(40, 167, 69, 0.05) 100%);
+            border-left: 4px solid var(--success-color);
+            color: #155724;
+        }
+        
+        .alert-danger-custom {
+            background: linear-gradient(135deg, rgba(220, 53, 69, 0.1) 0%, rgba(220, 53, 69, 0.05) 100%);
+            border-left: 4px solid var(--danger-color);
+            color: #721c24;
+        }
+        
+        .loading-spinner {
+            display: none;
+            text-align: center;
+            padding: 2rem;
+        }
+        
+        .loading-spinner .spinner-border {
+            color: var(--accent-color);
+        }
+        
+        .filter-section {
+            background: rgba(93, 137, 186, 0.05);
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            border: 1px solid rgba(93, 137, 186, 0.1);
+        }
+        
+        .badge-custom {
+            padding: 0.5rem 0.75rem;
+            border-radius: 6px;
+            font-weight: 500;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 3rem 2rem;
+            color: var(--text-color);
+            animation: fadeInBackground 0.8s ease-out;
+        }
+          .empty-state i {
+            font-size: 3rem;
+            color: var(--accent-color);
+            margin-bottom: 1rem;
+            animation: iconPulse 2s ease-in-out infinite;
+        }
+        
+        /* Estilos para detalles de ventas */
+        .details-toggle {
+            border-radius: 6px;
+            padding: 0.375rem 0.75rem;
+            font-size: 0.875rem;
+            transition: var(--transition);
+            border: 1px solid var(--info-color);
+            background: transparent;
+            color: var(--info-color);
+        }
+        
+        .details-toggle:hover {
+            background: var(--info-color);
+            color: white;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(23, 162, 184, 0.3);
+        }
+          .details-toggle i {
+            transition: transform 0.6s ease;
+            margin-right: 0.25rem;
+        }
+        
+        .details-toggle.expanded i {
+            transform: rotate(180deg);
+        }          .details-row {
+            background: linear-gradient(135deg, rgba(93, 137, 186, 0.02) 0%, rgba(93, 137, 186, 0.05) 100%);
+            animation: slideDown 0.8s ease-out;
+            transition: opacity 0.5s ease-in-out;
+        }
+        
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .details-cell {
+            padding: 1.5rem 2rem !important;
+            border-left: 4px solid var(--accent-color);
+        }
+        
+        .sale-details-container {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(93, 137, 186, 0.1);
+        }
+        
+        .details-header h6 {
+            color: var(--primary-color);
+            font-weight: 600;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid rgba(93, 137, 186, 0.1);
+        }
+        
+        .detail-item {
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .detail-label {
+            color: var(--text-color);
+            font-weight: 500;
+            min-width: 80px;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+        
+        .detail-label i {
+            font-size: 0.9rem;
+        }
+        
+        .total-amount {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--success-color);
+        }
+        
+        .products-table {
+            margin-top: 1rem;
+            border-top: 1px solid rgba(0, 0, 0, 0.1);
+            padding-top: 1rem;
+        }
+        
+        .products-table h6 {
+            color: var(--primary-color);
+            font-weight: 500;
+        }
+        
+        .products-table .table {
+            margin-bottom: 0;
+            font-size: 0.9rem;
+        }
+        
+        .products-table .table th {
+            background: linear-gradient(135deg, rgba(93, 137, 186, 0.1) 0%, rgba(93, 137, 186, 0.05) 100%);
+            color: var(--primary-color);
+            font-weight: 600;
+            border: none;
+            padding: 0.75rem 0.5rem;
+        }
+        
+        .products-table .table td {
+            padding: 0.75rem 0.5rem;
+            vertical-align: middle;
+            border-color: rgba(0, 0, 0, 0.05);
+        }
+          .products-table .table tbody tr:hover {
+            background-color: rgba(93, 137, 186, 0.03);
+        }
+          /* Efecto de destacado para detalles expandidos */
+        .details-highlight {
+            animation: detailsHighlight 3.5s ease-in-out;
+            transform: scale(1.01);
+        }
+        
+        @keyframes detailsHighlight {
+            0% {
+                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+                background-color: white;
+            }
+            15% {
+                box-shadow: 0 8px 30px rgba(93, 137, 186, 0.25);
+                background-color: rgba(93, 137, 186, 0.05);
+                transform: scale(1.02);
+            }
+            85% {
+                box-shadow: 0 8px 30px rgba(93, 137, 186, 0.25);
+                background-color: rgba(93, 137, 186, 0.05);
+                transform: scale(1.02);
+            }
+            100% {
+                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+                background-color: white;
+                transform: scale(1);
+            }
+        }
+          /* Mejorar el scroll suave para toda la página */
+        html {
+            scroll-behavior: smooth;
+        }
+          /* Efecto de pulsación suave en los detalles */
+        .sale-details-container {
+            transition: all 0.8s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+          /* Estilos específicos para filtros de usuario */
+        .user-filter-section {
+            background: linear-gradient(135deg, rgba(58, 80, 107, 0.05) 0%, rgba(93, 137, 186, 0.05) 100%);
+            border: 1px solid rgba(58, 80, 107, 0.1);
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--card-shadow);
+            transition: var(--transition);
+        }
+        
+        .user-filter-section:hover {
+            box-shadow: var(--hover-shadow);
+            border-color: rgba(58, 80, 107, 0.2);
+        }
+        
+        .user-filter-section h5 {
+            color: var(--primary-color);
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        .user-filter-section h5 i {
+            margin-right: 0.5rem;
+            font-size: 1.2em;
+        }
+        
+        /* Mejorar botones en la sección de filtros */
+        .user-filter-section .btn {
+            font-weight: 500;
+            padding: 0.7rem 1rem;
+            transition: var(--transition);
+        }
+        
+        .user-filter-section .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+        }
+        
+        .user-filter-section .btn-outline-secondary {
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+        }
+        
+        .user-filter-section .btn-outline-secondary:hover {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            color: white;
+        }
+        }
+        
+        .stats-user-card {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(248, 249, 250, 0.9) 100%);
+            border: 1px solid rgba(93, 137, 186, 0.1);
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            text-align: center;
+            transition: var(--transition);
+            animation: fadeInUp 0.6s ease-out;
+        }
+        
+        .stats-user-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(58, 80, 107, 0.15);
+            border-color: var(--accent-color);
+        }
+        
+        .filtered-results-header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--accent-color) 100%);
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: var(--border-radius) var(--border-radius) 0 0;
+            margin: -2rem -2rem 1.5rem -2rem;
+        }
+        
+        .user-badge {
+            background: linear-gradient(135deg, var(--info-color) 0%, var(--accent-color) 100%);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+        
+        .date-range-badge {
+            background: linear-gradient(135deg, var(--success-color) 0%, #20c997 100%);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            margin-left: 0.5rem;
+        }
+        
+        @media (max-width: 768px) {
+            .stat-card {
+                margin-bottom: 1rem;
+            }
+            
+            .btn-custom {
+                width: 100%;
+                margin-bottom: 0.5rem;
+            }
+            
+            .table-responsive {
+                font-size: 0.875rem;
+            }
+            
+            .user-filter-section {
+                padding: 1rem;
+            }
+            
+            .stats-user-card {
+                margin-bottom: 1rem;
+            }
+        }
+    </style>
+
+    <div class="main-content">
+        <div class="container main-container py-4">
+            <h2 class="page-title">
+                <i class="bi bi-graph-up"></i> Reportes de Ventas
+            </h2>
+
+            <!-- Mensajes de éxito y error -->
+            <div th:if="${error}" class="alert alert-danger alert-custom alert-danger-custom">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                <span th:text="${error}"></span>
+            </div>
+
+            <!-- Estadísticas Generales -->
+            <div class="stats-cards">
+                <div class="row g-4">
+                    <div class="col-md-3">
+                        <div class="stat-card">
+                            <i class="bi bi-receipt stat-icon"></i>
+                            <div class="stat-value" th:text="${totalVentas}">0</div>
+                            <div class="stat-label">Total Ventas</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stat-card">
+                            <i class="bi bi-currency-dollar stat-icon"></i>
+                            <div class="stat-value" th:text="'$' + ${#numbers.formatDecimal(totalIngresos, 1, 2)}">$0.00</div>
+                            <div class="stat-label">Ingresos Totales</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stat-card">
+                            <i class="bi bi-calendar-month stat-icon"></i>
+                            <div class="stat-value" th:text="${ventasDelMes}">0</div>
+                            <div class="stat-label">Ventas del Mes</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stat-card">
+                            <i class="bi bi-cash-stack stat-icon"></i>
+                            <div class="stat-value" th:text="'$' + ${#numbers.formatDecimal(ingresosDelMes, 1, 2)}">$0.00</div>
+                            <div class="stat-label">Ingresos del Mes</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sección de Reportes -->
+            <div class="report-section">
+                <h4 class="section-title">
+                    <i class="bi bi-file-earmark-bar-graph"></i>
+                    Generar Reportes
+                </h4>                <!-- Filtros de Fecha -->
+                <div class="filter-section">
+                    <h5 class="mb-3">
+                        <i class="bi bi-funnel"></i> Filtros de Fecha
+                    </h5>
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-4">
+                            <label for="fechaInicio" class="form-label fw-semibold">
+                                <i class="bi bi-calendar-event me-1"></i>Fecha Inicio
+                            </label>
+                            <input type="date" id="fechaInicio" class="form-control form-control-custom">
+                        </div>
+                        <div class="col-md-4">
+                            <label for="fechaFin" class="form-label fw-semibold">
+                                <i class="bi bi-calendar-check me-1"></i>Fecha Fin
+                            </label>
+                            <input type="date" id="fechaFin" class="form-control form-control-custom">
+                        </div>
+                        <div class="col-md-4">
+                            <label for="limite" class="form-label fw-semibold">
+                                <i class="bi bi-list-ol me-1"></i>Límite de Resultados
+                            </label>
+                            <select id="limite" class="form-select form-select-custom">
+                                <option value="10">10 resultados</option>
+                                <option value="25">25 resultados</option>
+                                <option value="50">50 resultados</option>
+                                <option value="100">100 resultados</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <!-- Botón para limpiar filtros de fecha -->
+                    <div class="row">
+                        <div class="col-12 d-flex justify-content-end">
+                            <button type="button" class="btn btn-outline-secondary btn-sm" onclick="limpiarFiltrosFecha()">
+                                <i class="bi bi-arrow-clockwise"></i> Limpiar Filtros de Fecha
+                            </button>
+                        </div>
+                    </div>
+                </div><!-- Filtros por Usuario (Solo para Administradores) -->
+                <div th:if="${usuario != null and usuario.isAdministrador()}" class="filter-section user-filter-section">
+                    <h5 class="mb-3">
+                        <i class="bi bi-person-gear"></i> Filtros por Usuario/Cajero
+                    </h5>
+                    
+                    <!-- Selector de Usuario -->
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-12">
+                            <label for="usuarioFiltro" class="form-label fw-semibold">
+                                <i class="bi bi-person-circle me-1"></i>Seleccionar Usuario
+                            </label>
+                            <select id="usuarioFiltro" class="form-select form-select-custom">
+                                <option value="">Todos los usuarios</option>
+                                <option th:each="usuarioActivo : ${usuariosActivos}" 
+                                        th:value="${usuarioActivo.nombre}" 
+                                        th:text="${usuarioActivo.nombre + ' (' + usuarioActivo.nombreUsuario + ')'}">
+                                    Usuario
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+                      <!-- Botones de Acción -->
+                    <div class="row g-2">
+                        <div class="col-md-2">
+                            <button type="button" class="btn btn-info-custom w-100" onclick="filtrarVentasPorUsuario()">
+                                <i class="bi bi-filter"></i> Filtrar
+                            </button>
+                        </div>
+                        <div class="col-md-2">
+                            <button type="button" class="btn btn-export w-100" onclick="mostrarEstadisticasUsuario()">
+                                <i class="bi bi-graph-up"></i> Estadísticas
+                            </button>
+                        </div>
+                        <div class="col-md-2">
+                            <button type="button" class="btn btn-success w-100" onclick="exportarReporteUsuario('pdf')">
+                                <i class="bi bi-file-pdf"></i> PDF
+                            </button>
+                        </div>
+                        <div class="col-md-2">
+                            <button type="button" class="btn btn-primary w-100" onclick="exportarReporteUsuario('excel')">
+                                <i class="bi bi-file-excel"></i> Excel
+                            </button>
+                        </div>
+                        <div class="col-md-2">
+                            <button type="button" class="btn btn-warning w-100" onclick="abrirModalCorreoUsuario()">
+                                <i class="bi bi-envelope"></i> Enviar
+                            </button>
+                        </div>
+                        <div class="col-md-2">
+                            <button type="button" class="btn btn-outline-secondary w-100" onclick="limpiarFiltrosUsuario()">
+                                <i class="bi bi-arrow-clockwise"></i> Limpiar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Botones de Reportes -->
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <div class="card h-100 border-0" style="background: linear-gradient(135deg, rgba(40, 167, 69, 0.1) 0%, rgba(32, 201, 151, 0.1) 100%);">
+                            <div class="card-body text-center">
+                                <i class="bi bi-trophy text-success" style="font-size: 3rem;"></i>
+                                <h5 class="card-title mt-3">Productos Más Vendidos</h5>
+                                <p class="card-text text-muted">Ranking de productos con mayor volumen de ventas</p>                                <div class="d-flex gap-2 justify-content-center">
+                                    <button class="btn btn-export" onclick="exportarReporte('productos-mas-vendidos', 'pdf')">
+                                        <i class="bi bi-file-earmark-pdf"></i> PDF
+                                    </button>
+                                    <button class="btn btn-info-custom" onclick="exportarReporte('productos-mas-vendidos', 'excel')">
+                                        <i class="bi bi-file-earmark-spreadsheet"></i> Excel
+                                    </button>
+                                    <button class="btn btn-warning" onclick="abrirModalCorreo('productos-mas-vendidos')">
+                                        <i class="bi bi-envelope"></i> Enviar
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card h-100 border-0" style="background: linear-gradient(135deg, rgba(23, 162, 184, 0.1) 0%, rgba(32, 201, 151, 0.1) 100%);">
+                            <div class="card-body text-center">
+                                <i class="bi bi-calendar-range text-info" style="font-size: 3rem;"></i>
+                                <h5 class="card-title mt-3">Ventas por Fecha</h5>
+                                <p class="card-text text-muted">Reporte de ventas en un período específico</p>                                <div class="d-flex gap-2 justify-content-center">
+                                    <button class="btn btn-export" onclick="exportarReporte('ventas-por-fecha', 'pdf')">
+                                        <i class="bi bi-file-earmark-pdf"></i> PDF
+                                    </button>
+                                    <button class="btn btn-info-custom" onclick="exportarReporte('ventas-por-fecha', 'excel')">
+                                        <i class="bi bi-file-earmark-spreadsheet"></i> Excel
+                                    </button>
+                                    <button class="btn btn-warning" onclick="abrirModalCorreo('ventas-por-fecha')">
+                                        <i class="bi bi-envelope"></i> Enviar
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card h-100 border-0" style="background: linear-gradient(135deg, rgba(255, 193, 7, 0.1) 0%, rgba(255, 152, 0, 0.1) 100%);">
+                            <div class="card-body text-center">
+                                <i class="bi bi-cash-coin text-warning" style="font-size: 3rem;"></i>
+                                <h5 class="card-title mt-3">Ingresos por Producto</h5>
+                                <p class="card-text text-muted">Productos que generan mayores ingresos</p>                                <div class="d-flex gap-2 justify-content-center">
+                                    <button class="btn btn-export" onclick="exportarReporte('ingresos-por-producto', 'pdf')">
+                                        <i class="bi bi-file-earmark-pdf"></i> PDF
+                                    </button>
+                                    <button class="btn btn-info-custom" onclick="exportarReporte('ingresos-por-producto', 'excel')">
+                                        <i class="bi bi-file-earmark-spreadsheet"></i> Excel
+                                    </button>
+                                    <button class="btn btn-warning" onclick="abrirModalCorreo('ingresos-por-producto')">
+                                        <i class="bi bi-envelope"></i> Enviar
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card h-100 border-0" style="background: linear-gradient(135deg, rgba(220, 53, 69, 0.1) 0%, rgba(255, 99, 132, 0.1) 100%);">
+                            <div class="card-body text-center">
+                                <i class="bi bi-graph-up-arrow text-danger" style="font-size: 3rem;"></i>
+                                <h5 class="card-title mt-3">Resumen General</h5>
+                                <p class="card-text text-muted">Reporte completo con estadísticas generales</p>                                <div class="d-flex gap-2 justify-content-center">
+                                    <button class="btn btn-export" onclick="exportarReporte('resumen-general', 'pdf')">
+                                        <i class="bi bi-file-earmark-pdf"></i> PDF
+                                    </button>
+                                    <button class="btn btn-info-custom" onclick="exportarReporte('resumen-general', 'excel')">
+                                        <i class="bi bi-file-earmark-spreadsheet"></i> Excel
+                                    </button>
+                                    <button class="btn btn-warning" onclick="abrirModalCorreo('resumen-general')">
+                                        <i class="bi bi-envelope"></i> Enviar
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Estadísticas por Usuario (Solo para Administradores) -->
+            <div th:if="${usuario != null and usuario.isAdministrador()}" 
+                 id="estadisticasUsuarioSection" 
+                 class="report-section" 
+                 style="display: none;">
+                <h4 class="section-title">
+                    <i class="bi bi-person-badge"></i>
+                    Estadísticas del Usuario: <span id="nombreUsuarioSeleccionado">-</span>
+                </h4>
+                <div class="row g-4" id="estadisticasUsuarioCards">
+                    <div class="col-md-3">
+                        <div class="stat-card">
+                            <i class="bi bi-receipt-cutoff stat-icon"></i>
+                            <div class="stat-value" id="totalVentasUsuario">0</div>
+                            <div class="stat-label">Total Ventas</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stat-card">
+                            <i class="bi bi-currency-dollar stat-icon"></i>
+                            <div class="stat-value" id="totalIngresosUsuario">$0.00</div>
+                            <div class="stat-label">Ingresos Totales</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stat-card">
+                            <i class="bi bi-calendar-month stat-icon"></i>
+                            <div class="stat-value" id="ventasDelMesUsuario">0</div>
+                            <div class="stat-label">Ventas del Mes</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stat-card">
+                            <i class="bi bi-calendar-day stat-icon"></i>
+                            <div class="stat-value" id="ventasDelDiaUsuario">0</div>
+                            <div class="stat-label">Ventas del Día</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ventas Filtradas por Usuario -->
+            <div id="ventasFiltradas" class="report-section" style="display: none;">
+                <h4 class="section-title">
+                    <i class="bi bi-filter-circle"></i>
+                    Ventas Filtradas: <span id="tituloVentasFiltradas">Todas las ventas</span>
+                </h4>
+                <div class="table-responsive">
+                    <table class="table table-custom" id="ventasFiltradasTable">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Fecha</th>
+                                <th>Cliente</th>
+                                <th>Cajero</th>
+                                <th>Total</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ventasFiltradasBody">
+                            <!-- Las ventas filtradas se cargarán aquí dinámicamente -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Productos Más Vendidos -->
+            <div class="report-section">
+                <h4 class="section-title">
+                    <i class="bi bi-trophy"></i>
+                    Top 5 Productos Más Vendidos
+                </h4>
+                <div class="table-responsive">
+                    <table class="table table-custom">
+                        <thead>
+                            <tr>
+                                <th>Posición</th>
+                                <th>Producto</th>
+                                <th>Cantidad Vendida</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="producto, iterStat : ${topProductos}">
+                                <td>
+                                    <span class="badge-custom" 
+                                          th:classappend="${iterStat.index == 0} ? 'bg-warning' : (${iterStat.index == 1} ? 'bg-secondary' : (${iterStat.index == 2} ? 'bg-warning' : 'bg-primary'))"
+                                          th:text="${iterStat.index + 1}">1</span>
+                                </td>
+                                <td th:text="${producto.nombre}">Producto</td>
+                                <td>
+                                    <strong th:text="${producto.totalVendido}">0</strong> unidades
+                                </td>
+                            </tr>
+                            <tr th:if="${#lists.isEmpty(topProductos)}">
+                                <td colspan="3" class="empty-state">
+                                    <i class="bi bi-inbox"></i>
+                                    <div>No hay datos de ventas disponibles</div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>            <!-- Últimas Ventas -->
+            <div class="report-section">
+                <h4 class="section-title">
+                    <i class="bi bi-clock-history"></i>
+                    Últimas 10 Ventas
+                </h4>
+                <div class="table-responsive">
+                    <table class="table table-custom" id="ventasTable">                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Fecha</th>
+                                <th>Cliente</th>
+                                <th>Cajero</th>
+                                <th>Total</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead><tbody>
+                            <!-- Usando th:block para agrupar cada venta con su fila de detalles -->
+                            <th:block th:each="venta, iterStat : ${ultimasVentas}">
+                                <!-- Fila principal de la venta -->                                <tr th:id="'venta-row-' + ${venta.id}">
+                                    <td>
+                                        <span class="badge bg-primary" th:text="${venta.id}">#001</span>
+                                    </td>
+                                    <td th:text="${#temporals.format(venta.fecha, 'dd/MM/yyyy HH:mm')}">01/01/2024 10:00</td>
+                                    <td>
+                                        <div th:if="${venta.nombreCliente != null and !#strings.isEmpty(venta.nombreCliente)}">
+                                            <strong th:text="${venta.nombreCliente}">Nombre Cliente</strong>
+                                            <br>
+                                            <small class="text-muted" th:text="${venta.correoCliente}">correo@cliente.com</small>
+                                        </div>
+                                        <div th:if="${venta.nombreCliente == null or #strings.isEmpty(venta.nombreCliente)}">
+                                            <span th:text="${venta.correoCliente != null ? venta.correoCliente : 'Cliente sin datos'}">cliente@email.com</span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-info" th:text="${venta.usuarioCajero != null ? venta.usuarioCajero : 'No especificado'}">Cajero</span>
+                                    </td>
+                                    <td>
+                                        <strong class="text-success" th:text="'$' + ${#numbers.formatDecimal(venta.total, 1, 2)}">$0.00</strong>
+                                    </td>                                    <td>
+                                        <div class="d-flex gap-1">
+                                            <button type="button" 
+                                                    class="btn btn-outline-info btn-sm details-toggle" 
+                                                    th:onclick="'toggleVentaDetails(' + ${venta.id} + ')'"
+                                                    th:id="'toggle-btn-' + ${venta.id}">
+                                                <i class="bi bi-chevron-down" th:id="'icon-' + ${venta.id}"></i>
+                                                <span class="btn-text">Ver Detalles</span>
+                                            </button>
+                                            <button type="button" 
+                                                    class="btn btn-success btn-sm"
+                                                    th:onclick="'generarFactura(' + ${venta.id} + ')'"
+                                                    title="Generar y descargar factura">
+                                                <i class="bi bi-file-earmark-pdf-fill"></i>
+                                                <span class="d-none d-md-inline">Factura</span>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                  <!-- Fila de detalles (inmediatamente después de cada venta) -->
+                                <tr th:id="'details-row-' + ${venta.id}" 
+                                    class="details-row" 
+                                    style="display: none;">
+                                    <td colspan="6" class="details-cell">
+                                        <div class="sale-details-container">
+                                            <div class="details-header">
+                                                <h6 class="mb-3">
+                                                    <i class="bi bi-receipt-cutoff text-primary"></i>
+                                                    Detalles de la Venta #<span th:text="${venta.id}">001</span>
+                                                </h6>
+                                            </div>
+                                              <div class="row mb-3">                                                <div class="col-md-6">
+                                                    <div class="detail-item">
+                                                        <strong class="detail-label">
+                                                            <i class="bi bi-person-fill text-info"></i> Cliente:
+                                                        </strong>
+                                                        <div th:if="${venta.nombreCliente != null and !#strings.isEmpty(venta.nombreCliente)}">
+                                                            <span th:text="${venta.nombreCliente}">Nombre Cliente</span>
+                                                            <br>
+                                                            <small class="text-muted" th:text="${venta.correoCliente}">correo@cliente.com</small>
+                                                        </div>
+                                                        <span th:if="${venta.nombreCliente == null or #strings.isEmpty(venta.nombreCliente)}" 
+                                                              th:text="${venta.correoCliente != null ? venta.correoCliente : 'Cliente sin datos'}">cliente@email.com</span>
+                                                    </div>
+                                                    <div class="detail-item">
+                                                        <strong class="detail-label">
+                                                            <i class="bi bi-calendar-event text-warning"></i> Fecha:
+                                                        </strong>
+                                                        <span th:text="${#temporals.format(venta.fecha, 'dd/MM/yyyy HH:mm')}">01/01/2024 10:00</span>
+                                                    </div>
+                                                    <div class="detail-item">
+                                                        <strong class="detail-label">
+                                                            <i class="bi bi-person-badge text-primary"></i> Cajero:
+                                                        </strong>
+                                                        <span th:text="${venta.usuarioCajero != null ? venta.usuarioCajero : 'No especificado'}">Cajero</span>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="detail-item">
+                                                        <strong class="detail-label">
+                                                            <i class="bi bi-currency-dollar text-success"></i> Total:
+                                                        </strong>
+                                                        <span class="total-amount" th:text="'$' + ${#numbers.formatDecimal(venta.total, 1, 2)}">$0.00</span>
+                                                    </div>
+                                                    <div class="detail-item">
+                                                        <strong class="detail-label">
+                                                            <i class="bi bi-box-seam text-primary"></i> Productos:
+                                                        </strong>
+                                                        <span th:text="${#lists.size(venta.detalles)} + ' artículos'">0 artículos</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+                                            <!-- Tabla de productos -->
+                                            <div class="products-table">
+                                                <h6 class="mb-2">
+                                                    <i class="bi bi-list-check text-secondary"></i> 
+                                                    Productos Vendidos
+                                                </h6>
+                                                <div class="table-responsive">
+                                                    <table class="table table-sm table-hover">
+                                                        <thead class="table-light">
+                                                            <tr>
+                                                                <th>Producto</th>
+                                                                <th>Cantidad</th>
+                                                                <th>Precio Unit.</th>
+                                                                <th>Subtotal</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <tr th:each="detalle : ${venta.detalles}">
+                                                                <td>
+                                                                    <strong th:text="${detalle.producto.nombre}">Producto</strong>
+                                                                    <br>
+                                                                    <small class="text-muted" th:text="${detalle.producto.categoria != null ? detalle.producto.categoria.nombre : 'Sin categoría'}">Categoría</small>
+                                                                </td>
+                                                                <td>
+                                                                    <span class="badge bg-secondary" th:text="${detalle.cantidad}">1</span>
+                                                                </td>
+                                                                <td th:text="'$' + ${#numbers.formatDecimal(detalle.precioUnitario, 1, 2)}">$0.00</td>
+                                                                <td>
+                                                                    <strong class="text-success" th:text="'$' + ${#numbers.formatDecimal(detalle.subtotal, 1, 2)}">$0.00</strong>
+                                                                </td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </th:block>
+                            
+                            <!-- Mensaje si no hay ventas -->
+                            <tr th:if="${#lists.isEmpty(ultimasVentas)}">
+                                <td colspan="5" class="empty-state">
+                                    <i class="bi bi-inbox"></i>
+                                    <div>No hay ventas registradas</div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Loading Spinner -->
+            <div class="loading-spinner" id="loadingSpinner">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Generando reporte...</span>
+                </div>
+                <p class="mt-2">Generando reporte, por favor espere...</p>
+            </div>
+
+            <!-- Modal para envío de correo masivo de reportes generales -->
+            <div class="modal fade" id="modalCorreoMasivo" tabindex="-1" aria-labelledby="modalCorreoMasivoLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header bg-primary text-white">
+                            <h5 class="modal-title" id="modalCorreoMasivoLabel">
+                                <i class="bi bi-envelope-fill me-2"></i>Enviar Reporte por Correo
+                            </h5>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form id="formCorreoMasivo">
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold">
+                                        <i class="bi bi-file-earmark-text text-info me-1"></i>Tipo de Reporte
+                                    </label>
+                                    <input type="text" id="tipoReporteTexto" class="form-control" readonly>
+                                    <input type="hidden" id="tipoReporte" name="tipoReporte">
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="formatoCorreo" class="form-label fw-bold">
+                                        <i class="bi bi-filetype-pdf text-danger me-1"></i>Formato del Archivo
+                                    </label>
+                                    <select id="formatoCorreo" name="formato" class="form-select">
+                                        <option value="pdf">PDF</option>
+                                        <option value="excel">Excel</option>
+                                    </select>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold">
+                                        <i class="bi bi-envelope-at text-primary me-1"></i>Correos Electrónicos
+                                    </label>
+                                    <div id="correosContainer">
+                                        <div class="input-group mb-2">
+                                            <input type="email" name="correos" class="form-control" placeholder="correo@ejemplo.com" required>
+                                            <button type="button" class="btn btn-success" onclick="agregarCorreo()">
+                                                <i class="bi bi-plus-lg"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <small class="text-muted">
+                                        <i class="bi bi-info-circle me-1"></i>Agregue los correos electrónicos de los destinatarios
+                                    </small>
+                                </div>
+
+                                <div class="alert alert-info">
+                                    <i class="bi bi-info-circle-fill me-2"></i>
+                                    <strong>Información:</strong> El reporte se enviará con los filtros de fecha actualmente configurados.
+                                    Si no hay fechas seleccionadas, se incluirán todos los datos disponibles.
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                <i class="bi bi-x-circle me-1"></i>Cancelar
+                            </button>
+                            <button type="button" class="btn btn-primary" onclick="enviarReportePorCorreo()">
+                                <i class="bi bi-send me-1"></i>Enviar Reporte
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal para envío de correo masivo de reportes de usuario -->
+            <div class="modal fade" id="modalCorreoUsuario" tabindex="-1" aria-labelledby="modalCorreoUsuarioLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header bg-warning text-dark">
+                            <h5 class="modal-title" id="modalCorreoUsuarioLabel">
+                                <i class="bi bi-person-envelope me-2"></i>Enviar Reporte de Usuario por Correo
+                            </h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form id="formCorreoUsuario">
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold">
+                                        <i class="bi bi-person-badge text-info me-1"></i>Usuario Seleccionado
+                                    </label>
+                                    <input type="text" id="usuarioSeleccionadoTexto" class="form-control" readonly>
+                                    <input type="hidden" id="usuarioSeleccionado" name="usuarioCajero">
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="formatoCorreoUsuario" class="form-label fw-bold">
+                                        <i class="bi bi-filetype-pdf text-danger me-1"></i>Formato del Archivo
+                                    </label>
+                                    <select id="formatoCorreoUsuario" name="formato" class="form-select">
+                                        <option value="pdf">PDF</option>
+                                        <option value="excel">Excel</option>
+                                    </select>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold">
+                                        <i class="bi bi-envelope-at text-primary me-1"></i>Correos Electrónicos
+                                    </label>
+                                    <div id="correosUsuarioContainer">
+                                        <div class="input-group mb-2">
+                                            <input type="email" name="correos" class="form-control" placeholder="correo@ejemplo.com" required>
+                                            <button type="button" class="btn btn-success" onclick="agregarCorreoUsuario()">
+                                                <i class="bi bi-plus-lg"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <small class="text-muted">
+                                        <i class="bi bi-info-circle me-1"></i>Agregue los correos electrónicos de los destinatarios
+                                    </small>
+                                </div>
+
+                                <div class="alert alert-warning">
+                                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                                    <strong>Nota:</strong> Se enviará el reporte completo del usuario seleccionado con los filtros de fecha actualmente configurados.
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                <i class="bi bi-x-circle me-1"></i>Cancelar
+                            </button>
+                            <button type="button" class="btn btn-warning" onclick="enviarReporteUsuarioPorCorreo()">
+                                <i class="bi bi-send me-1"></i>Enviar Reporte
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div th:replace="fragments/footer :: footer"></div>
+
+    <script>
+        // Establecer fechas por defecto
+        document.addEventListener('DOMContentLoaded', function() {
+            // Fecha de hoy
+            const hoy = new Date();
+            const fechaHoy = hoy.toISOString().split('T')[0];
+            
+            // Primer día del mes actual
+            const primerDiaDelMes = new Date(hoy.getFullYear(), hoy.getMonth(), 1);
+            const fechaInicio = primerDiaDelMes.toISOString().split('T')[0];
+            
+            document.getElementById('fechaInicio').value = fechaInicio;
+            document.getElementById('fechaFin').value = fechaHoy;
+        });
+
+        function exportarReporte(tipoReporte, formato) {
+            const fechaInicio = document.getElementById('fechaInicio').value;
+            const fechaFin = document.getElementById('fechaFin').value;
+            const limite = document.getElementById('limite').value;
+            
+            // Validar fechas para reportes que las requieren
+            if ((tipoReporte === 'ventas-por-fecha') && (!fechaInicio || !fechaFin)) {
+                alert('Por favor selecciona las fechas de inicio y fin para el reporte de ventas por fecha.');
+                return;
+            }
+            
+            // Mostrar spinner
+            document.getElementById('loadingSpinner').style.display = 'block';
+            
+            // Construir URL
+            let url = '';
+            if (formato === 'pdf') {
+                url = `/reportes-ventas/exportar-pdf?tipoReporte=${tipoReporte}&limite=${limite}`;
+                if (fechaInicio && fechaFin) {
+                    url += `&fechaInicio=${fechaInicio}&fechaFin=${fechaFin}`;
+                }
+            } else if (formato === 'excel') {
+                url = `/reportes-ventas/exportar-excel?tipoReporte=${tipoReporte}&limite=${limite}`;
+                if (fechaInicio && fechaFin) {
+                    url += `&fechaInicio=${fechaInicio}&fechaFin=${fechaFin}`;
+                }
+            }
+            
+            // Crear enlace temporal para descarga
+            const link = document.createElement('a');
+            link.href = url;
+            link.style.display = 'none';
+            document.body.appendChild(link);
+            
+            // Simular click y limpiar
+            link.click();
+            document.body.removeChild(link);
+            
+            // Ocultar spinner después de un tiempo
+            setTimeout(() => {
+                document.getElementById('loadingSpinner').style.display = 'none';
+            }, 2000);        }
+
+        // Función para generar y descargar factura individual
+        function generarFactura(ventaId) {
+            // Mostrar spinner
+            document.getElementById('loadingSpinner').style.display = 'block';
+            
+            // Construir URL para la factura
+            const url = `/reportes-ventas/generar-factura?ventaId=${ventaId}`;
+            
+            // Crear enlace temporal para descarga
+            const link = document.createElement('a');
+            link.href = url;
+            link.style.display = 'none';
+            document.body.appendChild(link);
+            
+            // Simular click y limpiar
+            link.click();
+            document.body.removeChild(link);
+            
+            // Ocultar spinner y mostrar notificación después de un tiempo
+            setTimeout(() => {
+                document.getElementById('loadingSpinner').style.display = 'none';
+                mostrarNotificacion(`Factura de la venta #${ventaId} generada exitosamente`, 'success');
+            }, 2000);
+        }        // Función para mostrar/ocultar detalles de venta
+        function toggleVentaDetails(ventaId) {
+            const detailsRow = document.getElementById('details-row-' + ventaId);
+            const toggleBtn = document.getElementById('toggle-btn-' + ventaId);
+            const icon = document.getElementById('icon-' + ventaId);
+            const btnText = toggleBtn.querySelector('.btn-text');
+            
+            if (detailsRow.style.display === 'none' || detailsRow.style.display === '') {
+                // Mostrar detalles
+                detailsRow.style.display = 'table-row';
+                toggleBtn.classList.add('expanded');
+                icon.className = 'bi bi-chevron-up';
+                btnText.textContent = 'Ocultar Detalles';
+                toggleBtn.classList.remove('btn-outline-info');
+                toggleBtn.classList.add('btn-info');
+                  // Animación suave
+                detailsRow.style.opacity = '0';
+                setTimeout(() => {
+                    detailsRow.style.opacity = '1';
+                    // Desplazamiento suave hacia los detalles después de la animación
+                    scrollToDetails(ventaId);
+                }, 100);
+            } else {
+                // Ocultar detalles
+                detailsRow.style.opacity = '0';
+                setTimeout(() => {
+                    detailsRow.style.display = 'none';
+                    toggleBtn.classList.remove('expanded');
+                    icon.className = 'bi bi-chevron-down';
+                    btnText.textContent = 'Ver Detalles';
+                    toggleBtn.classList.remove('btn-info');
+                    toggleBtn.classList.add('btn-outline-info');
+                }, 500);
+            }
+        }
+        
+        // Función para desplazamiento suave hacia los detalles
+        function scrollToDetails(ventaId) {
+            setTimeout(() => {
+                const detailsRow = document.getElementById('details-row-' + ventaId);
+                if (detailsRow) {
+                    const offset = 100; // Espacio adicional desde el top
+                    const elementPosition = detailsRow.getBoundingClientRect().top + window.pageYOffset;
+                    const offsetPosition = elementPosition - offset;
+                    
+                    // Desplazamiento suave y cómodo
+                    window.scrollTo({
+                        top: offsetPosition,
+                        behavior: 'smooth'
+                    });
+                    
+                    // Añadir un efecto de destacado temporal
+                    highlightDetails(detailsRow);
+                }            }, 500); // Esperar a que termine la animación de expansión
+        }
+        
+        // Función para destacar temporalmente los detalles
+        function highlightDetails(detailsRow) {
+            const detailsContainer = detailsRow.querySelector('.sale-details-container');
+            if (detailsContainer) {
+                // Añadir clase de destacado
+                detailsContainer.classList.add('details-highlight');
+                
+                // Remover el destacado después de 3.5 segundos
+                setTimeout(() => {
+                    detailsContainer.classList.remove('details-highlight');
+                }, 3500);
+            }
+        }
+
+        // Función para mostrar notificaciones de éxito
+        function mostrarNotificacion(mensaje, tipo = 'success') {
+            const alertClass = tipo === 'success' ? 'alert-success-custom' : 'alert-danger-custom';
+            const icon = tipo === 'success' ? 'check-circle-fill' : 'exclamation-triangle-fill';
+            
+            const alertHTML = `
+                <div class="alert alert-custom ${alertClass} alert-dismissible fade show">
+                    <i class="bi bi-${icon} me-2"></i>
+                    ${mensaje}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            `;
+            
+            // Insertar al inicio del contenedor principal
+            const container = document.querySelector('.main-container');
+            container.insertAdjacentHTML('afterbegin', alertHTML);
+            
+            // Auto-remover después de 5 segundos
+            setTimeout(() => {
+                const alert = container.querySelector('.alert');
+                if (alert) {
+                    alert.remove();
+                }
+            }, 5000);
+        }
+
+        // Validación de fechas
+        document.getElementById('fechaInicio').addEventListener('change', function() {
+            const fechaInicio = this.value;
+            const fechaFin = document.getElementById('fechaFin');
+            
+            if (fechaInicio) {
+                fechaFin.min = fechaInicio;
+                if (fechaFin.value && fechaFin.value < fechaInicio) {
+                    fechaFin.value = fechaInicio;
+                }
+            }
+        });        document.getElementById('fechaFin').addEventListener('change', function() {
+            const fechaFin = this.value;
+            const fechaInicio = document.getElementById('fechaInicio');
+            
+            if (fechaFin) {
+                fechaInicio.max = fechaFin;
+                if (fechaInicio.value && fechaInicio.value > fechaFin) {
+                    fechaInicio.value = fechaFin;
+                }
+            }
+        });        // Funciones para filtrado por usuario (solo para administradores)
+        function filtrarVentasPorUsuario() {
+            const usuarioFiltro = document.getElementById('usuarioFiltro').value;
+            const fechaInicio = document.getElementById('fechaInicio').value;
+            const fechaFin = document.getElementById('fechaFin').value;
+            const limite = document.getElementById('limite').value;
+            
+            if (!usuarioFiltro) {
+                mostrarNotificacion('Por favor selecciona un usuario para filtrar.', 'warning');
+                return;
+            }
+            
+            // Mostrar spinner
+            document.getElementById('loadingSpinner').style.display = 'block';
+            
+            // Construir URL
+            let url = `/reportes-ventas/ventas-usuario-detalladas?usuarioCajero=${encodeURIComponent(usuarioFiltro)}&limite=${limite}`;
+            if (fechaInicio && fechaFin) {
+                url += `&fechaInicio=${fechaInicio}&fechaFin=${fechaFin}`;
+            }
+            
+            fetch(url)
+                .then(response => response.json())
+                .then(ventas => {
+                    mostrarVentasFiltradas(ventas, usuarioFiltro, fechaInicio, fechaFin);
+                    document.getElementById('loadingSpinner').style.display = 'none';
+                    mostrarNotificacion(`Se encontraron ${ventas.length} ventas para ${usuarioFiltro}`, 'success');
+                })
+                .catch(error => {
+                    console.error('Error al filtrar ventas:', error);
+                    mostrarNotificacion('Error al filtrar las ventas. Por favor, intenta de nuevo.', 'danger');
+                    document.getElementById('loadingSpinner').style.display = 'none';
+                });
+        }
+        
+        function mostrarEstadisticasUsuario() {
+            const usuarioFiltro = document.getElementById('usuarioFiltro').value;
+            
+            if (!usuarioFiltro) {
+                mostrarNotificacion('Por favor selecciona un usuario para ver sus estadísticas.', 'warning');
+                return;
+            }
+            
+            // Mostrar spinner
+            document.getElementById('loadingSpinner').style.display = 'block';
+            
+            fetch(`/reportes-ventas/estadisticas-usuario?usuarioCajero=${encodeURIComponent(usuarioFiltro)}`)
+                .then(response => response.json())
+                .then(estadisticas => {
+                    actualizarEstadisticasUsuario(usuarioFiltro, estadisticas);
+                    document.getElementById('loadingSpinner').style.display = 'none';
+                    mostrarNotificacion(`Estadísticas de ${usuarioFiltro} cargadas exitosamente`, 'success');
+                })
+                .catch(error => {
+                    console.error('Error al cargar estadísticas:', error);
+                    mostrarNotificacion('Error al cargar las estadísticas del usuario. Por favor, intenta de nuevo.', 'danger');
+                    document.getElementById('loadingSpinner').style.display = 'none';
+                });
+        }
+        
+        function actualizarEstadisticasUsuario(nombreUsuario, estadisticas) {
+            // Actualizar título
+            document.getElementById('nombreUsuarioSeleccionado').textContent = nombreUsuario;
+            
+            // Actualizar estadísticas
+            document.getElementById('totalVentasUsuario').textContent = estadisticas.totalVentas || 0;
+            document.getElementById('totalIngresosUsuario').textContent = 
+                '$' + (estadisticas.totalIngresos || 0).toLocaleString('es-ES', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+            document.getElementById('ventasDelMesUsuario').textContent = estadisticas.ventasDelMes || 0;
+            document.getElementById('ventasDelDiaUsuario').textContent = estadisticas.ventasDelDia || 0;
+            
+            // Mostrar sección
+            document.getElementById('estadisticasUsuarioSection').style.display = 'block';
+            
+            // Scroll suave hacia las estadísticas
+            document.getElementById('estadisticasUsuarioSection').scrollIntoView({ 
+                behavior: 'smooth', 
+                block: 'start' 
+            });
+        }
+        
+        function mostrarVentasFiltradas(ventas, usuarioFiltro, fechaInicio, fechaFin) {
+            const tbody = document.getElementById('ventasFiltradasBody');
+            const titulo = document.getElementById('tituloVentasFiltradas');
+            
+            // Actualizar título
+            let tituloTexto = `Ventas de ${usuarioFiltro}`;
+            if (fechaInicio && fechaFin) {
+                tituloTexto += ` (${fechaInicio} - ${fechaFin})`;
+            }
+            titulo.textContent = tituloTexto;
+            
+            // Limpiar tabla
+            tbody.innerHTML = '';
+            
+            if (ventas.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="6" class="empty-state">
+                            <i class="bi bi-inbox"></i>
+                            <div>No se encontraron ventas para los filtros seleccionados</div>
+                        </td>
+                    </tr>
+                `;
+            } else {
+                ventas.forEach((venta, index) => {
+                    const fecha = new Date(venta.fecha).toLocaleString('es-ES', {
+                        year: 'numeric',
+                        month: '2-digit',
+                        day: '2-digit',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    });
+                    
+                    const total = parseFloat(venta.total).toLocaleString('es-ES', {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2
+                    });
+                      const clienteInfo = venta.nombreCliente && venta.nombreCliente.trim() !== '' 
+                        ? `<strong>${venta.nombreCliente}</strong><br><small class="text-muted">${venta.correoCliente || 'Sin correo'}</small>`
+                        : (venta.correoCliente || 'Cliente sin datos');
+                    
+                    const row = `
+                        <tr id="venta-filtrada-row-${venta.id}">
+                            <td>
+                                <span class="badge bg-primary">#${venta.id}</span>
+                            </td>
+                            <td>${fecha}</td>
+                            <td>${clienteInfo}</td>
+                            <td>
+                                <span class="badge bg-info">${venta.usuarioCajero || 'No especificado'}</span>
+                            </td>
+                            <td>
+                                <strong class="text-success">$${total}</strong>
+                            </td>
+                            <td>
+                                <div class="d-flex gap-1">
+                                    <button type="button" 
+                                            class="btn btn-outline-info btn-sm details-toggle" 
+                                            onclick="toggleVentaFilteredDetails(${venta.id})"
+                                            id="toggle-btn-filtered-${venta.id}">
+                                        <i class="bi bi-chevron-down" id="icon-filtered-${venta.id}"></i>
+                                        <span class="btn-text">Ver Detalles</span>
+                                    </button>
+                                    <button type="button" 
+                                            class="btn btn-success btn-sm"
+                                            onclick="generarFactura(${venta.id})"
+                                            title="Generar y descargar factura">
+                                        <i class="bi bi-file-earmark-pdf-fill"></i>
+                                        <span class="d-none d-md-inline">Factura</span>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                    
+                    tbody.insertAdjacentHTML('beforeend', row);
+                    
+                    // Agregar fila de detalles si existen
+                    if (venta.detalles && venta.detalles.length > 0) {
+                        const detallesRow = crearFilaDetallesFiltrados(venta);
+                        tbody.insertAdjacentHTML('beforeend', detallesRow);
+                    }
+                });
+            }
+            
+            // Mostrar sección
+            document.getElementById('ventasFiltradas').style.display = 'block';
+            
+            // Scroll suave hacia los resultados
+            document.getElementById('ventasFiltradas').scrollIntoView({ 
+                behavior: 'smooth', 
+                block: 'start' 
+            });
+        }
+        
+        function crearFilaDetallesFiltrados(venta) {
+            let productosHtml = '';
+            if (venta.detalles && venta.detalles.length > 0) {
+                venta.detalles.forEach(detalle => {
+                    const subtotal = parseFloat(detalle.subtotal).toLocaleString('es-ES', {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2
+                    });
+                    const precioUnitario = parseFloat(detalle.precioUnitario).toLocaleString('es-ES', {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2
+                    });
+                    
+                    productosHtml += `
+                        <tr>
+                            <td>
+                                <strong>${detalle.producto.nombre}</strong>
+                                <br>
+                                <small class="text-muted">${detalle.producto.categoria ? detalle.producto.categoria.nombre : 'Sin categoría'}</small>
+                            </td>
+                            <td>
+                                <span class="badge bg-secondary">${detalle.cantidad}</span>
+                            </td>
+                            <td>$${precioUnitario}</td>
+                            <td>
+                                <strong class="text-success">$${subtotal}</strong>
+                            </td>
+                        </tr>
+                    `;
+                });
+            }
+            
+            return `
+                <tr id="details-row-filtered-${venta.id}" 
+                    class="details-row" 
+                    style="display: none;">
+                    <td colspan="6" class="details-cell">
+                        <div class="sale-details-container">
+                            <div class="details-header">
+                                <h6 class="mb-3">
+                                    <i class="bi bi-receipt-cutoff text-primary"></i>
+                                    Detalles de la Venta #${venta.id}
+                                </h6>
+                            </div>
+                            
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <div class="detail-item">
+                                        <strong class="detail-label">
+                                            <i class="bi bi-person-fill text-info"></i> Cliente:
+                                        </strong>
+                                        <span>${venta.correoCliente || 'N/A'}</span>
+                                    </div>
+                                    <div class="detail-item">
+                                        <strong class="detail-label">
+                                            <i class="bi bi-calendar-event text-warning"></i> Fecha:
+                                        </strong>
+                                        <span>${new Date(venta.fecha).toLocaleString('es-ES')}</span>
+                                    </div>
+                                    <div class="detail-item">
+                                        <strong class="detail-label">
+                                            <i class="bi bi-person-badge text-primary"></i> Cajero:
+                                        </strong>
+                                        <span>${venta.usuarioCajero || 'No especificado'}</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="detail-item">
+                                        <strong class="detail-label">
+                                            <i class="bi bi-currency-dollar text-success"></i> Total:
+                                        </strong>
+                                        <span class="total-amount">$${parseFloat(venta.total).toLocaleString('es-ES', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
+                                    </div>
+                                    <div class="detail-item">
+                                        <strong class="detail-label">
+                                            <i class="bi bi-box-seam text-primary"></i> Productos:
+                                        </strong>
+                                        <span>${venta.detalles ? venta.detalles.length : 0} artículos</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="products-table">
+                                <h6 class="mb-2">
+                                    <i class="bi bi-list-check text-secondary"></i> 
+                                    Productos Vendidos
+                                </h6>
+                                <div class="table-responsive">
+                                    <table class="table table-sm table-hover">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th>Producto</th>
+                                                <th>Cantidad</th>
+                                                <th>Precio Unit.</th>
+                                                <th>Subtotal</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            ${productosHtml}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            `;
+        }
+        
+        function toggleVentaFilteredDetails(ventaId) {
+            const detailsRow = document.getElementById('details-row-filtered-' + ventaId);
+            const toggleBtn = document.getElementById('toggle-btn-filtered-' + ventaId);
+            const icon = document.getElementById('icon-filtered-' + ventaId);
+            const btnText = toggleBtn.querySelector('.btn-text');
+            
+            if (detailsRow.style.display === 'none' || detailsRow.style.display === '') {
+                // Mostrar detalles
+                detailsRow.style.display = 'table-row';
+                toggleBtn.classList.add('expanded');
+                icon.className = 'bi bi-chevron-up';
+                btnText.textContent = 'Ocultar Detalles';
+                toggleBtn.classList.remove('btn-outline-info');
+                toggleBtn.classList.add('btn-info');
+                
+                // Animación suave
+                detailsRow.style.opacity = '0';
+                setTimeout(() => {
+                    detailsRow.style.opacity = '1';
+                    scrollToDetails(ventaId, 'filtered');
+                }, 100);
+            } else {
+                // Ocultar detalles
+                detailsRow.style.opacity = '0';
+                setTimeout(() => {
+                    detailsRow.style.display = 'none';
+                    toggleBtn.classList.remove('expanded');
+                    icon.className = 'bi bi-chevron-down';
+                    btnText.textContent = 'Ver Detalles';
+                    toggleBtn.classList.remove('btn-info');
+                    toggleBtn.classList.add('btn-outline-info');
+                }, 500);
+            }
+        }
+        
+        function scrollToDetails(ventaId, type = '') {
+            setTimeout(() => {
+                const detailsRow = document.getElementById(`details-row-${type ? type + '-' : ''}${ventaId}`);
+                if (detailsRow) {
+                    const offset = 100;
+                    const elementPosition = detailsRow.getBoundingClientRect().top + window.pageYOffset;
+                    const offsetPosition = elementPosition - offset;
+                    
+                    window.scrollTo({
+                        top: offsetPosition,
+                        behavior: 'smooth'
+                    });
+                      highlightDetails(detailsRow);
+                }
+            }, 500);
+        }
+          function exportarReporteUsuario(formato) {
+            const usuarioFiltro = document.getElementById('usuarioFiltro').value;
+            const fechaInicio = document.getElementById('fechaInicio').value;
+            const fechaFin = document.getElementById('fechaFin').value;
+            
+            if (!usuarioFiltro) {
+                mostrarNotificacion('Por favor selecciona un usuario para exportar su reporte.', 'warning');
+                return;
+            }
+            
+            // Mostrar spinner
+            document.getElementById('loadingSpinner').style.display = 'block';
+            
+            // Construir URL
+            let url = '';
+            if (formato === 'pdf') {
+                url = `/reportes-ventas/exportar-pdf-usuario?usuarioCajero=${encodeURIComponent(usuarioFiltro)}`;
+            } else if (formato === 'excel') {
+                url = `/reportes-ventas/exportar-excel-usuario?usuarioCajero=${encodeURIComponent(usuarioFiltro)}`;
+            }
+            
+            if (fechaInicio && fechaFin) {
+                url += `&fechaInicio=${fechaInicio}&fechaFin=${fechaFin}`;
+            }
+            
+            // Crear enlace temporal para descarga
+            const link = document.createElement('a');
+            link.href = url;
+            link.style.display = 'none';
+            document.body.appendChild(link);
+            
+            // Simular click y limpiar
+            link.click();
+            document.body.removeChild(link);
+              // Ocultar spinner después de un tiempo
+            setTimeout(() => {
+                document.getElementById('loadingSpinner').style.display = 'none';
+                mostrarNotificacion(`Reporte de ${usuarioFiltro} generado exitosamente en formato ${formato.toUpperCase()}`, 'success');
+            }, 2000);
+        }
+        
+        // Función para limpiar filtros de usuario
+        function limpiarFiltrosUsuario() {
+            // Limpiar selector de usuario
+            document.getElementById('usuarioFiltro').value = '';
+            
+            // Ocultar secciones de resultados
+            const estadisticasSection = document.getElementById('estadisticasUsuarioSection');
+            const ventasFiltradasSection = document.getElementById('ventasFiltradas');
+            
+            if (estadisticasSection) {
+                estadisticasSection.style.display = 'none';
+            }
+            
+            if (ventasFiltradasSection) {
+                ventasFiltradasSection.style.display = 'none';
+            }
+            
+            // Limpiar contenido de las tablas
+            const ventasFiltradasBody = document.getElementById('ventasFiltradasBody');
+            if (ventasFiltradasBody) {
+                ventasFiltradasBody.innerHTML = '';
+            }
+            
+            // Resetear valores de estadísticas
+            const estadisticasElementos = [
+                'nombreUsuarioSeleccionado',
+                'totalVentasUsuario', 
+                'totalIngresosUsuario',
+                'ventasDelMesUsuario',
+                'ventasDelDiaUsuario'
+            ];
+            
+            estadisticasElementos.forEach(elementId => {
+                const elemento = document.getElementById(elementId);
+                if (elemento) {
+                    if (elementId === 'nombreUsuarioSeleccionado') {
+                        elemento.textContent = '-';
+                    } else if (elementId === 'totalIngresosUsuario') {
+                        elemento.textContent = '$0.00';
+                    } else {
+                        elemento.textContent = '0';
+                    }
+                }
+            });
+            
+            // Mostrar notificación
+            mostrarNotificacion('Filtros de usuario limpiados exitosamente', 'info');
+              // Scroll suave hacia la sección de filtros
+            const filtrosSection = document.querySelector('.user-filter-section');
+            if (filtrosSection) {
+                filtrosSection.scrollIntoView({ 
+                    behavior: 'smooth', 
+                    block: 'start' 
+                });
+            }
+        }
+        
+        // Función para limpiar filtros de fecha
+        function limpiarFiltrosFecha() {
+            // Limpiar campos de fecha
+            document.getElementById('fechaInicio').value = '';
+            document.getElementById('fechaFin').value = '';
+            
+            // Resetear límite al valor por defecto
+            document.getElementById('limite').value = '10';
+            
+            // Mostrar notificación
+            mostrarNotificacion('Filtros de fecha limpiados exitosamente', 'info');
+            
+            // Scroll suave hacia la sección de filtros de fecha
+            const fechaSection = document.querySelector('.filter-section');
+            if (fechaSection) {
+                fechaSection.scrollIntoView({ 
+                    behavior: 'smooth', 
+                    block: 'start' 
+                });            }
+        }
+
+        // ============ FUNCIONES PARA ENVÍO DE CORREO MASIVO ============
+
+        // Función para abrir el modal de correo masivo para reportes generales
+        function abrirModalCorreo(tipoReporte) {
+            // Configurar el tipo de reporte en el modal
+            document.getElementById('tipoReporte').value = tipoReporte;
+            
+            // Configurar el texto descriptivo del tipo de reporte
+            let textoReporte = '';
+            switch (tipoReporte) {
+                case 'productos-mas-vendidos':
+                    textoReporte = 'Productos Más Vendidos';
+                    break;
+                case 'ventas-por-fecha':
+                    textoReporte = 'Ventas por Fecha';
+                    break;
+                case 'ingresos-por-producto':
+                    textoReporte = 'Ingresos por Producto';
+                    break;
+                case 'resumen-general':
+                    textoReporte = 'Resumen General de Ventas';
+                    break;
+                default:
+                    textoReporte = 'Reporte de Ventas';
+            }
+            document.getElementById('tipoReporteTexto').value = textoReporte;
+            
+            // Limpiar correos anteriores
+            limpiarCorreos();
+            
+            // Abrir el modal
+            new bootstrap.Modal(document.getElementById('modalCorreoMasivo')).show();
+        }
+
+        // Función para abrir el modal de correo masivo para reportes de usuario
+        function abrirModalCorreoUsuario() {
+            const usuarioFiltro = document.getElementById('usuarioFiltro').value;
+            
+            if (!usuarioFiltro) {
+                mostrarNotificacion('Por favor selecciona un usuario antes de enviar el reporte por correo.', 'warning');
+                return;
+            }
+            
+            // Configurar el usuario en el modal
+            document.getElementById('usuarioSeleccionado').value = usuarioFiltro;
+            document.getElementById('usuarioSeleccionadoTexto').value = usuarioFiltro;
+            
+            // Limpiar correos anteriores
+            limpiarCorreosUsuario();
+            
+            // Abrir el modal
+            new bootstrap.Modal(document.getElementById('modalCorreoUsuario')).show();
+        }
+
+        // Función para agregar campos de correo adicionales en el modal general
+        function agregarCorreo() {
+            const container = document.getElementById('correosContainer');
+            const nuevoCampo = document.createElement('div');
+            nuevoCampo.classList.add('input-group', 'mb-2');
+            nuevoCampo.innerHTML = `
+                <input type="email" name="correos" class="form-control" placeholder="correo@ejemplo.com" required>
+                <button type="button" class="btn btn-danger" onclick="this.parentElement.remove()">
+                    <i class="bi bi-trash"></i>
+                </button>
+            `;
+            container.appendChild(nuevoCampo);
+        }
+
+        // Función para agregar campos de correo adicionales en el modal de usuario
+        function agregarCorreoUsuario() {
+            const container = document.getElementById('correosUsuarioContainer');
+            const nuevoCampo = document.createElement('div');
+            nuevoCampo.classList.add('input-group', 'mb-2');
+            nuevoCampo.innerHTML = `
+                <input type="email" name="correos" class="form-control" placeholder="correo@ejemplo.com" required>
+                <button type="button" class="btn btn-danger" onclick="this.parentElement.remove()">
+                    <i class="bi bi-trash"></i>
+                </button>
+            `;
+            container.appendChild(nuevoCampo);
+        }
+
+        // Función para limpiar los campos de correo en el modal general
+        function limpiarCorreos() {
+            const container = document.getElementById('correosContainer');
+            container.innerHTML = `
+                <div class="input-group mb-2">
+                    <input type="email" name="correos" class="form-control" placeholder="correo@ejemplo.com" required>
+                    <button type="button" class="btn btn-success" onclick="agregarCorreo()">
+                        <i class="bi bi-plus-lg"></i>
+                    </button>
+                </div>
+            `;
+        }
+
+        // Función para limpiar los campos de correo en el modal de usuario
+        function limpiarCorreosUsuario() {
+            const container = document.getElementById('correosUsuarioContainer');
+            container.innerHTML = `
+                <div class="input-group mb-2">
+                    <input type="email" name="correos" class="form-control" placeholder="correo@ejemplo.com" required>
+                    <button type="button" class="btn btn-success" onclick="agregarCorreoUsuario()">
+                        <i class="bi bi-plus-lg"></i>
+                    </button>
+                </div>
+            `;
+        }
+
+        // Función para enviar reporte general por correo
+        function enviarReportePorCorreo() {
+            const form = document.getElementById('formCorreoMasivo');
+            const correos = Array.from(form.querySelectorAll('input[name="correos"]'))
+                                .map(input => input.value.trim())
+                                .filter(email => email !== '');
+            
+            if (correos.length === 0) {
+                mostrarNotificacion('Debe agregar al menos un correo electrónico.', 'warning');
+                return;
+            }
+
+            // Validar correos
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            for (let email of correos) {
+                if (!emailRegex.test(email)) {
+                    mostrarNotificacion(`El correo "${email}" no tiene un formato válido.`, 'danger');
+                    return;
+                }
+            }
+
+            const tipoReporte = document.getElementById('tipoReporte').value;
+            const formato = document.getElementById('formatoCorreo').value;
+            const fechaInicio = document.getElementById('fechaInicio').value;
+            const fechaFin = document.getElementById('fechaFin').value;
+            const limite = document.getElementById('limite').value;
+
+            // Mostrar loading
+            const modal = bootstrap.Modal.getInstance(document.getElementById('modalCorreoMasivo'));
+            modal.hide();
+            document.getElementById('loadingSpinner').style.display = 'block';
+
+            // Preparar datos para envío
+            const formData = new FormData();
+            formData.append('tipoReporte', tipoReporte);
+            formData.append('formato', formato);
+            formData.append('limite', limite);
+            
+            correos.forEach(email => {
+                formData.append('correos', email);
+            });
+
+            if (fechaInicio && fechaFin) {
+                formData.append('fechaInicio', fechaInicio);
+                formData.append('fechaFin', fechaFin);
+            }
+
+            // Enviar solicitud
+            fetch('/reportes-ventas/enviar-correo-masivo', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('loadingSpinner').style.display = 'none';
+                
+                if (data.success) {
+                    mostrarNotificacion(data.message, 'success');
+                } else {
+                    mostrarNotificacion(data.message, 'danger');
+                }
+            })
+            .catch(error => {
+                document.getElementById('loadingSpinner').style.display = 'none';
+                mostrarNotificacion('Error al enviar el reporte: ' + error.message, 'danger');
+            });
+        }
+
+        // Función para enviar reporte de usuario por correo
+        function enviarReporteUsuarioPorCorreo() {
+            const form = document.getElementById('formCorreoUsuario');
+            const correos = Array.from(form.querySelectorAll('input[name="correos"]'))
+                                .map(input => input.value.trim())
+                                .filter(email => email !== '');
+            
+            if (correos.length === 0) {
+                mostrarNotificacion('Debe agregar al menos un correo electrónico.', 'warning');
+                return;
+            }
+
+            // Validar correos
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            for (let email of correos) {
+                if (!emailRegex.test(email)) {
+                    mostrarNotificacion(`El correo "${email}" no tiene un formato válido.`, 'danger');
+                    return;
+                }
+            }
+
+            const usuarioCajero = document.getElementById('usuarioSeleccionado').value;
+            const formato = document.getElementById('formatoCorreoUsuario').value;
+            const fechaInicio = document.getElementById('fechaInicio').value;
+            const fechaFin = document.getElementById('fechaFin').value;
+
+            // Mostrar loading
+            const modal = bootstrap.Modal.getInstance(document.getElementById('modalCorreoUsuario'));
+            modal.hide();
+            document.getElementById('loadingSpinner').style.display = 'block';
+
+            // Preparar datos para envío
+            const formData = new FormData();
+            formData.append('usuarioCajero', usuarioCajero);
+            formData.append('formato', formato);
+            
+            correos.forEach(email => {
+                formData.append('correos', email);
+            });
+
+            if (fechaInicio && fechaFin) {
+                formData.append('fechaInicio', fechaInicio);
+                formData.append('fechaFin', fechaFin);
+            }
+
+            // Enviar solicitud
+            fetch('/reportes-ventas/enviar-reporte-usuario-correo', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('loadingSpinner').style.display = 'none';
+                
+                if (data.success) {
+                    mostrarNotificacion(data.message, 'success');
+                } else {
+                    mostrarNotificacion(data.message, 'danger');
+                }
+            })
+            .catch(error => {
+                document.getElementById('loadingSpinner').style.display = 'none';
+                mostrarNotificacion('Error al enviar el reporte: ' + error.message, 'danger');
+            });
+        }
+
+        // ============ FIN FUNCIONES PARA ENVÍO DE CORREO MASIVO ============
+    </script>
+
+    <!-- Script de seguridad para prevenir navegación hacia atrás después del logout -->
+    <script th:src="@{/js/security.js}"></script>
+</body>
+</html>

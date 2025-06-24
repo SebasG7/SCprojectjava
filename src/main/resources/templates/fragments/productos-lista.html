@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <!-- Enhanced Product Card Styling -->
+    <style>        /* Product Grid Layout */        .productos-grid {
+            padding: 1rem 0;
+        }
+
+        /* Enhanced Product Card Styling */
+        .producto-card {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border-radius: 16px;
+            overflow: hidden;
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            position: relative;
+            height: 100%;
+            min-height: 420px; /* Altura mínima fija */
+            max-height: 420px; /* Altura máxima fija */
+            display: flex;
+            flex-direction: column;
+        }
+
+        .producto-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #007bff, #0056b3, #6610f2, #6f42c1);
+            z-index: 1;
+        }
+
+        .producto-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(0, 123, 255, 0.15);
+            border-color: #007bff;
+        }
+
+        .producto-card:hover::before {
+            background: linear-gradient(90deg, #28a745, #20c997, #17a2b8, #007bff);
+            animation: gradientShift 2s ease-in-out infinite;
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { background: linear-gradient(90deg, #28a745, #20c997, #17a2b8, #007bff); }
+            50% { background: linear-gradient(90deg, #007bff, #6610f2, #e83e8c, #fd7e14); }
+        }
+
+        /* Card Header Enhancement */
+        .producto-card .card-header {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            position: relative;
+            z-index: 2;
+        }
+
+        .producto-card .card-header .badge {
+            font-size: 0.75rem;
+            padding: 0.5rem 0.8rem;
+            border-radius: 20px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .producto-card .card-header .badge.bg-dark {
+            background: linear-gradient(135deg, #343a40 0%, #495057 100%) !important;
+            box-shadow: 0 2px 4px rgba(52, 58, 64, 0.3);
+        }
+
+        .producto-card .card-header .badge.bg-secondary {
+            background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%) !important;
+            box-shadow: 0 2px 4px rgba(108, 117, 125, 0.3);
+        }        /* Card Body Enhancement */
+        .producto-card .card-body {
+            background: linear-gradient(180deg, #ffffff 0%, #fafbfc 100%);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            justify-content: space-between;
+            padding: 1.25rem;
+            min-height: 320px; /* Altura mínima del contenido */
+        }        .producto-card .card-title {
+            color: #2c3e50;
+            font-size: 1.25rem;
+            line-height: 1.3;
+            margin-bottom: 1rem;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+            min-height: 3.2rem; /* Altura mínima para 2 líneas */
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }        /* Pricing Section Enhancement */
+        .pricing-info {
+            background: linear-gradient(135deg, #f8f9ff 0%, #e8f2ff 100%);
+            border: 1px solid rgba(0, 123, 255, 0.1);
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            position: relative;
+            overflow: hidden;
+            min-height: 120px; /* Altura mínima fija */
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .pricing-info::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #007bff, #0056b3);
+        }
+
+        .pricing-info .badge {
+            font-size: 0.85rem;
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            font-weight: 600;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .pricing-info .badge.bg-primary {
+            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%) !important;
+        }
+
+        .pricing-info .badge.bg-info {
+            background: linear-gradient(135deg, #17a2b8 0%, #138496 100%) !important;
+        }
+
+        .pricing-info .badge.bg-success {
+            background: linear-gradient(135deg, #28a745 0%, #1e7e34 100%) !important;
+        }        /* Stock Section Enhancement */
+        .stock-vencimiento {
+            background: linear-gradient(135deg, #f0fff4 0%, #e8f5e8 100%);
+            border: 1px solid rgba(40, 167, 69, 0.1);
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            position: relative;
+            overflow: hidden;
+            min-height: 100px; /* Altura mínima fija */
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .stock-vencimiento::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #28a745, #20c997);
+        }
+
+        .stock-vencimiento .badge.bg-success {
+            background: linear-gradient(135deg, #28a745 0%, #1e7e34 100%) !important;
+        }
+
+        .stock-vencimiento .badge.bg-warning {
+            background: linear-gradient(135deg, #ffc107 0%, #e0a800 100%) !important;
+            color: #000 !important;
+        }
+
+        .stock-vencimiento .badge.bg-danger {
+            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%) !important;
+        }
+
+        /* Expiration Status Enhancement */
+        .stock-vencimiento .badge.w-100 {
+            border-radius: 10px;
+            padding: 0.75rem;
+            font-size: 0.8rem;
+            line-height: 1.2;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Action Button Enhancement */
+        .producto-card .btn {
+            border-radius: 12px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+        }
+
+        .producto-card .btn.btn-success {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            border: none;
+            box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+        }
+
+        .producto-card .btn.btn-success:hover {
+            background: linear-gradient(135deg, #218838 0%, #1e7e34 100%);
+            box-shadow: 0 6px 20px rgba(40, 167, 69, 0.4);
+            transform: translateY(-2px);
+        }
+
+        .producto-card .btn.btn-outline-danger {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border: 2px solid #dc3545;
+            color: #dc3545;
+        }
+
+        .producto-card .btn.btn-outline-danger:hover {
+            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+            border-color: #c82333;
+            color: white;
+        }
+
+        /* Section Headers */
+        .pricing-info small.fw-bold,
+        .stock-vencimiento small.fw-bold {
+            color: #495057;
+            font-size: 0.7rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            font-weight: 700;
+        }
+
+        /* Search Results Enhancement */
+        .search-results {
+            background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
+            border: 1px solid rgba(63, 81, 181, 0.2);
+            border-radius: 10px;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            color: #1565c0;
+            font-weight: 500;
+        }
+
+        .search-results i {
+            color: #1976d2;
+            margin-right: 0.5rem;
+        }
+
+        /* Alert Enhancements */
+        .alert-custom {
+            border-radius: 12px;
+            border: none;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            font-weight: 500;
+        }
+
+        .alert-info-custom {
+            background: linear-gradient(135deg, #d1ecf1 0%, #b8daff 100%);
+            color: #0c5460;
+        }
+
+        /* Responsive Enhancements */
+        @media (max-width: 768px) {
+            .producto-card {
+                margin-bottom: 1.5rem;
+            }
+            
+            .producto-card:hover {
+                transform: translateY(-4px) scale(1.01);
+            }
+            
+            .producto-card .card-title {
+                font-size: 1.1rem;
+            }
+            
+            .producto-card .btn {
+                font-size: 0.85rem;
+                padding: 0.75rem 1rem;
+            }
+        }
+
+        /* Animation for card appearance */
+        .producto-card {
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Stagger animation for multiple cards */
+        .col-md-6:nth-child(1) .producto-card { animation-delay: 0.1s; }
+        .col-md-6:nth-child(2) .producto-card { animation-delay: 0.2s; }
+        .col-md-6:nth-child(3) .producto-card { animation-delay: 0.3s; }        .col-md-6:nth-child(4) .producto-card { animation-delay: 0.4s; }
+        .col-md-6:nth-child(5) .producto-card { animation-delay: 0.5s; }
+        .col-md-6:nth-child(6) .producto-card { animation-delay: 0.6s; }
+
+        /* Productos Vencidos - Estilos especiales */
+        .producto-card.expired {
+            background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%) !important;
+            border: 2px solid #f44336 !important;
+            opacity: 0.8;
+            filter: grayscale(20%);
+        }
+
+        .producto-card.expired::before {
+            background: linear-gradient(90deg, #f44336, #e53935, #d32f2f, #c62828) !important;
+            animation: expiredGradient 2s ease-in-out infinite;
+        }
+
+        @keyframes expiredGradient {
+            0%, 100% { 
+                background: linear-gradient(90deg, #f44336, #e53935, #d32f2f, #c62828);
+            }
+            50% { 
+                background: linear-gradient(90deg, #c62828, #d32f2f, #e53935, #f44336);
+            }
+        }
+
+        .producto-card.expired:hover {
+            transform: translateY(-4px) scale(1.01) !important;
+            box-shadow: 0 10px 20px rgba(244, 67, 54, 0.3) !important;
+            border-color: #d32f2f !important;
+        }
+
+        .producto-card.expired .card-body {
+            background: linear-gradient(180deg, #ffebee 0%, #ffcdd2 100%) !important;
+        }
+
+        .producto-card.expired .pricing-info {
+            background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%) !important;
+            border: 1px solid rgba(244, 67, 54, 0.3) !important;
+        }
+
+        .producto-card.expired .stock-vencimiento {
+            background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%) !important;
+            border: 1px solid rgba(244, 67, 54, 0.3) !important;
+        }
+
+        .producto-card.expired .card-title {
+            color: #c62828 !important;
+            text-decoration: line-through;
+        }
+
+        .producto-card.expired .btn {
+            cursor: not-allowed !important;
+        }
+
+        /* Productos Agotados - Estilos especiales */
+        .producto-card.out-of-stock {
+            background: linear-gradient(135deg, #fff8e1 0%, #ffecb3 100%) !important;
+            border: 2px solid #ff9800 !important;
+            opacity: 0.9;
+            filter: grayscale(10%);
+        }
+
+        .producto-card.out-of-stock::before {
+            background: linear-gradient(90deg, #ff9800, #f57c00, #ef6c00, #e65100) !important;
+            animation: outOfStockGradient 2s ease-in-out infinite;
+        }
+
+        @keyframes outOfStockGradient {
+            0%, 100% { 
+                background: linear-gradient(90deg, #ff9800, #f57c00, #ef6c00, #e65100);
+            }
+            50% { 
+                background: linear-gradient(90deg, #e65100, #ef6c00, #f57c00, #ff9800);
+            }
+        }
+
+        .producto-card.out-of-stock:hover {
+            transform: translateY(-4px) scale(1.01) !important;
+            box-shadow: 0 10px 20px rgba(255, 152, 0, 0.3) !important;
+            border-color: #f57c00 !important;
+        }
+
+        .producto-card.out-of-stock .card-body {
+            background: linear-gradient(180deg, #fff8e1 0%, #ffecb3 100%) !important;
+        }
+
+        .producto-card.out-of-stock .pricing-info {
+            background: linear-gradient(135deg, #fff8e1 0%, #ffecb3 100%) !important;
+            border: 1px solid rgba(255, 152, 0, 0.3) !important;
+        }
+
+        .producto-card.out-of-stock .stock-vencimiento {
+            background: linear-gradient(135deg, #fff8e1 0%, #ffecb3 100%) !important;
+            border: 1px solid rgba(255, 152, 0, 0.3) !important;
+        }
+
+        .producto-card.out-of-stock .card-title {
+            color: #e65100 !important;
+        }
+
+        .producto-card.out-of-stock .btn {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body>
+    <!-- Fragmento de lista de productos para AJAX -->
+    <div th:fragment="productos-lista">
+        <!-- Resultados de búsqueda -->
+        <div th:if="${resultadosBusqueda != null}" class="search-results mb-3">
+            <i class="bi bi-info-circle"></i> 
+            Se encontraron <strong th:text="${resultadosBusqueda}"></strong> productos
+            <span th:if="${busquedaActual != null && !busquedaActual.empty}"> para "<strong th:text="${busquedaActual}"></strong>"</span>
+            <span th:if="${categoriaActual != null && categoriaActual > 0}"> 
+                en la categoría seleccionada
+            </span>
+        </div>
+
+        <!-- Mensaje inicial si no hay búsqueda -->
+        <div th:if="${busquedaActual == null && categoriaActual == null}" class="alert alert-info alert-custom alert-info-custom">
+            <i class="bi bi-search me-2"></i>
+            Utilice los filtros de búsqueda para encontrar productos para agregar al carrito.
+        </div>
+
+        <!-- Alerta si no hay productos -->
+        <div th:if="${resultadosBusqueda != null && resultadosBusqueda == 0}" class="alert alert-info alert-custom alert-info-custom">
+            <i class="bi bi-info-circle-fill me-2"></i>
+            No se encontraron productos que coincidan con los filtros aplicados.
+            <a href="javascript:void(0)" onclick="buscarProductos('', '')" class="alert-link">Mostrar todos los productos</a>
+        </div>        <!-- Lista de productos -->
+        <div th:if="${productos != null && productos.size() > 0}" id="productos-contenedor" class="productos-grid">
+            <div class="row g-4 justify-content-start">                <div th:each="producto : ${productos}" class="col-12 col-md-6 col-lg-4 mb-4">
+                    <div class="card h-100 producto-card shadow-lg border-0" 
+                         th:classappend="${producto.vencido} ? 'expired' : (${producto.agotado} ? 'out-of-stock' : '')">
+                        <!-- Card Header with Code and Category -->
+                        <div class="card-header border-0 py-3">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="badge bg-dark text-white fw-bold" th:text="'#' + ${producto.codigo}">
+                                    <i class="bi bi-hash me-1"></i>Código
+                                </span>
+                                <span class="badge bg-secondary text-white" th:text="${producto.categoria != null ? producto.categoria.nombre : 'Sin categoría'}">
+                                    <i class="bi bi-tag-fill me-1"></i>Categoría
+                                </span>
+                            </div>
+                        </div>
+                        
+                        <!-- Card Body -->
+                        <div class="card-body d-flex flex-column p-4">
+                            <!-- Product Title -->
+                            <h5 class="card-title text-dark fw-bold mb-3 text-center" th:text="${producto.nombre}">Producto</h5>
+                            
+                            <!-- Product Description -->
+                            <div th:if="${producto.descripcion != null && !producto.descripcion.empty}" 
+                                 class="text-center mb-4">
+                                <p class="card-text text-muted small mb-0" 
+                                   th:text="${#strings.abbreviate(producto.descripcion, 85)}">
+                                   Descripción del producto
+                                </p>
+                            </div>
+                            
+                            <!-- Pricing Information Section -->
+                            <div class="pricing-info mb-3">
+                                <div class="text-center mb-3">
+                                    <small class="text-muted fw-bold">
+                                        <i class="bi bi-currency-dollar me-1"></i>PRECIOS
+                                    </small>
+                                </div>
+                                
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <span class="text-muted small">
+                                        <i class="bi bi-tag me-1"></i>Precio base:
+                                    </span>
+                                    <span class="badge bg-primary fs-6">
+                                        S/. <span th:text="${#numbers.formatDecimal(producto.precio, 1, 2)}">0.00</span>
+                                    </span>
+                                </div>
+                                
+                                <div th:if="${producto.iva != null}" class="d-flex justify-content-between align-items-center mb-2">
+                                    <span class="text-muted small">
+                                        <i class="bi bi-percent me-1"></i>IVA:
+                                    </span>
+                                    <span class="badge bg-info">
+                                        <span th:text="${#numbers.formatDecimal(producto.iva, 1, 2)}">0</span>%
+                                    </span>
+                                </div>
+                                
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span class="fw-bold text-success">
+                                        <i class="bi bi-calculator me-1"></i>Precio final:
+                                    </span>
+                                    <span class="badge bg-success fs-5 fw-bold">
+                                        S/. <span th:text="${#numbers.formatDecimal(producto.precioConIva, 1, 2)}">0.00</span>
+                                    </span>
+                                </div>
+                            </div>
+                            
+                            <!-- Stock and Expiration Section -->
+                            <div class="stock-vencimiento mb-4">
+                                <div class="text-center mb-3">
+                                    <small class="text-muted fw-bold">
+                                        <i class="bi bi-box-seam me-1"></i>DISPONIBILIDAD
+                                    </small>
+                                </div>
+                                  <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <span class="text-muted small">
+                                        <i class="bi bi-boxes me-1"></i>Stock disponible:
+                                    </span>
+                                    <span class="badge" 
+                                          th:classappend="${producto.stock == 0 ? 'bg-warning text-dark' : (producto.stock > 10 ? 'bg-success' : (producto.stock > 5 ? 'bg-warning text-dark' : 'bg-danger'))}"
+                                          th:text="${producto.stock == 0 ? 'AGOTADO' : (producto.stock + ' unidades')}">
+                                        <i class="bi bi-box me-1"></i>Stock
+                                    </span>
+                                </div>
+                                
+                                <!-- Out of Stock Warning (only if not expired) -->
+                                <div th:if="${producto.agotado and !producto.vencido}" class="text-center mt-2">
+                                    <span class="badge bg-warning text-dark w-100 py-2">
+                                        <i class="bi bi-exclamation-triangle-fill me-1"></i> 
+                                        <strong>SIN STOCK</strong><br>
+                                        <small>Producto agotado</small>
+                                    </span>
+                                </div>
+                                
+                                <!-- Expiration Date -->
+                                <div th:if="${producto.fechaVencimiento != null}" class="text-center">
+                                    <span th:if="${producto.vencido}" class="badge bg-danger w-100 py-2">
+                                        <i class="bi bi-exclamation-triangle-fill me-1"></i> 
+                                        <strong>VENCIDO</strong><br>
+                                        <small th:text="${#temporals.format(producto.fechaVencimiento, 'dd/MM/yyyy')}"></small>
+                                    </span>
+                                    <span th:if="${producto.proximoAVencer and !producto.vencido}" class="badge bg-warning text-dark w-100 py-2">
+                                        <i class="bi bi-clock-fill me-1"></i> 
+                                        <strong>PRÓXIMO A VENCER</strong><br>
+                                        <small th:text="${#temporals.format(producto.fechaVencimiento, 'dd/MM/yyyy')}"></small>
+                                    </span>
+                                    <span th:if="${!producto.vencido and !producto.proximoAVencer}" class="badge bg-success w-100 py-2">
+                                        <i class="bi bi-calendar-check-fill me-1"></i>
+                                        <strong>VIGENTE</strong><br>
+                                        <small th:text="'Vence: ' + ${#temporals.format(producto.fechaVencimiento, 'dd/MM/yyyy')}"></small>
+                                    </span>
+                                </div>
+                            </div>
+                            
+                            <!-- Action Button -->
+                            <div class="mt-auto text-center">                                <button type="button" 
+                                        class="btn btn-lg w-100 d-flex align-items-center justify-content-center py-3"
+                                        th:classappend="${producto.vencido ? 'btn-outline-danger' : (producto.agotado ? 'btn-outline-warning' : 'btn-success')}"
+                                        th:attr="data-id=${producto.id}, data-nombre=${producto.nombre}, data-precio=${producto.precio}, data-precio-con-iva=${producto.precioConIva}, data-iva=${producto.iva}, data-codigo=${producto.codigo}, data-vencido=${producto.vencido}, data-agotado=${producto.agotado}"
+                                        th:disabled="${producto.vencido or producto.agotado}"
+                                        onclick="window.agregarProductoDesdeGrid(this)">                                    <i th:class="${producto.vencido ? 'bi bi-x-circle-fill' : (producto.agotado ? 'bi bi-exclamation-triangle-fill' : 'bi bi-cart-plus-fill')}" class="me-2 fs-5"></i>
+                                    <span class="fw-bold">
+                                        <span th:if="${!producto.vencido and !producto.agotado}">Agregar al Carrito</span>
+                                        <span th:if="${producto.vencido}">Producto Vencido</span>
+                                        <span th:if="${producto.agotado and !producto.vencido}">Sin Stock</span>
+                                    </span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

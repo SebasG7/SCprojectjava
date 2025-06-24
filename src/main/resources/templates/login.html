@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>Inicio de Sesión - SCProject</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #3a506b 0%, #5d89ba 100%);
+            --accent-color: #5d89ba;
+            --primary-color: #3a506b;
+            --light-bg: #f8f9fa;
+            --card-shadow: 0 10px 30px rgba(58, 80, 107, 0.15);
+            --hover-shadow: 0 15px 35px rgba(58, 80, 107, 0.25);
+            --transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+            --success-color: #28a745;        --danger-color: #dc3545;
+        }
+          body {
+            background: linear-gradient(135deg, #5a6c7d 0%, #3f4b56 100%);
+            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            display: flex;
+            min-height: 100vh;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+        
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="%23ffffff" fill-opacity="0.05" d="M0,192L48,197.3C96,203,192,213,288,229.3C384,245,480,267,576,250.7C672,235,768,181,864,181.3C960,181,1056,235,1152,234.7C1248,235,1344,181,1392,154.7L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>');
+            background-repeat: no-repeat;
+            background-position: bottom;
+            background-size: cover;
+            animation: floatBackground 20s ease-in-out infinite;
+        }
+        
+        @keyframes floatBackground {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+        
+        .floating-shapes {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+          .shape {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.08);
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        .shape:nth-child(1) {
+            width: 80px;
+            height: 80px;
+            top: 20%;
+            left: 10%;
+            animation-delay: -0.5s;
+        }
+        
+        .shape:nth-child(2) {
+            width: 120px;
+            height: 120px;
+            top: 60%;
+            right: 10%;
+            animation-delay: -2s;
+        }
+        
+        .shape:nth-child(3) {
+            width: 60px;
+            height: 60px;
+            top: 40%;
+            left: 20%;
+            animation-delay: -3.5s;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            33% { transform: translateY(-20px) rotate(120deg); }
+            66% { transform: translateY(10px) rotate(240deg); }
+        }
+        
+        .login-container {
+            animation: slideInUp 0.8s ease-out;
+            position: relative;
+            z-index: 10;
+            max-width: 450px;
+            width: 100%;
+        }
+        
+        @keyframes slideInUp {
+            from { 
+                opacity: 0; 
+                transform: translateY(50px) scale(0.9); 
+            }
+            to { 
+                opacity: 1; 
+                transform: translateY(0) scale(1); 
+            }
+        }
+        
+        .login-card {
+            border: none;
+            border-radius: 20px;
+            box-shadow: var(--card-shadow);
+            overflow: hidden;
+            transition: var(--transition);
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .login-card:hover {
+            box-shadow: var(--hover-shadow);
+            transform: translateY(-8px);
+        }
+        
+        .card-header {
+            background: var(--primary-gradient);
+            color: white;
+            text-align: center;
+            padding: 2rem 1.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .card-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: repeating-linear-gradient(
+                45deg,
+                transparent,
+                transparent 10px,
+                rgba(255, 255, 255, 0.05) 10px,
+                rgba(255, 255, 255, 0.05) 20px
+            );
+            animation: shimmer 3s linear infinite;
+        }
+        
+        @keyframes shimmer {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+        }
+        
+        .login-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin: 0;
+            position: relative;
+            z-index: 2;
+            animation: titleGlow 2s ease-in-out infinite alternate;
+        }
+        
+        @keyframes titleGlow {
+            from { text-shadow: 0 0 10px rgba(255, 255, 255, 0.3); }
+            to { text-shadow: 0 0 20px rgba(255, 255, 255, 0.5); }
+        }
+        
+        .welcome-text {
+            font-size: 0.95rem;
+            opacity: 0.9;
+            margin-top: 0.5rem;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .card-body {
+            padding: 2.5rem 2rem;
+            position: relative;
+        }
+        
+        .form-floating {
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+        
+        .form-control {
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            padding: 1rem 0.75rem;
+            font-size: 1rem;
+            transition: var(--transition);
+            background-color: rgba(248, 249, 250, 0.8);
+            backdrop-filter: blur(10px);
+        }
+        
+        .form-control:focus {
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 0.25rem rgba(93, 137, 186, 0.15);
+            transform: translateY(-2px);
+            background-color: white;
+        }
+        
+        .form-floating > label {
+            color: #6c757d;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+        
+        .form-floating > .form-control:focus ~ label,
+        .form-floating > .form-control:not(:placeholder-shown) ~ label {
+            color: var(--accent-color);
+            transform: scale(0.85) translateY(-0.5rem) translateX(0.15rem);
+        }
+        
+        .password-toggle {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            border: none;
+            background: none;
+            color: #6c757d;
+            font-size: 1.1rem;
+            cursor: pointer;
+            z-index: 10;
+            transition: var(--transition);
+        }
+        
+        .password-toggle:hover {
+            color: var(--accent-color);
+            transform: translateY(-50%) scale(1.1);
+        }
+        
+        .btn-login {
+            background: var(--primary-gradient);
+            border: none;
+            border-radius: 12px;
+            padding: 0.875rem 2rem;
+            font-weight: 600;
+            font-size: 1.05rem;
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+            transition: var(--transition);
+            color: white;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .btn-login::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s ease;
+        }
+        
+        .btn-login:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 15px 35px rgba(58, 80, 107, 0.4);
+            background: linear-gradient(135deg, #2d3e52 0%, #4a739e 100%);
+        }
+        
+        .btn-login:hover::before {
+            left: 100%;
+        }
+        
+        .btn-login:active {
+            transform: translateY(-1px) scale(1.01);
+        }
+        
+        .spinner-border-sm {
+            width: 1rem;
+            height: 1rem;
+            margin-right: 0.5rem;
+        }
+          .alert {
+            border: none;
+            border-radius: 12px;
+            padding: 1rem 1.25rem;
+            margin-top: 1.5rem;
+            margin-bottom: 1rem;
+            animation: alertSlide 0.5s ease-out;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        @keyframes alertSlide {
+            from { 
+                opacity: 0; 
+                transform: translateX(-20px); 
+            }
+            to { 
+                opacity: 1; 
+                transform: translateX(0); 
+            }
+        }
+          .alert-danger {
+            background: linear-gradient(135deg, rgba(220, 53, 69, 0.1) 0%, rgba(255, 99, 132, 0.1) 100%);
+            color: #721c24;
+            border-left: 4px solid var(--danger-color);
+            box-shadow: 0 4px 15px rgba(220, 53, 69, 0.1);
+        }
+        
+        .alert-success {
+            background: linear-gradient(135deg, rgba(40, 167, 69, 0.1) 0%, rgba(72, 199, 142, 0.1) 100%);
+            color: #155724;
+            border-left: 4px solid var(--success-color);
+            box-shadow: 0 4px 15px rgba(40, 167, 69, 0.1);
+        }
+          .forgot-password {
+            text-align: center;
+            margin-top: 1.5rem;
+        }
+        
+        .messages-container {
+            margin-top: 1.8rem;
+        }
+        
+        .forgot-password a {
+            color: var(--accent-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: var(--transition);
+            position: relative;
+        }
+        
+        .forgot-password a::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--accent-color);
+            transition: width 0.3s ease;
+        }
+        
+        .forgot-password a:hover {
+            color: var(--primary-color);
+        }
+        
+        .forgot-password a:hover::after {
+            width: 100%;
+        }
+        
+        .register-link {
+            text-align: center;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(0, 0, 0, 0.1);
+        }
+        
+        .register-link a {
+            color: var(--accent-color);
+            text-decoration: none;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+        
+        .register-link a:hover {
+            color: var(--primary-color);
+            transform: translateY(-1px);
+        }
+        
+        .loading-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.9);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            border-radius: 20px;
+        }
+        
+        .brand-logo {
+            width: 60px;
+            height: 60px;
+            margin: 0 auto 1rem;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            animation: logoPulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes logoPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        .social-login {
+            margin-top: 1.5rem;
+            text-align: center;
+        }
+        
+        .social-divider {
+            position: relative;
+            margin: 1.5rem 0;
+            text-align: center;
+            color: #6c757d;
+        }
+        
+        .social-divider::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: rgba(0, 0, 0, 0.1);
+        }
+        
+        .social-divider span {
+            background: white;
+            padding: 0 1rem;
+            font-size: 0.875rem;
+            position: relative;
+        }
+        
+        @media (max-width: 768px) {
+            .login-container {
+                margin: 0 15px;
+            }
+            
+            .card-header {
+                padding: 1.5rem 1rem;
+            }
+            
+            .card-body {
+                padding: 2rem 1.5rem;
+            }
+            
+            .login-title {
+                font-size: 1.5rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+            
+            .card-header {
+                padding: 1.25rem 0.75rem;
+            }
+            
+            .card-body {
+                padding: 1.5rem 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Floating background shapes -->
+    <div class="floating-shapes">
+        <div class="shape"></div>
+        <div class="shape"></div>
+        <div class="shape"></div>
+    </div>
+    
+    <div class="login-container">
+        <div class="login-card card">
+            <div class="card-header">
+                <div class="brand-logo">
+                    <i class="bi bi-shield-lock"></i>
+                </div>
+                <h1 class="login-title">Iniciar Sesión</h1>
+                <p class="welcome-text">SCProject - Sistema de Control</p>
+            </div>
+            
+            <div class="card-body">
+                <!-- Loading overlay -->
+                <div class="loading-overlay" id="loadingOverlay">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Cargando...</span>
+                    </div>
+                </div>
+                
+                <form th:action="@{/login}" method="POST" id="loginForm">
+                    <div class="form-floating">
+                        <input type="text" id="nombreUsuario" name="nombreUsuario" class="form-control" 
+                               placeholder="Usuario" required th:value="${param.nombreUsuario}">
+                        <label for="nombreUsuario">
+                            <i class="bi bi-person-fill me-2"></i>Usuario
+                        </label>
+                    </div>
+                    
+                    <div class="form-floating">
+                        <input type="password" id="contrasena" name="contrasena" class="form-control" 
+                               placeholder="Contraseña" required>
+                        <label for="contrasena">
+                            <i class="bi bi-key-fill me-2"></i>Contraseña
+                        </label>
+                        <button type="button" class="password-toggle" onclick="togglePassword()">
+                            <i class="bi bi-eye" id="passwordToggleIcon"></i>
+                        </button>
+                    </div>
+                      <button type="submit" class="btn-login">
+                        <span class="btn-text">
+                            <i class="bi bi-box-arrow-in-right me-2"></i>
+                            Iniciar Sesión
+                        </span>
+                    </button>
+                </form>
+                
+                <!-- Mensajes de sistema -->
+                <div class="messages-container">
+                    <!-- Error and success messages -->
+                    <div th:if="${param.error}" class="alert alert-danger" role="alert">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                        Usuario o contraseña incorrectos
+                    </div>
+                    
+                    <div th:if="${param.logout}" class="alert alert-success" role="alert">
+                        <i class="bi bi-check-circle-fill me-2"></i>
+                        Ha cerrado sesión correctamente
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Enhanced login page interactions
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Login page loaded');
+            
+            // Initialize login form enhancements
+            initializeLoginForm();
+            
+            // Limpiar storage completamente
+            try {
+                localStorage.clear();
+                sessionStorage.clear();
+                console.log('Storage limpiado');
+            } catch (e) {
+                console.log('Error limpiando storage:', e);
+            }
+            
+            // Configurar prevención agresiva de navegación hacia atrás
+            configurarPrevencionNavegacionAgresiva();
+        });
+        
+        // Initialize login form with modern interactions
+        function initializeLoginForm() {
+            const form = document.getElementById('loginForm');
+            const submitBtn = document.querySelector('.btn-login');
+            const loadingOverlay = document.getElementById('loadingOverlay');
+            
+            form.addEventListener('submit', function(e) {
+                // Show loading state
+                showLoadingState(submitBtn, loadingOverlay);
+            });
+            
+            // Add input focus animations
+            document.querySelectorAll('.form-control').forEach(input => {
+                input.addEventListener('focus', function() {
+                    this.parentElement.classList.add('focused');
+                });
+                
+                input.addEventListener('blur', function() {
+                    if (!this.value) {
+                        this.parentElement.classList.remove('focused');
+                    }
+                });
+            });
+        }
+        
+        // Show loading state
+        function showLoadingState(button, overlay) {
+            button.innerHTML = `
+                <div class="spinner-border spinner-border-sm me-2" role="status">
+                    <span class="visually-hidden">Cargando...</span>
+                </div>
+                Iniciando sesión...
+            `;
+            button.disabled = true;
+            
+            if (overlay) {
+                overlay.style.display = 'flex';
+            }
+        }
+        
+        // Toggle password visibility
+        function togglePassword() {
+            const passwordInput = document.getElementById('contrasena');
+            const toggleIcon = document.getElementById('passwordToggleIcon');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggleIcon.className = 'bi bi-eye-slash';
+            } else {
+                passwordInput.type = 'password';
+                toggleIcon.className = 'bi bi-eye';
+            }
+        }
+        
+        // Show forgot password modal
+        function showForgotPassword() {
+            alert('Funcionalidad de recuperación de contraseña próximamente.');
+        }
+        
+        // Show register modal
+        function showRegister() {
+            alert('Funcionalidad de registro próximamente.');
+        }
+        
+        // Función para prevenir navegación hacia atrás de forma más agresiva
+        function configurarPrevencionNavegacionAgresiva() {
+            console.log('Configurando prevención agresiva de navegación en login');
+            
+            // Limpiar el historial del navegador
+            if (window.history.replaceState) {
+                window.history.replaceState(null, null, window.location.href);
+            }
+            
+            // Agregar múltiples entradas al historial para hacer más difícil volver
+            for (let i = 0; i < 10; i++) {
+                history.pushState(null, null, window.location.href);
+            }
+            
+            // Bloquear navegación hacia atrás con múltiples eventos
+            function bloquearNavegacionAtras(event) {
+                console.log('Intento de navegación hacia atrás bloqueado');
+                event.preventDefault();
+                event.stopPropagation();
+                
+                // Volver a agregar entradas al historial
+                history.pushState(null, null, window.location.href);
+                
+                // Mostrar mensaje de advertencia
+                setTimeout(() => {
+                    alert('Por seguridad, no se puede navegar hacia atrás después del logout.');
+                }, 100);
+                
+                return false;
+            }
+            
+            // Múltiples eventos para capturar navegación hacia atrás
+            window.addEventListener('popstate', bloquearNavegacionAtras, true);
+            window.addEventListener('beforeunload', function(e) {
+                // Intentar limpiar el cache cuando se sale de la página
+                try {
+                    if (window.caches) {
+                        caches.keys().then(names => {
+                            names.forEach(name => {
+                                caches.delete(name);
+                            });
+                        });
+                    }
+                } catch (ex) {
+                    console.log('No se pudo limpiar cache:', ex);
+                }
+            });
+            
+            // Bloquear teclas de navegación (Alt+Left, Backspace)
+            document.addEventListener('keydown', function(e) {
+                // Bloquear Alt + Flecha Izquierda (navegación hacia atrás)
+                if (e.altKey && e.keyCode === 37) {
+                    e.preventDefault();
+                    alert('Navegación hacia atrás deshabilitada por seguridad.');
+                    return false;
+                }
+                
+                // Bloquear Backspace si no está en un input
+                if (e.keyCode === 8 && !['INPUT', 'TEXTAREA'].includes(e.target.tagName)) {
+                    e.preventDefault();
+                    return false;
+                }
+            });
+        }
+        
+        // Manejar el evento de pageshow para prevenir cache más agresivamente
+        window.addEventListener('pageshow', function(event) {
+            console.log('Evento pageshow disparado, persisted:', event.persisted);
+            
+            if (event.persisted) {
+                // Página cargada desde cache, forzar recarga
+                console.log('Recargando página desde cache');
+                window.location.reload(true);
+            }
+        });
+        
+        // Interceptar intentos de usar el cache del navegador
+        window.addEventListener('beforeunload', function() {
+            // Agregar timestamp para forzar recarga
+            sessionStorage.setItem('forceReload', Date.now().toString());
+        });
+        
+        window.addEventListener('load', function() {
+            // Si hay un timestamp de forzar recarga y es reciente, limpiar
+            const forceReload = sessionStorage.getItem('forceReload');
+            if (forceReload && (Date.now() - parseInt(forceReload)) < 5000) {
+                sessionStorage.removeItem('forceReload');
+                console.log('Página recargada después de logout');
+            }
+        });
+        
+        // Función para limpiar completamente el estado del navegador
+        function limpiarEstadoNavegador() {
+            try {
+                // Limpiar localStorage y sessionStorage
+                localStorage.clear();
+                sessionStorage.clear();
+                
+                // Limpiar cookies de sesión si es posible
+                document.cookie.split(";").forEach(function(c) { 
+                    document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/"); 
+                });
+                
+                console.log('Estado del navegador limpiado completamente');
+            } catch (e) {
+                console.log('Error limpiando estado del navegador:', e);
+            }
+        }
+        
+        // Ejecutar limpieza al cargar la página de login
+        limpiarEstadoNavegador();
+    </script>
+</body>
+</html>

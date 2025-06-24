@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/header :: header('Gestión de Usuarios')">
+</head>
+<body>    
+    <div th:replace="fragments/header :: navigation"></div>
+    
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #3a506b 0%, #5d89ba 100%);
+            --card-shadow: 0 4px 20px rgba(58, 80, 107, 0.1);
+            --hover-shadow: 0 10px 30px rgba(58, 80, 107, 0.2);
+            --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --border-radius: 12px;
+            --primary-color: #3a506b;
+            --accent-color: #5d89ba;
+        }
+
+        .main-content {
+            min-height: calc(100vh - 200px);
+            background: linear-gradient(135deg, rgba(58, 80, 107, 0.02) 0%, rgba(93, 137, 186, 0.02) 100%);
+            animation: fadeInBackground 1s ease-out;
+        }
+
+        @keyframes fadeInBackground {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .card-custom {
+            border: none;
+            border-radius: var(--border-radius);
+            box-shadow: var(--card-shadow);
+            transition: var(--transition-smooth);
+            overflow: hidden;
+            position: relative;
+            animation: slideInUp 0.6s ease-out;
+        }
+
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .card-custom:hover {
+            box-shadow: var(--hover-shadow);
+            transform: translateY(-5px);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+        
+        .action-buttons .btn {
+            white-space: nowrap;
+            transition: var(--transition-smooth);
+        }
+        
+        .empty-state {
+            padding: 2rem;
+            text-align: center;
+            color: #6c757d;
+        }
+        
+        .badge {
+            font-size: 0.875rem;
+            padding: 0.5rem 0.75rem;
+            border-radius: 6px;
+        }
+        
+        .table th {
+            background: var(--primary-gradient);
+            color: white;
+            border-bottom: 2px solid #dee2e6;
+            font-weight: 600;
+            padding: 1rem;
+        }
+        
+        .table td {
+            vertical-align: middle;
+            padding: 1rem;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .table tbody tr {
+            transition: var(--transition-smooth);
+            animation: fadeInRow 0.5s ease-out;
+        }
+
+        @keyframes fadeInRow {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .table tbody tr:hover {
+            background: linear-gradient(135deg, rgba(58, 80, 107, 0.05) 0%, rgba(93, 137, 186, 0.05) 100%);
+            transform: scale(1.01);
+        }
+        
+        .card-header-custom {
+            background: var(--primary-gradient);
+            color: white;
+            border-bottom: none;
+            padding: 1.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card-header-custom::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: left 0.8s;
+        }
+
+        .card-custom:hover .card-header-custom::before {
+            left: 100%;
+        }
+
+        .card-header-custom h3 {
+            margin: 0;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .card-header-custom i {
+            font-size: 1.2rem;
+            animation: iconPulse 2s infinite;
+        }
+
+        @keyframes iconPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        
+        .btn-custom {
+            border-radius: 8px;
+            font-weight: 500;
+            transition: var(--transition-smooth);
+            position: relative;
+            overflow: hidden;
+            padding: 0.5rem 1rem;
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .btn-custom::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn-custom:hover::before {
+            left: 100%;
+        }
+        
+        .btn-edit {
+            background: linear-gradient(135deg, #17a2b8 0%, #6f42c1 100%);
+            border-color: #17a2b8;
+            color: white;
+        }
+        
+        .btn-edit:hover {
+            background: linear-gradient(135deg, #138496 0%, #5a2d91 100%);
+            border-color: #117a8b;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(23, 162, 184, 0.3);
+        }
+        
+        .btn-delete {
+            background: linear-gradient(135deg, #dc3545 0%, #e83e8c 100%);
+            border-color: #dc3545;
+            color: white;
+        }
+        
+        .btn-delete:hover {
+            background: linear-gradient(135deg, #c82333 0%, #d91a72 100%);
+            border-color: #bd2130;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(220, 53, 69, 0.3);
+        }
+        
+        .btn-save {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            border-color: #28a745;
+            color: white;
+        }
+        
+        .btn-save:hover {
+            background: linear-gradient(135deg, #218838 0%, #1ca085 100%);
+            border-color: #1e7e34;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(40, 167, 69, 0.3);
+        }
+
+        .form-control, .form-select {
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            padding: 0.75rem;
+            transition: var(--transition-smooth);
+            background: rgba(255, 255, 255, 0.9);
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 0.2rem rgba(93, 137, 186, 0.25);
+            background: white;
+            transform: translateY(-2px);
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .container {
+            animation: containerSlide 0.8s ease-out;
+        }
+
+        @keyframes containerSlide {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive animations */
+        @media (max-width: 768px) {
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .card-custom {
+                margin: 0.5rem 0;
+            }
+        }
+    </style>
+    
+    <div class="container py-4">
+        <!-- Formulario -->
+        <div class="card card-custom mb-4">
+            <div class="card-header card-header-custom">
+                <h3 class="mb-0"><i class="bi bi-people"></i> Gestión de Usuarios</h3>
+            </div>
+            <div class="card-body">                <form th:action="@{/usuarios/guardar}" method="post">
+                    <input type="hidden" name="id" th:value="${usuarioEditar != null ? usuarioEditar.id : 0}">
+                    
+                    <!-- Primera fila: Datos principales -->
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <label for="nombreUsuario" class="form-label fw-semibold">
+                                <i class="bi bi-person-circle me-1"></i>Nombre de Usuario
+                            </label>
+                            <input type="text" name="nombreUsuario" id="nombreUsuario"
+                                   class="form-control form-control-custom" placeholder="Ej: admin" required
+                                   th:value="${usuarioEditar != null ? usuarioEditar.nombreUsuario : ''}">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="nombre" class="form-label fw-semibold">
+                                <i class="bi bi-person-badge me-1"></i>Nombre Completo
+                            </label>
+                            <input type="text" name="nombre" id="nombre"
+                                   class="form-control form-control-custom" placeholder="Ej: Juan Pérez" required
+                                   th:value="${usuarioEditar != null ? usuarioEditar.nombre : ''}">
+                        </div>
+                    </div>
+                    
+                    <!-- Segunda fila: Contraseña y Estado -->
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-8">
+                            <label for="contrasena" class="form-label fw-semibold">
+                                <i class="bi bi-key me-1"></i>
+                                <span th:if="${usuarioEditar == null}">Contraseña</span>
+                                <span th:if="${usuarioEditar != null}">Nueva Contraseña (Opcional)</span>
+                            </label>
+                            <input type="password" name="contrasena" id="contrasena"
+                                   class="form-control form-control-custom" 
+                                   th:placeholder="${usuarioEditar == null ? 'Ingrese la contraseña' : 'Dejar vacío para mantener la contraseña actual'}"
+                                   th:required="${usuarioEditar == null}">
+                            <div class="form-text" th:if="${usuarioEditar != null}">
+                                <i class="bi bi-info-circle me-1"></i>
+                                <small class="text-muted">Solo ingrese una nueva contraseña si desea cambiarla</small>
+                            </div>                        </div>
+                        <div class="col-md-4">
+                            <label for="activo" class="form-label fw-semibold">
+                                <i class="bi bi-toggle-on me-1"></i>Estado del Usuario
+                            </label>
+                            <select name="activo" id="activo" class="form-select form-control-custom">
+                                <option value="1" th:selected="${usuarioEditar != null ? usuarioEditar.activo == 1 : true}">
+                                    <i class="bi bi-check-circle"></i> Activo
+                                </option>
+                                <option value="0" th:selected="${usuarioEditar != null ? usuarioEditar.activo == 0 : false}">
+                                    <i class="bi bi-x-circle"></i> Inactivo
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+                      <!-- Tercera fila: Rol -->
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-6">
+                            <label for="role" class="form-label fw-semibold">
+                                <i class="bi bi-person-badge me-1"></i>Rol del Usuario
+                            </label>                            <select name="role" id="role" class="form-select form-control-custom">
+                                <option value="CAJERO" th:selected="${usuarioEditar == null or usuarioEditar.isCajero()}">
+                                    <i class="bi bi-cash-coin"></i> Cajero
+                                </option>
+                                <option value="ADMINISTRADOR" th:selected="${usuarioEditar != null and usuarioEditar.isAdministrador()}">
+                                    <i class="bi bi-shield-check"></i> Administrador
+                                </option>
+                            </select><div class="form-text">
+                                <i class="bi bi-info-circle me-1"></i>
+                                <small class="text-muted">Los administradores tienen acceso completo, los cajeros solo a ventas, productos, categorías y unidades (consulta)</small>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <!-- Espacio para futuras opciones adicionales -->
+                        </div>
+                    </div>
+                    
+                    <!-- Botones de acción -->
+                    <div class="row">
+                        <div class="col-12 d-flex justify-content-end gap-2">
+                            <button type="button" class="btn btn-secondary btn-custom" onclick="limpiarFormulario()">
+                                <i class="bi bi-arrow-clockwise me-1"></i>Limpiar
+                            </button>
+                            <button type="submit" class="btn btn-save btn-custom">
+                                <i class="bi bi-save me-1"></i>
+                                <span th:text="${usuarioEditar != null ? 'Actualizar Usuario' : 'Guardar Usuario'}"></span>
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Tabla -->
+        <div class="card card-custom">
+            <div class="card-body">
+                <h4 class="mb-4"><i class="bi bi-list-ul"></i> Listado de Usuarios</h4>
+                <div class="table-responsive">
+                    <table class="table table-custom table-hover">                        <thead>
+                        <tr>
+                            <th><i class="bi bi-person-circle me-1"></i>Nombre de Usuario</th>
+                            <th><i class="bi bi-person-badge me-1"></i>Nombre Completo</th>
+                            <th><i class="bi bi-shield-check me-1"></i>Rol</th>
+                            <th><i class="bi bi-toggle-on me-1"></i>Estado</th>
+                            <th><i class="bi bi-gear me-1"></i>Acciones</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="u : ${usuarios}">
+                            <td>
+                                <span class="fw-semibold" th:text="${u.nombreUsuario}">admin</span>
+                            </td>
+                            <td>
+                                <span th:text="${u.nombre}">Administrador</span>
+                            </td>                            <td>
+                                <span th:if="${u.isAdministrador()}" 
+                                      class="badge bg-primary">
+                                    <i class="bi bi-shield-check me-1"></i>Administrador
+                                </span>
+                                <span th:if="${u.isCajero()}" 
+                                      class="badge bg-info">
+                                    <i class="bi bi-cash-coin me-1"></i>Cajero
+                                </span>
+                            </td>
+                            <td>
+                                <span th:if="${u.activo == 1}" class="badge bg-success">
+                                    <i class="bi bi-check-circle me-1"></i>Activo
+                                </span>
+                                <span th:if="${u.activo == 0}" class="badge bg-danger">
+                                    <i class="bi bi-x-circle me-1"></i>Inactivo
+                                </span>
+                            </td>
+                            <td>
+                                <div class="action-buttons">
+                                    <a th:href="@{/usuarios(accion='editar',id=${u.id})}"
+                                       class="btn btn-edit btn-custom btn-sm">
+                                        <i class="bi bi-pencil"></i> Editar
+                                    </a>
+                                    <form th:action="@{/usuarios/eliminar}" method="post" style="display:inline;" onsubmit="return confirmDelete(event)">
+                                        <input type="hidden" name="id" th:value="${u.id}">
+                                        <button type="submit" class="btn btn-delete btn-custom btn-sm">
+                                            <i class="bi bi-trash"></i> Eliminar
+                                        </button>
+                                    </form>
+                                    <form th:action="@{/usuarios/cambiar-estado/{id}(id=${u.id})}" method="post" style="display:inline;">
+                                        <button type="submit"
+                                                th:classappend="${u.activo == 1} ? 'btn-warning' : 'btn-success'"
+                                                class="btn btn-custom btn-sm">
+                                            <i th:classappend="${u.activo == 1} ? 'bi bi-x-circle' : 'bi bi-check-circle'"></i>
+                                            <span th:text="${u.activo == 1} ? 'Inactivar' : 'Activar'"></span>
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>                        <tr th:if="${usuarios.size() == 0}">
+                            <td colspan="5" class="text-center py-4">
+                                <div class="empty-state">
+                                    <i class="bi bi-people fs-1 text-muted mb-2"></i>
+                                    <p class="text-muted mb-0">No hay usuarios registrados en el sistema</p>
+                                </div>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div th:replace="fragments/footer :: footer"></div>    <script>
+        function confirmDelete(event) {
+            event.preventDefault();
+            Swal.fire({
+                title: '¿Estás seguro?',
+                text: "¡No podrás revertir esta acción!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Sí, eliminar',
+                cancelButtonText: 'Cancelar'
+            }).then(result => {
+                if (result.isConfirmed) {
+                    event.target.submit();
+                }
+            });
+            return false;
+        }        function togglePassword(element, password) {
+            // Esta función ya no es necesaria ya que no mostramos contraseñas en la tabla
+            console.log('Password toggle function removed for security');
+        }        function limpiarFormulario() {
+            // Limpiar todos los campos del formulario
+            document.getElementById('nombreUsuario').value = '';
+            document.getElementById('nombre').value = '';
+            document.getElementById('contrasena').value = '';
+            document.getElementById('activo').value = '1';
+            document.getElementById('role').value = 'CAJERO';
+            
+            // Limpiar el campo oculto del ID para crear un nuevo usuario
+            document.querySelector('input[name="id"]').value = '0';
+            
+            // Cambiar el texto del botón a "Guardar Usuario"
+            const submitButton = document.querySelector('button[type="submit"] span');
+            if (submitButton) {
+                submitButton.textContent = 'Guardar Usuario';
+            }
+            
+            // Cambiar el texto de la etiqueta de contraseña
+            const passwordLabel = document.querySelector('label[for="contrasena"] span');
+            if (passwordLabel) {
+                passwordLabel.textContent = 'Contraseña';
+            }
+            
+            // Ocultar el texto de ayuda de contraseña
+            const helpText = document.querySelector('.form-text');
+            if (helpText) {
+                helpText.style.display = 'none';
+            }
+            
+            // Hacer que la contraseña sea requerida de nuevo
+            document.getElementById('contrasena').required = true;
+            document.getElementById('contrasena').placeholder = 'Ingrese la contraseña';
+        }
+    </script>
+
+<!-- Script de seguridad para prevenir navegación hacia atrás después del logout -->
+<script th:src="@{/js/security.js}"></script>
+
+</body>
+</html>

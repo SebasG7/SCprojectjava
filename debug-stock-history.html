@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Debug Stock History</title>
+    <script>
+        function debugStockHistory() {
+            console.log('Starting stock history debug...');
+            
+            // Test if we can reach the edit page
+            fetch('/productos/editar/1')
+                .then(response => {
+                    console.log('Response status:', response.status);
+                    if (response.status === 200) {
+                        return response.text();
+                    } else {
+                        throw new Error('Failed to load edit page: ' + response.status);
+                    }
+                })
+                .then(html => {
+                    console.log('Page loaded successfully');
+                    
+                    // Check if historial variable is in the page
+                    if (html.includes('th:each="movimiento : ${historial}"')) {
+                        console.log('✓ Template iteration code found');
+                    } else {
+                        console.log('✗ Template iteration code NOT found');
+                    }
+                    
+                    // Check if empty message is showing
+                    if (html.includes('No hay movimientos de stock registrados')) {
+                        console.log('- Empty stock message found (might indicate empty historial)');
+                    }
+                    
+                    // Look for actual movement data
+                    if (html.includes('ENTRADA') || html.includes('SALIDA')) {
+                        console.log('✓ Stock movement data found in HTML');
+                    } else {
+                        console.log('✗ No stock movement data found in HTML');
+                    }
+                    
+                    // Check for the specific date mentioned in the issue
+                    if (html.includes('08/06/2025 18:47')) {
+                        console.log('✓ Found the specific date: 08/06/2025 18:47');
+                    } else {
+                        console.log('✗ The specific date 08/06/2025 18:47 not found');
+                    }
+                    
+                    // Display results
+                    document.getElementById('result').innerHTML = `
+                        <h3>Debug Results:</h3>
+                        <p>Response Status: ${response.status}</p>
+                        <p>HTML Length: ${html.length} characters</p>
+                        <p>Contains historial template code: ${html.includes('th:each="movimiento : ${historial}"')}</p>
+                        <p>Contains empty message: ${html.includes('No hay movimientos de stock registrados')}</p>
+                        <p>Contains movement data: ${html.includes('ENTRADA') || html.includes('SALIDA')}</p>
+                        <p>Contains specific date: ${html.includes('08/06/2025 18:47')}</p>
+                        <details>
+                            <summary>HTML Content Preview</summary>
+                            <pre style="max-height: 300px; overflow-y: auto;">${html.substring(0, 2000)}...</pre>
+                        </details>
+                    `;
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    document.getElementById('result').innerHTML = `<p style="color: red;">Error: ${error.message}</p>`;
+                });
+        }
+        
+        function addTestStockMovement() {
+            console.log('Adding test stock movement...');
+            
+            // Try to add a stock movement via the ingreso endpoint
+            const formData = new FormData();
+            formData.append('productoId', '1');
+            formData.append('cantidad', '10');
+            formData.append('motivo', 'Test movement for debugging');
+            
+            fetch('/productos/stock/ingreso', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                console.log('Add movement response status:', response.status);
+                if (response.ok) {
+                    console.log('✓ Test movement added successfully');
+                    document.getElementById('result').innerHTML += '<p style="color: green;">✓ Test stock movement added</p>';
+                } else {
+                    console.log('✗ Failed to add test movement');
+                    document.getElementById('result').innerHTML += '<p style="color: red;">✗ Failed to add test movement</p>';
+                }
+            })
+            .catch(error => {
+                console.error('Error adding movement:', error);
+                document.getElementById('result').innerHTML += `<p style="color: red;">Error adding movement: ${error.message}</p>`;
+            });
+        }
+    </script>
+</head>
+<body>
+    <h1>Stock History Debug Tool</h1>
+    <button onclick="debugStockHistory()">Debug Stock History</button>
+    <button onclick="addTestStockMovement()">Add Test Movement</button>
+    <div id="result"></div>
+</body>
+</html>

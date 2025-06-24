@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Eliminar Producto</title>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
+    <h2>Test del Botón Eliminar</h2>
+    <button type="button" onclick="confirmDelete(this)" data-id="123" class="btn btn-delete btn-custom btn-sm">
+        🗑️ Eliminar Producto Test
+    </button>
+
+    <script>
+    function confirmDelete(button) {
+        const productId = button.getAttribute('data-id');
+        
+        if (!productId) {
+            console.error('No se pudo obtener el ID del producto');
+            return;
+        }
+        
+        console.log('ID del producto:', productId);
+        
+        Swal.fire({
+            title: '¿Estás seguro?',
+            text: "¡No podrás revertir esta acción!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#dc3545',
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: 'Sí, eliminar',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                console.log('Usuario confirmó eliminar producto ID:', productId);
+                
+                // En lugar de enviar el formulario, mostrar mensaje de éxito para test
+                Swal.fire(
+                    '¡Eliminado!',
+                    'El producto ha sido eliminado (modo test).',
+                    'success'
+                );
+                
+                /* 
+                // Código real para enviar formulario:
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = '/productos/eliminar';
+                
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = 'id';
+                input.value = productId;
+                
+                form.appendChild(input);
+                document.body.appendChild(form);
+                form.submit();
+                */
+            }
+        });
+    }
+    </script>
+</body>
+</html>

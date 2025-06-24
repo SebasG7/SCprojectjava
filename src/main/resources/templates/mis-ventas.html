@@ -1,0 +1,1333 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head th:replace="fragments/header :: header('Mis Ventas - Sistema de Ventas')">
+</head>
+<body>
+    <div th:replace="fragments/header :: navigation"></div>
+
+    <style>
+   :root {
+            --primary-gradient: linear-gradient(135deg, #3a506b 0%, #5d89ba 100%);
+            --card-shadow: 0 4px 20px rgba(58, 80, 107, 0.1);
+            --hover-shadow: 0 10px 30px rgba(58, 80, 107, 0.2);
+            --primary-color: #3a506b;
+            --accent-color: #5d89ba;
+            --success-color: #28a745;
+            --danger-color: #dc3545;
+            --warning-color: #ffc107;
+            --info-color: #17a2b8;
+            --text-color: #495057;
+            --border-radius: 12px;
+            --transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        * {
+            transition: var(--transition);
+        }
+        
+        .main-container {
+            animation: containerSlide 0.6s ease-out;
+        }
+        
+        @keyframes containerSlide {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .page-title {
+            color: var(--primary-color);
+            font-weight: 700;
+            margin-bottom: 2rem;
+            position: relative;
+            animation: slideInUp 0.8s ease-out;
+        }
+        
+        .page-title::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 0;
+            width: 100px;
+            height: 4px;
+            background: var(--primary-gradient);
+            border-radius: 2px;
+            animation: expandWidth 1s ease-out 0.5s both;
+        }
+        
+        @keyframes expandWidth {
+            from { width: 0; }
+            to { width: 100px; }
+        }
+        
+        .stats-cards {
+            margin-bottom: 2rem;
+        }
+        
+        .stat-card {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--card-shadow);
+            padding: 1.5rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            transition: var(--transition);
+            animation: slideInUp 0.6s ease-out;
+            animation-fill-mode: both;
+        }
+        
+        .stat-card:nth-child(1) { animation-delay: 0.1s; }
+        .stat-card:nth-child(2) { animation-delay: 0.2s; }
+        .stat-card:nth-child(3) { animation-delay: 0.3s; }
+        .stat-card:nth-child(4) { animation-delay: 0.4s; }
+        
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.6s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: var(--hover-shadow);
+        }
+        
+        .stat-card:hover::before {
+            left: 100%;
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-label {
+            color: var(--text-color);
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+        
+        .stat-icon {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            font-size: 2rem;
+            color: var(--accent-color);
+            opacity: 0.3;
+            animation: iconPulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes iconPulse {
+            0%, 100% { transform: scale(1); opacity: 0.3; }
+            50% { transform: scale(1.1); opacity: 0.5; }
+        }
+        
+        .report-section {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--card-shadow);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+            animation: fadeInBackground 0.8s ease-out;
+        }
+        
+        @keyframes fadeInBackground {
+            from {
+                opacity: 0;
+                background-color: rgba(255, 255, 255, 0.5);
+            }
+            to {
+                opacity: 1;
+                background-color: white;
+            }
+        }
+        
+        .section-title {
+            color: var(--primary-color);
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .section-title i {
+            color: var(--accent-color);
+            animation: iconPulse 2s ease-in-out infinite;
+        }
+        
+        .form-control-custom, .form-select-custom {
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            transition: var(--transition);
+            background-color: #fafbfc;
+        }
+        
+        .form-control-custom:focus, .form-select-custom:focus {
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 0.2rem rgba(93, 137, 186, 0.25);
+            transform: translateY(-2px);
+            background-color: white;
+        }
+        
+        .btn-custom {
+            border-radius: 8px;
+            font-weight: 500;
+            padding: 0.75rem 1.5rem;
+            position: relative;
+            overflow: hidden;
+            transition: var(--transition);
+            border: none;
+        }
+        
+        .btn-custom::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.3s ease, height 0.3s ease;
+        }
+        
+        .btn-custom:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+        
+        .btn-custom:hover::after {
+            width: 300px;
+            height: 300px;
+        }
+        
+        .btn-export {
+            background: var(--primary-gradient);
+            color: white;
+        }
+        
+        .btn-export:hover {
+            background: linear-gradient(135deg, #2d3e52 0%, #4a739e 100%);
+            color: white;
+        }
+        
+        .btn-info-custom {
+            background: linear-gradient(135deg, var(--info-color) 0%, #20c997 100%);
+            color: white;
+        }
+        
+        .btn-info-custom:hover {
+            background: linear-gradient(135deg, #138496 0%, #1a9e7e 100%);
+            color: white;
+        }
+        
+        .table-responsive {
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--card-shadow);
+            animation: slideInUp 0.8s ease-out;
+        }
+        
+        .table-custom {
+            margin-bottom: 0;
+            background: white;
+        }
+        
+        .table-custom thead th {
+            background: var(--primary-gradient);
+            color: white;
+            font-weight: 600;
+            border: none;
+            padding: 1rem 0.75rem;
+            position: relative;
+        }
+        
+        .table-custom tbody td {
+            padding: 1rem 0.75rem;
+            vertical-align: middle;
+            border-color: #f1f3f4;
+        }
+        
+        .table-custom tbody tr {
+            animation: fadeInRow 0.6s ease-out;
+            animation-fill-mode: both;
+        }
+        
+        .table-custom tbody tr:nth-child(odd) { animation-delay: 0.1s; }
+        .table-custom tbody tr:nth-child(even) { animation-delay: 0.2s; }
+        
+        .table-custom tbody tr:hover {
+            background-color: rgba(93, 137, 186, 0.05);
+            transform: scale(1.01);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        }
+        
+        @keyframes fadeInRow {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .chart-container {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            box-shadow: var(--card-shadow);
+            animation: fadeInBackground 1s ease-out;
+        }
+        
+        .alert-custom {
+            border-radius: 8px;
+            border: none;
+            padding: 1rem 1.25rem;
+            margin-bottom: 1.5rem;
+            animation: slideInUp 0.6s ease-out;
+        }
+          .alert-success-custom {
+            background: linear-gradient(135deg, rgba(40, 167, 69, 0.1) 0%, rgba(40, 167, 69, 0.05) 100%);
+            border-left: 4px solid var(--success-color);
+            color: #155724;
+        }
+        
+        .alert-danger-custom {
+            background: linear-gradient(135deg, rgba(220, 53, 69, 0.1) 0%, rgba(220, 53, 69, 0.05) 100%);
+            border-left: 4px solid var(--danger-color);
+            color: #721c24;
+        }
+        
+        .alert-info-custom {
+            background: linear-gradient(135deg, rgba(23, 162, 184, 0.1) 0%, rgba(23, 162, 184, 0.05) 100%);
+            border-left: 4px solid var(--info-color);
+            color: #0c5460;
+        }
+        
+        .alert-warning-custom {
+            background: linear-gradient(135deg, rgba(255, 193, 7, 0.1) 0%, rgba(255, 193, 7, 0.05) 100%);
+            border-left: 4px solid var(--warning-color);
+            color: #856404;
+        }
+        
+        /* Animaciones para notificaciones */
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(100%);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        @keyframes slideOutRight {
+            from {
+                opacity: 1;
+                transform: translateX(0);
+            }
+            to {
+                opacity: 0;
+                transform: translateX(100%);
+            }
+        }
+          .loading-spinner {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: var(--border-radius);
+            box-shadow: var(--hover-shadow);
+            padding: 2rem;
+            text-align: center;
+            z-index: 9999;
+            backdrop-filter: blur(5px);
+        }
+        
+        .loading-spinner .spinner-border {
+            color: var(--accent-color);
+            width: 3rem;
+            height: 3rem;
+        }
+        
+        .loading-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.3);
+            z-index: 9998;
+        }
+        
+        .filter-section {
+            background: rgba(93, 137, 186, 0.05);
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            border: 1px solid rgba(93, 137, 186, 0.1);
+        }
+          .badge-custom {
+            padding: 0.5rem 0.75rem;
+            border-radius: 6px;
+            font-weight: 500;
+            background: var(--primary-gradient);
+            color: white;
+            animation: fadeInBackground 0.8s ease-out;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 3rem 2rem;
+            color: var(--text-color);
+            animation: fadeInBackground 0.8s ease-out;
+        }
+          .empty-state i {
+            font-size: 3rem;
+            color: var(--accent-color);
+            margin-bottom: 1rem;
+            animation: iconPulse 2s ease-in-out infinite;
+        }
+        
+        /* Estilos para detalles de ventas */
+        .details-toggle {
+            border-radius: 6px;
+            padding: 0.375rem 0.75rem;
+            font-size: 0.875rem;
+            transition: var(--transition);
+            border: 1px solid var(--info-color);
+            background: transparent;
+            color: var(--info-color);
+        }
+        
+        .details-toggle:hover {
+            background: var(--info-color);
+            color: white;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(23, 162, 184, 0.3);
+        }
+          .details-toggle i {
+            transition: transform 0.6s ease;
+            margin-right: 0.25rem;
+        }
+        
+        .details-toggle.expanded i {
+            transform: rotate(180deg);
+        }          .details-row {
+            background: linear-gradient(135deg, rgba(93, 137, 186, 0.02) 0%, rgba(93, 137, 186, 0.05) 100%);
+            animation: slideDown 0.8s ease-out;
+            transition: opacity 0.5s ease-in-out;
+        }
+        
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .details-cell {
+            padding: 1.5rem 2rem !important;
+            border-left: 4px solid var(--accent-color);
+        }
+        
+        .sale-details-container {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(93, 137, 186, 0.1);
+        }
+        
+        .details-header h6 {
+            color: var(--primary-color);
+            font-weight: 600;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid rgba(93, 137, 186, 0.1);
+        }
+        
+        .detail-item {
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .detail-label {
+            color: var(--text-color);
+            font-weight: 500;
+            min-width: 80px;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+        
+        .detail-label i {
+            font-size: 0.9rem;
+        }
+        
+        .total-amount {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--success-color);
+        }
+        
+        .products-table {
+            margin-top: 1rem;
+            border-top: 1px solid rgba(0, 0, 0, 0.1);
+            padding-top: 1rem;
+        }
+        
+        .products-table h6 {
+            color: var(--primary-color);
+            font-weight: 500;
+        }
+        
+        .products-table .table {
+            margin-bottom: 0;
+            font-size: 0.9rem;
+        }
+        
+        .products-table .table th {
+            background: linear-gradient(135deg, rgba(93, 137, 186, 0.1) 0%, rgba(93, 137, 186, 0.05) 100%);
+            color: var(--primary-color);
+            font-weight: 600;
+            border: none;
+            padding: 0.75rem 0.5rem;
+        }
+        
+        .products-table .table td {
+            padding: 0.75rem 0.5rem;
+            vertical-align: middle;
+            border-color: rgba(0, 0, 0, 0.05);
+        }
+          .products-table .table tbody tr:hover {
+            background-color: rgba(93, 137, 186, 0.03);
+        }
+          /* Efecto de destacado para detalles expandidos */
+        .details-highlight {
+            animation: detailsHighlight 3.5s ease-in-out;
+            transform: scale(1.01);
+        }
+        
+        @keyframes detailsHighlight {
+            0% {
+                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+                background-color: white;
+            }
+            15% {
+                box-shadow: 0 8px 30px rgba(93, 137, 186, 0.25);
+                background-color: rgba(93, 137, 186, 0.05);
+                transform: scale(1.02);
+            }
+            85% {
+                box-shadow: 0 8px 30px rgba(93, 137, 186, 0.25);
+                background-color: rgba(93, 137, 186, 0.05);
+                transform: scale(1.02);
+            }
+            100% {
+                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+                background-color: white;
+                transform: scale(1);
+            }
+        }
+          /* Mejorar el scroll suave para toda la página */
+        html {
+            scroll-behavior: smooth;
+        }
+          /* Efecto de pulsación suave en los detalles */
+        .sale-details-container {
+            transition: all 0.8s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+          /* Estilos específicos para filtros de usuario */
+        .user-filter-section {
+            background: linear-gradient(135deg, rgba(58, 80, 107, 0.05) 0%, rgba(93, 137, 186, 0.05) 100%);
+            border: 1px solid rgba(58, 80, 107, 0.1);
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--card-shadow);
+            transition: var(--transition);
+        }
+        
+        .user-filter-section:hover {
+            box-shadow: var(--hover-shadow);
+            border-color: rgba(58, 80, 107, 0.2);
+        }
+        
+        .user-filter-section h5 {
+            color: var(--primary-color);
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        .user-filter-section h5 i {
+            margin-right: 0.5rem;
+            font-size: 1.2em;
+        }
+        
+        /* Mejorar botones en la sección de filtros */
+        .user-filter-section .btn {
+            font-weight: 500;
+            padding: 0.7rem 1rem;
+            transition: var(--transition);
+        }
+        
+        .user-filter-section .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+        }
+        
+        .user-filter-section .btn-outline-secondary {
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+        }
+          .user-filter-section .btn-outline-secondary:hover {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            color: white;
+        }
+        
+        .stats-user-card {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(248, 249, 250, 0.9) 100%);
+            border: 1px solid rgba(93, 137, 186, 0.1);
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            text-align: center;
+            transition: var(--transition);
+            animation: fadeInUp 0.6s ease-out;
+        }
+        
+        .stats-user-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(58, 80, 107, 0.15);
+            border-color: var(--accent-color);
+        }
+        
+        .filtered-results-header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--accent-color) 100%);
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: var(--border-radius) var(--border-radius) 0 0;
+            margin: -2rem -2rem 1.5rem -2rem;
+        }
+        
+        .user-badge {
+            background: linear-gradient(135deg, var(--info-color) 0%, var(--accent-color) 100%);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+        
+        .date-range-badge {
+            background: linear-gradient(135deg, var(--success-color) 0%, #20c997 100%);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            margin-left: 0.5rem;
+        }        @media (max-width: 768px) {
+            .stat-card {
+                margin-bottom: 1rem;
+            }
+            
+            .btn-custom {
+                width: 100%;
+                margin-bottom: 0.5rem;
+            }
+            
+            .table-responsive {
+                font-size: 0.875rem;
+            }
+            
+            .user-filter-section {
+                padding: 1rem;
+            }
+            
+            .stats-user-card {
+                margin-bottom: 1rem;
+            }
+            
+            .col-md-4 {
+                margin-top: 1rem;
+            }
+            
+            .col-md-4 .btn-custom {
+                margin-bottom: 0.5rem;
+            }
+            
+            .page-title {
+                font-size: 1.5rem;
+            }
+            
+            .section-title {
+                font-size: 1.2rem;
+            }
+            
+            .toast-notification {
+                right: 10px !important;
+                left: 10px !important;
+                max-width: none !important;
+                min-width: auto !important;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .container {
+                padding-left: 10px;
+                padding-right: 10px;
+            }
+            
+            .report-section {
+                padding: 1rem;
+            }
+            
+            .stat-card {
+                padding: 1rem;
+            }
+            
+            .btn-custom {
+                padding: 0.5rem 1rem;
+                font-size: 0.875rem;
+            }
+        }
+    </style><div class="main-content">
+        <div class="container main-container py-4">
+            <h2 class="page-title">
+                <i class="bi bi-receipt-cutoff me-3"></i>Mis Ventas
+            </h2>            <!-- Mensajes de éxito y error -->
+            <div th:if="${error}" class="alert alert-danger alert-custom alert-danger-custom">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                <span th:text="${error}"></span>
+            </div>
+
+            <!-- Estadísticas Generales -->
+            <div class="stats-cards">
+                <div class="row mb-4">
+                    <div class="col-xl-3 col-lg-6 col-md-6 mb-4">
+                        <div class="stat-card">
+                            <div class="stat-value" th:text="${totalVentas}">0</div>
+                            <div class="stat-label">Total de Ventas</div>
+                            <i class="bi bi-cart-check stat-icon"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="col-xl-3 col-lg-6 col-md-6 mb-4">
+                        <div class="stat-card">
+                            <div class="stat-value">$<span th:text="${#numbers.formatDecimal(totalIngresos, 1, 2)}">0.00</span></div>
+                            <div class="stat-label">Ingresos Totales</div>
+                            <i class="bi bi-currency-dollar stat-icon"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="col-xl-3 col-lg-6 col-md-6 mb-4">
+                        <div class="stat-card">
+                            <div class="stat-value" th:text="${ventasDelMes}">0</div>
+                            <div class="stat-label">Ventas del Mes</div>
+                            <i class="bi bi-calendar-month stat-icon"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="col-xl-3 col-lg-6 col-md-6 mb-4">
+                        <div class="stat-card">
+                            <div class="stat-value" th:text="${ventasDelDia}">0</div>
+                            <div class="stat-label">Ventas de Hoy</div>
+                            <i class="bi bi-calendar-day stat-icon"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>            <!-- Sección de Reportes -->
+            <div class="report-section">
+                <h4 class="section-title">
+                    <i class="bi bi-funnel"></i>Filtros de Búsqueda
+                </h4>
+                
+                <div class="row g-3">
+                    <div class="col-md-3">
+                        <label for="fechaInicio" class="form-label">Fecha Inicio</label>
+                        <input type="date" class="form-control form-control-custom" id="fechaInicio">
+                    </div>
+                    
+                    <div class="col-md-3">
+                        <label for="fechaFin" class="form-label">Fecha Fin</label>
+                        <input type="date" class="form-control form-control-custom" id="fechaFin">
+                    </div>
+                    
+                    <div class="col-md-2">
+                        <label for="limite" class="form-label">Límite</label>
+                        <select class="form-select form-select-custom" id="limite">
+                            <option value="10">10 resultados</option>
+                            <option value="20" selected>20 resultados</option>
+                            <option value="50">50 resultados</option>
+                            <option value="100">100 resultados</option>
+                        </select>
+                    </div>
+                      <div class="col-md-4 d-flex align-items-end flex-wrap gap-2">
+                        <button type="button" class="btn btn-export btn-custom flex-fill" onclick="filtrarMisVentas()">
+                            <i class="bi bi-search me-2"></i>Filtrar
+                        </button>
+                        
+                        <button type="button" class="btn btn-secondary btn-custom flex-fill" onclick="limpiarFiltros()">
+                            <i class="bi bi-arrow-clockwise me-2"></i>Limpiar
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Segunda fila de botones -->
+                <div class="row g-3 mt-2">
+                    <div class="col-12 d-flex justify-content-center flex-wrap gap-2">
+                        <div class="dropdown">
+                            <button class="btn btn-info-custom btn-custom dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                <i class="bi bi-download me-2"></i>Exportar
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="#" onclick="exportarMisVentas('pdf')">
+                                    <i class="bi bi-file-pdf me-2"></i>PDF
+                                </a></li>
+                                <li><a class="dropdown-item" href="#" onclick="exportarMisVentas('excel')">
+                                    <i class="bi bi-file-excel me-2"></i>Excel
+                                </a></li>
+                            </ul>
+                        </div>
+                        
+                        <button type="button" class="btn btn-info-custom btn-custom" onclick="actualizarEstadisticas()">
+                            <i class="bi bi-arrow-repeat me-2"></i>Actualizar Estadísticas
+                        </button>
+                    </div>
+                </div>
+            </div>            <!-- Últimas Ventas -->
+            <div class="report-section">
+                <h4 class="section-title">
+                    <i class="bi bi-table"></i>Mis Ventas Recientes
+                    <span id="resultadosContador" class="badge badge-custom ms-2"></span>
+                </h4>
+                
+                <div class="table-responsive">
+                    <table class="table table-custom" id="ventasTable">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Fecha</th>
+                                <th>Cliente</th>
+                                <th>Total</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ventasTableBody">
+                            <!-- Usando th:block para agrupar cada venta con su fila de detalles -->
+                            <th:block th:each="venta, iterStat : ${ultimasVentas}">
+                                <!-- Fila principal de la venta -->
+                                <tr th:id="'venta-row-' + ${venta.id}">
+                                    <td>
+                                        <span class="badge bg-primary" th:text="${venta.id}">#001</span>
+                                    </td>
+                                    <td th:text="${#temporals.format(venta.fecha, 'dd/MM/yyyy HH:mm')}">01/01/2024 10:00</td>
+                                    <td th:text="${venta.correoCliente}">cliente@email.com</td>
+                                    <td>
+                                        <strong class="text-success" th:text="'$' + ${#numbers.formatDecimal(venta.total, 1, 2)}">$0.00</strong>
+                                    </td>
+                                    <td>
+                                        <button type="button" 
+                                                class="btn btn-outline-info btn-sm details-toggle" 
+                                                th:onclick="'toggleVentaDetails(' + ${venta.id} + ')'"
+                                                th:id="'toggle-btn-' + ${venta.id}">
+                                            <i class="bi bi-chevron-down" th:id="'icon-' + ${venta.id}"></i>
+                                            <span class="btn-text">Ver Detalles</span>
+                                        </button>
+                                    </td>
+                                </tr>
+                                
+                                <!-- Fila de detalles (inmediatamente después de cada venta) -->
+                                <tr th:id="'details-row-' + ${venta.id}" 
+                                    class="details-row" 
+                                    style="display: none;">
+                                    <td colspan="5" class="details-cell">
+                                        <div class="sale-details-container">
+                                            <div class="details-header">
+                                                <h6>
+                                                    <i class="bi bi-list-ul me-2"></i>Productos Vendidos:
+                                                </h6>
+                                            </div>
+                                            <div class="products-table">
+                                                <table class="table table-sm table-striped mb-0">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Producto</th>
+                                                            <th>Cantidad</th>
+                                                            <th>Precio Unit.</th>
+                                                            <th>Subtotal</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr th:each="detalle : ${venta.detalles}">
+                                                            <td th:text="${detalle.producto.nombre}">Producto X</td>
+                                                            <td th:text="${detalle.cantidad}">1</td>
+                                                            <td th:text="'$' + ${#numbers.formatDecimal(detalle.precioUnitario, 1, 2)}">$0.00</td>
+                                                            <td th:text="'$' + ${#numbers.formatDecimal(detalle.subtotal, 1, 2)}">$0.00</td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </th:block>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!-- Mensaje cuando no hay ventas -->
+                <div id="noVentasMessage" class="empty-state" style="display: none;">
+                    <i class="bi bi-inbox"></i>
+                    <h5 class="mt-3">No se encontraron ventas</h5>
+                    <p>Intenta ajustar los filtros de búsqueda</p>
+                </div>
+            </div>            <!-- Loading Overlay -->
+            <div class="loading-overlay" id="loadingOverlay"></div>
+            
+            <!-- Loading Spinner -->
+            <div class="loading-spinner" id="loadingSpinner">
+                <div class="spinner-border" role="status">
+                    <span class="visually-hidden">Cargando...</span>
+                </div>
+                <p class="mt-3 mb-0">Procesando datos...</p>
+            </div>
+        </div>
+    </div>
+
+    <script>        // Función para actualizar el contador de resultados
+        function actualizarContadorResultados() {
+            const resultadosContador = document.getElementById('resultadosContador');
+            if (resultadosContador) {
+                // Contar solo las filas principales de ventas (excluyendo filas de detalles)
+                const filasVentas = document.querySelectorAll('#ventasTableBody tr[id^="venta-row-"]');
+                const count = filasVentas.length;
+                resultadosContador.textContent = `${count} resultados`;
+                
+                // Log para debug
+                console.log(`Contador actualizado: ${count} ventas`);
+                return count;
+            }
+            return 0;
+        }
+
+        // Función para alternar detalles de una venta
+        function toggleVentaDetails(ventaId) {
+            const detailsRow = document.getElementById('details-row-' + ventaId);
+            const toggleBtn = document.getElementById('toggle-btn-' + ventaId);
+            const icon = document.getElementById('icon-' + ventaId);
+            const btnText = toggleBtn.querySelector('.btn-text');
+            
+            if (detailsRow.style.display === 'none' || detailsRow.style.display === '') {
+                detailsRow.style.display = 'table-row';
+                icon.className = 'bi bi-chevron-up';
+                btnText.textContent = 'Ocultar Detalles';
+                toggleBtn.classList.remove('btn-outline-info');
+                toggleBtn.classList.add('btn-outline-warning', 'expanded');
+                
+                // Aplicar efecto de destacado
+                setTimeout(() => {
+                    highlightDetails(detailsRow);
+                    scrollToDetails(ventaId);
+                }, 100);
+            } else {
+                detailsRow.style.display = 'none';
+                icon.className = 'bi bi-chevron-down';
+                btnText.textContent = 'Ver Detalles';
+                toggleBtn.classList.remove('btn-outline-warning', 'expanded');
+                toggleBtn.classList.add('btn-outline-info');
+            }
+        }
+        
+        // Función para desplazamiento suave hacia los detalles
+        function scrollToDetails(ventaId) {
+            setTimeout(() => {
+                const detailsRow = document.getElementById('details-row-' + ventaId);
+                if (detailsRow) {
+                    detailsRow.scrollIntoView({ 
+                        behavior: 'smooth', 
+                        block: 'nearest' 
+                    });
+                }
+            }, 500);
+        }
+        
+        // Función para destacar temporalmente los detalles
+        function highlightDetails(detailsRow) {
+            const detailsContainer = detailsRow.querySelector('.sale-details-container');
+            if (detailsContainer) {
+                detailsContainer.classList.add('details-highlight');
+                setTimeout(() => {
+                    detailsContainer.classList.remove('details-highlight');
+                }, 3500);
+            }
+        }        // Función para mostrar loading
+        function mostrarLoading() {
+            document.getElementById('loadingOverlay').style.display = 'block';
+            document.getElementById('loadingSpinner').style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        }
+        
+        // Función para ocultar loading
+        function ocultarLoading() {
+            document.getElementById('loadingOverlay').style.display = 'none';
+            document.getElementById('loadingSpinner').style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        // Función para filtrar mis ventas
+        function filtrarMisVentas() {
+            const fechaInicio = document.getElementById('fechaInicio').value;
+            const fechaFin = document.getElementById('fechaFin').value;
+            const limite = document.getElementById('limite').value;
+            
+            // Mostrar loading
+            mostrarLoading();
+            
+            // Construir URL
+            let url = `/mis-ventas/filtrar?limite=${limite}`;
+            if (fechaInicio && fechaFin) {
+                url += `&fechaInicio=${fechaInicio}&fechaFin=${fechaFin}`;
+            }
+            
+            fetch(url)
+                .then(response => response.json())
+                .then(ventas => {
+                    mostrarVentasFiltradas(ventas);
+                    ocultarLoading();
+                    mostrarNotificacion(`Se encontraron ${ventas.length} ventas`, 'success');
+                })
+                .catch(error => {
+                    console.error('Error al filtrar ventas:', error);
+                    mostrarNotificacion('Error al filtrar las ventas. Por favor, intenta de nuevo.', 'danger');
+                    ocultarLoading();
+                });
+        }        // Función para mostrar ventas filtradas
+        function mostrarVentasFiltradas(ventas) {
+            const tbody = document.getElementById('ventasTableBody');
+            const noVentasMessage = document.getElementById('noVentasMessage');
+            const resultadosContador = document.getElementById('resultadosContador');
+            
+            if (ventas.length === 0) {
+                tbody.innerHTML = '';
+                noVentasMessage.style.display = 'block';
+                resultadosContador.textContent = '0 resultados';
+                return;
+            }
+            
+            noVentasMessage.style.display = 'none';
+            
+            let html = '';
+            ventas.forEach((venta, index) => {
+                // Fila principal con animación escalonada
+                html += `
+                    <tr id="venta-row-${venta.id}" style="animation-delay: ${index * 0.1}s;">
+                        <td><span class="badge bg-primary">#${venta.id}</span></td>
+                        <td>${formatearFecha(venta.fecha)}</td>
+                        <td>${venta.correoCliente || 'N/A'}</td>
+                        <td><strong class="text-success">$${formatearNumero(venta.total)}</strong></td>
+                        <td>
+                            <button type="button" class="btn btn-outline-info btn-sm details-toggle" 
+                                    onclick="toggleVentaDetails(${venta.id})" id="toggle-btn-${venta.id}">
+                                <i class="bi bi-chevron-down" id="icon-${venta.id}"></i>
+                                <span class="btn-text">Ver Detalles</span>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+                
+                // Fila de detalles con estilos mejorados
+                html += `
+                    <tr id="details-row-${venta.id}" class="details-row" style="display: none;">
+                        <td colspan="5" class="details-cell">
+                            <div class="sale-details-container">
+                                <div class="details-header">
+                                    <h6><i class="bi bi-list-ul me-2"></i>Productos Vendidos:</h6>
+                                </div>
+                                <div class="products-table">
+                                    <table class="table table-sm table-striped mb-0">
+                                        <thead>
+                                            <tr>
+                                                <th>Producto</th>
+                                                <th>Cantidad</th>
+                                                <th>Precio Unit.</th>
+                                                <th>Subtotal</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                `;
+                
+                if (venta.detalles && venta.detalles.length > 0) {
+                    venta.detalles.forEach(detalle => {
+                        html += `
+                            <tr>
+                                <td>${detalle.producto?.nombre || 'N/A'}</td>
+                                <td>${detalle.cantidad}</td>
+                                <td>$${formatearNumero(detalle.precioUnitario)}</td>
+                                <td>$${formatearNumero(detalle.subtotal)}</td>
+                            </tr>
+                        `;
+                    });
+                } else {
+                    html += '<tr><td colspan="4" class="text-center text-muted">No hay detalles disponibles</td></tr>';
+                }
+                
+                html += `
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            });
+            
+            tbody.innerHTML = html;
+            
+            // Actualizar contador después de insertar el HTML
+            setTimeout(() => {
+                resultadosContador.textContent = `${ventas.length} resultados`;
+            }, 100);
+        }        // Función para limpiar filtros
+        function limpiarFiltros() {
+            // Limpiar campos con animación
+            const campos = ['fechaInicio', 'fechaFin', 'limite'];
+            campos.forEach(campo => {
+                const elemento = document.getElementById(campo);
+                if (elemento) {
+                    elemento.style.transform = 'scale(0.95)';
+                    setTimeout(() => {
+                        if (campo === 'limite') {
+                            elemento.value = '20';
+                        } else {
+                            elemento.value = '';
+                        }
+                        elemento.style.transform = 'scale(1)';
+                    }, 100);
+                }
+            });
+            
+            // Mostrar notificación
+            setTimeout(() => {
+                mostrarNotificacion('Filtros limpiados correctamente', 'info');
+                
+                // Recargar después de un breve delay
+                setTimeout(() => {
+                    location.reload();
+                }, 1000);
+            }, 300);
+        }// Función para actualizar estadísticas
+        function actualizarEstadisticas() {
+            mostrarLoading();
+            
+            fetch('/mis-ventas/estadisticas')
+                .then(response => response.json())
+                .then(estadisticas => {
+                    if (estadisticas.error) {
+                        mostrarNotificacion('Error: ' + estadisticas.error, 'danger');
+                        return;
+                    }
+                    
+                    // Actualizar las tarjetas de estadísticas con animación
+                    const cards = document.querySelectorAll('.stat-card');
+                    cards.forEach((card, index) => {
+                        card.style.animation = 'none';
+                        setTimeout(() => {
+                            card.style.animation = `slideInUp 0.6s ease-out ${index * 0.1}s both`;
+                        }, 50);
+                    });
+                    
+                    // Actualizar valores
+                    setTimeout(() => {
+                        document.querySelector('.stat-card:nth-child(1) .stat-value').textContent = estadisticas.totalVentas || 0;
+                        document.querySelector('.stat-card:nth-child(2) .stat-value').innerHTML = '$' + formatearNumero(estadisticas.totalIngresos || 0);
+                        document.querySelector('.stat-card:nth-child(3) .stat-value').textContent = estadisticas.ventasDelMes || 0;
+                        document.querySelector('.stat-card:nth-child(4) .stat-value').textContent = estadisticas.ventasDelDia || 0;
+                    }, 300);
+                    
+                    ocultarLoading();
+                    mostrarNotificacion('Estadísticas actualizadas correctamente', 'success');
+                })
+                .catch(error => {
+                    console.error('Error al actualizar estadísticas:', error);
+                    ocultarLoading();
+                    mostrarNotificacion('Error al actualizar las estadísticas', 'danger');
+                });
+        }
+
+        // Función para exportar mis ventas
+        function exportarMisVentas(formato) {
+            const fechaInicio = document.getElementById('fechaInicio').value;
+            const fechaFin = document.getElementById('fechaFin').value;
+            
+            let url = `/mis-ventas/exportar-${formato}`;
+            if (fechaInicio && fechaFin) {
+                url += `?fechaInicio=${fechaInicio}&fechaFin=${fechaFin}`;
+            }
+            
+            mostrarNotificacion(`Descargando reporte en ${formato.toUpperCase()}...`, 'info');
+            
+            // Crear enlace temporal para descarga
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = '';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }        // Función para mostrar notificaciones con estilo mejorado
+        function mostrarNotificacion(mensaje, tipo = 'success') {
+            // Remover notificaciones anteriores
+            const alertasAnteriores = document.querySelectorAll('.toast-notification');
+            alertasAnteriores.forEach(alerta => alerta.remove());
+            
+            const alertClass = tipo === 'success' ? 'alert-success-custom' : 
+                             tipo === 'danger' ? 'alert-danger-custom' : 
+                             tipo === 'info' ? 'alert-info-custom' : 'alert-warning-custom';
+            
+            const icon = tipo === 'success' ? 'check-circle-fill' : 
+                        tipo === 'danger' ? 'exclamation-triangle-fill' : 
+                        tipo === 'info' ? 'info-circle-fill' : 'exclamation-triangle-fill';
+            
+            const alertHTML = `
+                <div class="alert ${alertClass} alert-custom alert-dismissible fade show toast-notification" 
+                     role="alert" 
+                     style="position: fixed; top: 90px; right: 20px; z-index: 10000; max-width: 400px; min-width: 300px; animation: slideInRight 0.5s ease-out;">
+                    <i class="bi bi-${icon} me-2"></i>
+                    <span>${mensaje}</span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" onclick="this.parentElement.remove()"></button>
+                </div>
+            `;
+            
+            // Insertar en el body
+            document.body.insertAdjacentHTML('beforeend', alertHTML);
+            
+            // Auto-remover después de 5 segundos
+            setTimeout(() => {
+                const alerta = document.querySelector('.toast-notification');
+                if (alerta) {
+                    alerta.style.animation = 'slideOutRight 0.5s ease-out';
+                    setTimeout(() => {
+                        alerta.remove();
+                    }, 500);
+                }
+            }, 5000);
+        }
+
+        // Funciones utilitarias
+        function formatearFecha(fechaStr) {
+            const fecha = new Date(fechaStr);
+            return fecha.toLocaleDateString('es-ES', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        function formatearNumero(numero) {
+            return parseFloat(numero).toLocaleString('es-ES', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
+        }
+
+        // Validación de fechas
+        document.getElementById('fechaInicio').addEventListener('change', function() {
+            const fechaInicio = this.value;
+            const fechaFin = document.getElementById('fechaFin');
+            
+            if (fechaInicio) {
+                fechaFin.min = fechaInicio;
+                if (fechaFin.value && fechaFin.value < fechaInicio) {
+                    fechaFin.value = fechaInicio;
+                }
+            }
+        });
+
+        document.getElementById('fechaFin').addEventListener('change', function() {
+            const fechaFin = this.value;
+            const fechaInicio = document.getElementById('fechaInicio');
+            
+            if (fechaFin) {
+                fechaInicio.max = fechaFin;
+                if (fechaInicio.value && fechaInicio.value > fechaFin) {
+                    fechaInicio.value = fechaFin;
+                }
+            }
+        });        // Establecer fechas por defecto
+        document.addEventListener('DOMContentLoaded', function() {
+            // Fecha de hoy
+            const hoy = new Date();
+            const fechaHoy = hoy.toISOString().split('T')[0];
+            
+            // Primer día del mes actual
+            const primerDiaDelMes = new Date(hoy.getFullYear(), hoy.getMonth(), 1);
+            const fechaInicio = primerDiaDelMes.toISOString().split('T')[0];
+            
+            const fechaInicioInput = document.getElementById('fechaInicio');
+            const fechaFinInput = document.getElementById('fechaFin');
+            
+            if (fechaInicioInput && fechaFinInput) {
+                fechaInicioInput.value = fechaInicio;
+                fechaFinInput.value = fechaHoy;
+            }
+            
+            // Contar resultados iniciales - Solo contar filas de ventas principales
+            // Usar múltiples estrategias para mayor precisión
+            setTimeout(() => {
+                actualizarContadorResultados();
+            }, 200); // Aumentar el delay para asegurar renderizado completo
+        });
+    </script>
+
+    <!-- Script de seguridad para prevenir navegación hacia atrás después del logout -->
+    <script th:src="@{/js/security.js}"></script>
+
+    <div th:replace="fragments/footer :: footer"></div>
+</body>
+</html>

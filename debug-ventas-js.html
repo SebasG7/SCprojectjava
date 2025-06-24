@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Debug JavaScript Ventas</title>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-4">
+        <h1>Debug JavaScript Functions</h1>
+        
+        <!-- Botones de prueba -->
+        <div class="mb-3">
+            <button type="button" class="btn btn-primary" onclick="window.buscarProductos()">Test buscarProductos</button>
+            <button type="button" class="btn btn-success" onclick="window.limpiarCarritoCompleto()">Test limpiarCarritoCompleto</button>
+            <button type="button" class="btn btn-info" onclick="window.agregarProductoDesdeGrid(this)" 
+                    data-id="1" data-nombre="Test Product" data-precio="100" data-precio-con-iva="119" data-iva="19">Test agregarProductoDesdeGrid</button>
+        </div>
+        
+        <!-- Elementos requeridos para las funciones -->
+        <div id="busqueda"></div>
+        <div id="categoria"></div>
+        <div id="productosListaContainer"></div>
+        <div id="productosContainer"></div>
+        <div id="correos-container"></div>
+        <div id="nombreCliente"></div>
+        
+        <div id="output"></div>
+    </div>
+
+    <script>
+        // Test functions
+        function testFunction(name, func) {
+            try {
+                console.log(`Testing ${name}...`);
+                if (typeof func === 'function') {
+                    console.log(`✓ ${name} is defined as function`);
+                    document.getElementById('output').innerHTML += `<p class="text-success">✓ ${name} is defined</p>`;
+                } else {
+                    console.log(`✗ ${name} is not a function, type: ${typeof func}`);
+                    document.getElementById('output').innerHTML += `<p class="text-danger">✗ ${name} is not a function, type: ${typeof func}</p>`;
+                }
+            } catch (error) {
+                console.error(`Error testing ${name}:`, error);
+                document.getElementById('output').innerHTML += `<p class="text-danger">✗ Error testing ${name}: ${error.message}</p>`;
+            }
+        }
+
+        // Crear elementos mínimos necesarios
+        document.getElementById('busqueda').innerHTML = '<input type="text" id="busqueda" class="form-control" placeholder="Buscar...">';
+        document.getElementById('categoria').innerHTML = '<select id="categoria" class="form-control"><option value="">Todas</option></select>';
+
+        // Definir las funciones básicas para prueba
+        window.contadorProductos = 0;
+        window.productosData = {};
+        window.productosDataConIva = {};
+
+        // Test buscarProductos
+        window.buscarProductos = function(busquedaParam, categoriaParam) {
+            console.log('buscarProductos called with:', busquedaParam, categoriaParam);
+            document.getElementById('output').innerHTML += '<p class="text-info">buscarProductos executed</p>';
+        };
+
+        // Test limpiarCarritoCompleto
+        window.limpiarCarritoCompleto = function() {
+            console.log('limpiarCarritoCompleto called');
+            document.getElementById('output').innerHTML += '<p class="text-info">limpiarCarritoCompleto executed</p>';
+        };
+
+        // Test agregarProductoDesdeGrid
+        window.agregarProductoDesdeGrid = function(button) {
+            console.log('agregarProductoDesdeGrid called with button:', button);
+            document.getElementById('output').innerHTML += '<p class="text-info">agregarProductoDesdeGrid executed</p>';
+        };
+
+        // Test all functions on load
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM loaded, testing functions...');
+            
+            testFunction('buscarProductos', window.buscarProductos);
+            testFunction('limpiarCarritoCompleto', window.limpiarCarritoCompleto);
+            testFunction('agregarProductoDesdeGrid', window.agregarProductoDesdeGrid);
+            
+            console.log('All tests completed');
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Modal Bootstrap</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</head>
+<body>
+    <div class="container mt-5">
+        <h1>Test Modal Bootstrap</h1>
+        
+        <!-- Button trigger modal -->
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#testModal">
+            Abrir Modal de Prueba
+        </button>
+        
+        <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#reporteFechasModal">
+            Abrir Modal de Reporte por Fechas
+        </button>
+
+        <!-- Test Modal -->
+        <div class="modal fade" id="testModal" tabindex="-1" aria-labelledby="testModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="testModalLabel">Modal de Prueba</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        Este es un modal de prueba para verificar que Bootstrap funciona correctamente.
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal para reporte por fechas -->
+        <div class="modal fade" id="reporteFechasModal" tabindex="-1" aria-labelledby="reporteFechasModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="reporteFechasModalLabel">Generar Reporte de Stock por Fechas</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <form action="/productos/reporte-fechas" method="get">
+                        <div class="modal-body">
+                            <div class="alert alert-info">
+                                <i class="bi bi-info-circle"></i>
+                                Este reporte muestra el historial de stock de los productos entre las fechas seleccionadas.
+                            </div>
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label for="fechaInicio" class="form-label">Fecha Inicio</label>
+                                    <input type="date" class="form-control" id="fechaInicio" name="fechaInicio" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="fechaFin" class="form-label">Fecha Fin</label>
+                                    <input type="date" class="form-control" id="fechaFin" name="fechaFin" required>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                            <button type="submit" class="btn btn-primary">
+                                Generar Reporte
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Página de prueba cargada');
+            console.log('Bootstrap disponible:', typeof bootstrap !== 'undefined');
+            
+            // Establecer fechas por defecto
+            const fechaInicioInput = document.getElementById('fechaInicio');
+            const fechaFinInput = document.getElementById('fechaFin');
+            
+            if (fechaInicioInput && fechaFinInput) {
+                const hoy = new Date();
+                const hace30Dias = new Date();
+                hace30Dias.setDate(hoy.getDate() - 30);
+                
+                fechaInicioInput.value = hace30Dias.toISOString().split('T')[0];
+                fechaFinInput.value = hoy.toISOString().split('T')[0];
+                
+                console.log('Fechas establecidas:', {
+                    inicio: fechaInicioInput.value,
+                    fin: fechaFinInput.value
+                });
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prueba de Estilos - Mis Ventas</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #3a506b 0%, #5d89ba 100%);
+            --card-shadow: 0 4px 20px rgba(58, 80, 107, 0.1);
+            --hover-shadow: 0 10px 30px rgba(58, 80, 107, 0.2);
+            --primary-color: #3a506b;
+            --accent-color: #5d89ba;
+            --success-color: #28a745;
+            --danger-color: #dc3545;
+            --warning-color: #ffc107;
+            --info-color: #17a2b8;
+            --text-color: #495057;
+            --border-radius: 12px;
+            --transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        * {
+            transition: var(--transition);
+        }
+        
+        .main-container {
+            animation: containerSlide 0.6s ease-out;
+        }
+        
+        @keyframes containerSlide {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .page-title {
+            color: var(--primary-color);
+            font-weight: 700;
+            margin-bottom: 2rem;
+            position: relative;
+            animation: slideInUp 0.8s ease-out;
+        }
+        
+        .page-title::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 0;
+            width: 100px;
+            height: 4px;
+            background: var(--primary-gradient);
+            border-radius: 2px;
+            animation: expandWidth 1s ease-out 0.5s both;
+        }
+        
+        @keyframes expandWidth {
+            from { width: 0; }
+            to { width: 100px; }
+        }
+        
+        .stats-cards {
+            margin-bottom: 2rem;
+        }
+        
+        .stat-card {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--card-shadow);
+            padding: 1.5rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            transition: var(--transition);
+            animation: slideInUp 0.6s ease-out;
+            animation-fill-mode: both;
+        }
+        
+        .stat-card:nth-child(1) { animation-delay: 0.1s; }
+        .stat-card:nth-child(2) { animation-delay: 0.2s; }
+        .stat-card:nth-child(3) { animation-delay: 0.3s; }
+        .stat-card:nth-child(4) { animation-delay: 0.4s; }
+        
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.6s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: var(--hover-shadow);
+        }
+        
+        .stat-card:hover::before {
+            left: 100%;
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-label {
+            color: var(--text-color);
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+        
+        .stat-icon {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            font-size: 2rem;
+            color: var(--accent-color);
+            opacity: 0.3;
+            animation: iconPulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes iconPulse {
+            0%, 100% { transform: scale(1); opacity: 0.3; }
+            50% { transform: scale(1.1); opacity: 0.5; }
+        }
+        
+        .report-section {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--card-shadow);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+            animation: fadeInBackground 0.8s ease-out;
+        }
+        
+        @keyframes fadeInBackground {
+            from {
+                opacity: 0;
+                background-color: rgba(255, 255, 255, 0.5);
+            }
+            to {
+                opacity: 1;
+                background-color: white;
+            }
+        }
+        
+        .section-title {
+            color: var(--primary-color);
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .section-title i {
+            color: var(--accent-color);
+            animation: iconPulse 2s ease-in-out infinite;
+        }
+        
+        .btn-custom {
+            border-radius: 8px;
+            font-weight: 500;
+            padding: 0.75rem 1.5rem;
+            position: relative;
+            overflow: hidden;
+            transition: var(--transition);
+            border: none;
+        }
+        
+        .btn-custom:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+        
+        .btn-export {
+            background: var(--primary-gradient);
+            color: white;
+        }
+        
+        .btn-export:hover {
+            background: linear-gradient(135deg, #2d3e52 0%, #4a739e 100%);
+            color: white;
+        }
+        
+        .btn-info-custom {
+            background: linear-gradient(135deg, var(--info-color) 0%, #20c997 100%);
+            color: white;
+        }
+        
+        .btn-info-custom:hover {
+            background: linear-gradient(135deg, #138496 0%, #1a9e7e 100%);
+            color: white;
+        }
+        
+        .table-responsive {
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--card-shadow);
+            animation: slideInUp 0.8s ease-out;
+        }
+        
+        .table-custom {
+            margin-bottom: 0;
+            background: white;
+        }
+        
+        .table-custom thead th {
+            background: var(--primary-gradient);
+            color: white;
+            font-weight: 600;
+            border: none;
+            padding: 1rem 0.75rem;
+            position: relative;
+        }
+        
+        .table-custom tbody td {
+            padding: 1rem 0.75rem;
+            vertical-align: middle;
+            border-color: #f1f3f4;
+        }
+        
+        .table-custom tbody tr {
+            animation: fadeInRow 0.6s ease-out;
+            animation-fill-mode: both;
+        }
+        
+        .table-custom tbody tr:nth-child(odd) { animation-delay: 0.1s; }
+        .table-custom tbody tr:nth-child(even) { animation-delay: 0.2s; }
+        
+        .table-custom tbody tr:hover {
+            background-color: rgba(93, 137, 186, 0.05);
+            transform: scale(1.01);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        }
+        
+        @keyframes fadeInRow {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .details-toggle {
+            border-radius: 6px;
+            padding: 0.375rem 0.75rem;
+            font-size: 0.875rem;
+            transition: var(--transition);
+            border: 1px solid var(--info-color);
+            background: transparent;
+            color: var(--info-color);
+        }
+        
+        .details-toggle:hover {
+            background: var(--info-color);
+            color: white;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(23, 162, 184, 0.3);
+        }
+        
+        .details-toggle i {
+            transition: transform 0.6s ease;
+            margin-right: 0.25rem;
+        }
+        
+        .details-toggle.expanded i {
+            transform: rotate(180deg);
+        }
+        
+        .details-row {
+            background: linear-gradient(135deg, rgba(93, 137, 186, 0.02) 0%, rgba(93, 137, 186, 0.05) 100%);
+            animation: slideDown 0.8s ease-out;
+            transition: opacity 0.5s ease-in-out;
+        }
+        
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .details-cell {
+            padding: 1.5rem 2rem !important;
+            border-left: 4px solid var(--accent-color);
+        }
+        
+        .sale-details-container {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(93, 137, 186, 0.1);
+            transition: all 0.8s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+        
+        .details-highlight {
+            animation: detailsHighlight 3.5s ease-in-out;
+            transform: scale(1.01);
+        }
+        
+        @keyframes detailsHighlight {
+            0% {
+                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+                background-color: white;
+            }
+            15% {
+                box-shadow: 0 8px 30px rgba(93, 137, 186, 0.25);
+                background-color: rgba(93, 137, 186, 0.05);
+                transform: scale(1.02);
+            }
+            85% {
+                box-shadow: 0 8px 30px rgba(93, 137, 186, 0.25);
+                background-color: rgba(93, 137, 186, 0.05);
+                transform: scale(1.02);
+            }
+            100% {
+                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+                background-color: white;
+                transform: scale(1);
+            }
+        }
+        
+        .badge-custom {
+            padding: 0.5rem 0.75rem;
+            border-radius: 6px;
+            font-weight: 500;
+            background: var(--primary-gradient);
+            color: white;
+        }
+        
+        .loading-spinner {
+            display: none;
+            text-align: center;
+            padding: 2rem;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--hover-shadow);
+            z-index: 9999;
+        }
+        
+        .loading-spinner .spinner-border {
+            color: var(--accent-color);
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 3rem 2rem;
+            color: var(--text-color);
+            animation: fadeInBackground 0.8s ease-out;
+        }
+        
+        .empty-state i {
+            font-size: 3rem;
+            color: var(--accent-color);
+            margin-bottom: 1rem;
+            animation: iconPulse 2s ease-in-out infinite;
+        }
+        
+        .form-control-custom, .form-select-custom {
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            transition: var(--transition);
+            background-color: #fafbfc;
+        }
+        
+        .form-control-custom:focus, .form-select-custom:focus {
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 0.2rem rgba(93, 137, 186, 0.25);
+            transform: translateY(-2px);
+            background-color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="main-content">
+        <div class="container main-container py-4">
+            <h2 class="page-title">
+                <i class="bi bi-receipt-cutoff me-3"></i>Mis Ventas - Vista Mejorada
+            </h2>
+
+            <!-- Estadísticas Generales -->
+            <div class="stats-cards">
+                <div class="row mb-4">
+                    <div class="col-xl-3 col-lg-6 col-md-6 mb-4">
+                        <div class="stat-card">
+                            <div class="stat-value">45</div>
+                            <div class="stat-label">Total de Ventas</div>
+                            <i class="bi bi-cart-check stat-icon"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="col-xl-3 col-lg-6 col-md-6 mb-4">
+                        <div class="stat-card">
+                            <div class="stat-value">$15,750.00</div>
+                            <div class="stat-label">Ingresos Totales</div>
+                            <i class="bi bi-currency-dollar stat-icon"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="col-xl-3 col-lg-6 col-md-6 mb-4">
+                        <div class="stat-card">
+                            <div class="stat-value">12</div>
+                            <div class="stat-label">Ventas del Mes</div>
+                            <i class="bi bi-calendar-month stat-icon"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="col-xl-3 col-lg-6 col-md-6 mb-4">
+                        <div class="stat-card">
+                            <div class="stat-value">3</div>
+                            <div class="stat-label">Ventas de Hoy</div>
+                            <i class="bi bi-calendar-day stat-icon"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sección de Reportes -->
+            <div class="report-section">
+                <h4 class="section-title">
+                    <i class="bi bi-funnel"></i>Filtros de Búsqueda
+                </h4>
+                
+                <div class="row g-3">
+                    <div class="col-md-3">
+                        <label for="fechaInicio" class="form-label">Fecha Inicio</label>
+                        <input type="date" class="form-control form-control-custom" id="fechaInicio">
+                    </div>
+                    
+                    <div class="col-md-3">
+                        <label for="fechaFin" class="form-label">Fecha Fin</label>
+                        <input type="date" class="form-control form-control-custom" id="fechaFin">
+                    </div>
+                    
+                    <div class="col-md-2">
+                        <label for="limite" class="form-label">Límite</label>
+                        <select class="form-select form-select-custom" id="limite">
+                            <option value="10">10 resultados</option>
+                            <option value="20" selected>20 resultados</option>
+                            <option value="50">50 resultados</option>
+                            <option value="100">100 resultados</option>
+                        </select>
+                    </div>
+                    
+                    <div class="col-md-4 d-flex align-items-end gap-2">
+                        <button type="button" class="btn btn-export btn-custom">
+                            <i class="bi bi-search me-2"></i>Filtrar
+                        </button>
+                        
+                        <button type="button" class="btn btn-secondary btn-custom">
+                            <i class="bi bi-arrow-clockwise me-2"></i>Limpiar
+                        </button>
+                        
+                        <button type="button" class="btn btn-info-custom btn-custom">
+                            <i class="bi bi-download me-2"></i>Exportar
+                        </button>
+                        
+                        <button type="button" class="btn btn-info-custom btn-custom">
+                            <i class="bi bi-arrow-repeat me-2"></i>Actualizar
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Últimas Ventas -->
+            <div class="report-section">
+                <h4 class="section-title">
+                    <i class="bi bi-table"></i>Mis Ventas Recientes
+                    <span class="badge badge-custom ms-2">3 resultados</span>
+                </h4>
+                
+                <div class="table-responsive">
+                    <table class="table table-custom">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Fecha</th>
+                                <th>Cliente</th>
+                                <th>Total</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="badge bg-primary">#001</span></td>
+                                <td>09/06/2025 10:30</td>
+                                <td>cliente1@email.com</td>
+                                <td><strong class="text-success">$350.00</strong></td>
+                                <td>
+                                    <button type="button" class="btn btn-outline-info btn-sm details-toggle" onclick="toggleDemo(1)">
+                                        <i class="bi bi-chevron-down" id="icon-1"></i>
+                                        <span>Ver Detalles</span>
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr id="details-1" class="details-row" style="display: none;">
+                                <td colspan="5" class="details-cell">
+                                    <div class="sale-details-container">
+                                        <div class="details-header">
+                                            <h6><i class="bi bi-list-ul me-2"></i>Productos Vendidos:</h6>
+                                        </div>
+                                        <div class="products-table">
+                                            <table class="table table-sm table-striped mb-0">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Producto</th>
+                                                        <th>Cantidad</th>
+                                                        <th>Precio Unit.</th>
+                                                        <th>Subtotal</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td>Producto Demo 1</td>
+                                                        <td>2</td>
+                                                        <td>$125.00</td>
+                                                        <td>$250.00</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Producto Demo 2</td>
+                                                        <td>1</td>
+                                                        <td>$100.00</td>
+                                                        <td>$100.00</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><span class="badge bg-primary">#002</span></td>
+                                <td>08/06/2025 15:45</td>
+                                <td>cliente2@email.com</td>
+                                <td><strong class="text-success">$220.50</strong></td>
+                                <td>
+                                    <button type="button" class="btn btn-outline-info btn-sm details-toggle">
+                                        <i class="bi bi-chevron-down"></i>
+                                        <span>Ver Detalles</span>
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><span class="badge bg-primary">#003</span></td>
+                                <td>07/06/2025 09:15</td>
+                                <td>cliente3@email.com</td>
+                                <td><strong class="text-success">$180.00</strong></td>
+                                <td>
+                                    <button type="button" class="btn btn-outline-info btn-sm details-toggle">
+                                        <i class="bi bi-chevron-down"></i>
+                                        <span>Ver Detalles</span>
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Loading Spinner -->
+            <div class="loading-spinner" id="loadingSpinner">
+                <div class="spinner-border" role="status">
+                    <span class="visually-hidden">Cargando...</span>
+                </div>
+                <p class="mt-2">Procesando...</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function toggleDemo(id) {
+            const detailsRow = document.getElementById('details-' + id);
+            const icon = document.getElementById('icon-' + id);
+            const button = icon.closest('.details-toggle');
+            
+            if (detailsRow.style.display === 'none' || detailsRow.style.display === '') {
+                detailsRow.style.display = 'table-row';
+                icon.className = 'bi bi-chevron-up';
+                button.classList.add('expanded');
+                
+                // Efecto de destacado
+                setTimeout(() => {
+                    const container = detailsRow.querySelector('.sale-details-container');
+                    container.classList.add('details-highlight');
+                    setTimeout(() => {
+                        container.classList.remove('details-highlight');
+                    }, 3500);
+                }, 100);
+            } else {
+                detailsRow.style.display = 'none';
+                icon.className = 'bi bi-chevron-down';
+                button.classList.remove('expanded');
+            }
+        }
+        
+        // Establecer fechas por defecto al cargar la página
+        document.addEventListener('DOMContentLoaded', function() {
+            const hoy = new Date();
+            const fechaHoy = hoy.toISOString().split('T')[0];
+            
+            const primerDiaDelMes = new Date(hoy.getFullYear(), hoy.getMonth(), 1);
+            const fechaInicio = primerDiaDelMes.toISOString().split('T')[0];
+            
+            document.getElementById('fechaInicio').value = fechaInicio;
+            document.getElementById('fechaFin').value = fechaHoy;
+        });
+    </script>
+</body>
+</html>

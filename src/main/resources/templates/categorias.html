@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/header :: header('Gestión de Categorías')">
+</head>
+<body>
+    <div th:replace="fragments/header :: navigation"></div>
+
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #3a506b 0%, #5d89ba 100%);
+            --card-shadow: 0 4px 20px rgba(58, 80, 107, 0.1);
+            --hover-shadow: 0 10px 30px rgba(58, 80, 107, 0.2);
+            --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --border-radius: 12px;
+            --primary-color: #3a506b;
+            --accent-color: #5d89ba;
+        }
+
+        .main-content {
+            min-height: calc(100vh - 200px);
+            background: linear-gradient(135deg, rgba(58, 80, 107, 0.02) 0%, rgba(93, 137, 186, 0.02) 100%);
+            animation: fadeInBackground 1s ease-out;
+        }
+
+        @keyframes fadeInBackground {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .card-custom {
+            border: none;
+            border-radius: var(--border-radius);
+            box-shadow: var(--card-shadow);
+            transition: var(--transition-smooth);
+            overflow: hidden;
+            position: relative;
+            animation: slideInUp 0.6s ease-out;
+        }
+
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .card-custom:hover {
+            box-shadow: var(--hover-shadow);
+            transform: translateY(-5px);
+        }
+
+        .card-header-custom {
+            background: var(--primary-gradient);
+            color: white;
+            padding: 1.5rem;
+            border: none;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card-header-custom::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: left 0.8s;
+        }
+
+        .card-custom:hover .card-header-custom::before {
+            left: 100%;
+        }
+
+        .card-header-custom h3 {
+            margin: 0;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .card-header-custom i {
+            font-size: 1.2rem;
+            animation: iconPulse 2s infinite;
+        }
+
+        @keyframes iconPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .form-control-custom {
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            padding: 0.75rem;
+            transition: var(--transition-smooth);
+            background: rgba(255, 255, 255, 0.9);
+        }
+
+        .form-control-custom:focus {
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 0.2rem rgba(93, 137, 186, 0.25);
+            background: white;
+            transform: translateY(-2px);
+        }
+
+        .btn-custom {
+            border-radius: 8px;
+            font-weight: 500;
+            padding: 0.75rem 1.5rem;
+            transition: var(--transition-smooth);
+            position: relative;
+            overflow: hidden;
+            border: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            justify-content: center;
+        }
+
+        .btn-custom::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn-custom:hover::before {
+            left: 100%;
+        }
+
+        .btn-save {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+        }
+
+        .btn-save:hover {
+            background: linear-gradient(135deg, #218838 0%, #1ca085 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(40, 167, 69, 0.3);
+        }
+
+        .btn-edit {
+            background: linear-gradient(135deg, #17a2b8 0%, #6f42c1 100%);
+            color: white;
+        }
+
+        .btn-edit:hover {
+            background: linear-gradient(135deg, #138496 0%, #5a2d91 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(23, 162, 184, 0.3);
+        }
+
+        .btn-delete {
+            background: linear-gradient(135deg, #dc3545 0%, #e83e8c 100%);
+            color: white;
+        }
+
+        .btn-delete:hover {
+            background: linear-gradient(135deg, #c82333 0%, #d91a72 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(220, 53, 69, 0.3);
+        }
+
+        .btn-export {
+            background: linear-gradient(135deg, #fd7e14 0%, #e83e8c 100%);
+            color: white;
+        }
+
+        .btn-export:hover {
+            background: linear-gradient(135deg, #e8650e 0%, #d91a72 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(253, 126, 20, 0.3);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: linear-gradient(135deg, #5a6268 0%, #3d4449 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(108, 117, 125, 0.3);
+        }
+
+        .btn-primary {
+            background: var(--primary-gradient);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #2e4057 0%, #4a7ba7 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(58, 80, 107, 0.3);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: linear-gradient(135deg, #218838 0%, #1ca085 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(40, 167, 69, 0.3);
+        }
+
+        .table-custom {
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            background: white;
+        }
+
+        .table-custom thead th {
+            background: var(--primary-gradient);
+            color: white;
+            border: none;
+            padding: 1rem;
+            font-weight: 600;
+            position: relative;
+        }
+
+        .table-custom tbody tr {
+            transition: var(--transition-smooth);
+            animation: fadeInRow 0.5s ease-out;
+        }
+
+        @keyframes fadeInRow {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .table-custom tbody tr:hover {
+            background: linear-gradient(135deg, rgba(58, 80, 107, 0.05) 0%, rgba(93, 137, 186, 0.05) 100%);
+            transform: scale(1.01);
+        }
+
+        .table-custom tbody td {
+            padding: 1rem;
+            border: none;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            vertical-align: middle;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .btn-reactivate {
+            animation: pulseGreen 2s infinite;
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            border: none;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-reactivate::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn-reactivate:hover::before {
+            left: 100%;
+        }
+
+        .btn-reactivate:hover {
+            transform: translateY(-2px) scale(1.05);
+            box-shadow: 0 6px 20px rgba(40, 167, 69, 0.4);
+        }
+
+        @keyframes pulseGreen {
+            0% {
+                box-shadow: 0 0 0 0 rgba(40, 167, 69, 0.7);
+            }
+            70% {
+                box-shadow: 0 0 0 10px rgba(40, 167, 69, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(40, 167, 69, 0);
+            }
+        }
+
+        .btn-sm {
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem;
+        }
+
+        .empty-message {
+            text-align: center;
+            padding: 3rem;
+            color: #6c757d;
+            font-style: italic;
+        }
+
+        .empty-message i {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            display: block;
+            opacity: 0.5;
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .container {
+            animation: containerSlide 0.8s ease-out;
+        }
+
+        @keyframes containerSlide {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive animations */
+        @media (max-width: 768px) {
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .card-custom {
+                margin: 0.5rem 0;
+            }
+        }
+
+        /* Espaciado para botones de acciones principales */
+        .header-actions {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+            align-items: center;
+        }
+
+        .header-actions .btn {
+            white-space: nowrap;
+        }
+
+        @media (max-width: 768px) {
+            .header-actions {
+                gap: 0.5rem;
+                justify-content: center;
+            }
+            
+            .header-actions .btn {
+                font-size: 0.875rem;
+                padding: 0.5rem 1rem;
+            }
+        }
+    </style>
+
+<div class="main-content">
+<div class="container py-4">
+    <!-- Formulario -->
+    <div class="card card-custom mb-4" th:if="${usuario != null and usuario.isAdministrador()}">
+        <div class="card-header card-header-custom">
+            <h3 class="mb-0"><i class="bi bi-tags"></i> Gestión de Categorías</h3>
+        </div>
+        <div class="card-body">
+            <form th:action="@{/categorias/guardar}" method="post">
+                <input type="hidden" name="id" th:value="${categoria.id}">
+                <div class="row g-3 align-items-end">
+                    <div class="col-md-4">
+                        <label for="nombre" class="form-label">Nombre</label>
+                        <input type="text" id="nombre" name="nombre" class="form-control form-control-custom"
+                               placeholder="Ej: Bebidas" required
+                               th:value="${categoria.nombre}">
+                    </div>
+                    <div class="col-md-4">
+                        <label for="descripcion" class="form-label">Descripción</label>
+                        <input type="text" id="descripcion" name="descripcion" class="form-control form-control-custom"
+                               placeholder="Ej: Productos líquidos para beber" required
+                               th:value="${categoria.descripcion}">
+                    </div>
+                    <div class="col-md-4 d-flex">
+                        <button type="submit" class="btn btn-save btn-custom w-100">
+                            <i class="bi bi-save"></i>
+                            <span>Guardar</span>
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Tabla de categorías -->
+    <div class="card card-custom">
+        <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h4 class="mb-0">
+                    <i class="bi bi-list-ul"></i> 
+                    <span th:if="${usuario != null and usuario.isAdministrador()}">
+                        <span th:text="${viendoInactivos} ? 'Categorías Eliminadas' : 'Listado de Categorías'"></span>
+                    </span>
+                    <span th:if="${usuario != null and usuario.isCajero()}">
+                        <span th:text="${viendoInactivos} ? 'Categorías Eliminadas (Consulta)' : 'Consulta de Categorías'"></span>
+                    </span>
+                </h4>
+                <div th:if="${usuario != null and usuario.isAdministrador()}" class="header-actions">
+                    <a th:if="${!viendoInactivos}" th:href="@{/categorias/reporte}" class="btn btn-export btn-custom">
+                        <i class="bi bi-file-earmark-pdf"></i> Exportar PDF
+                    </a>
+                    <a th:if="${!viendoInactivos}" th:href="@{/categorias(accion='verInactivos')}" class="btn btn-secondary btn-custom">
+                        <i class="bi bi-eye-slash"></i> Ver eliminadas
+                    </a>
+                    <a th:if="${viendoInactivos}" th:href="@{/categorias}" class="btn btn-primary btn-custom">
+                        <i class="bi bi-eye"></i> Ver activas
+                    </a>
+                </div>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table table-custom table-hover">
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Descripción</th>
+                            <th th:if="${usuario != null and usuario.isAdministrador()}">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="cat : ${categorias}">
+                            <td th:text="${cat.nombre}"></td>
+                            <td th:text="${cat.descripcion}"></td>
+                            <td th:if="${usuario != null and usuario.isAdministrador()}">
+                                <div class="action-buttons">
+                                    <!-- Show reactivate button for inactive categories -->
+                                    <div th:if="${viendoInactivos}" class="d-flex justify-content-center">
+                                        <a th:href="@{/categorias(accion='reactivar', id=${cat.id})}"
+                                           class="btn btn-success btn-custom btn-sm btn-reactivate"
+                                           onclick="return confirm('¿Estás seguro de reactivar esta categoría?');">
+                                            <i class="bi bi-arrow-counterclockwise"></i> Reactivar
+                                        </a>
+                                    </div>
+                                    <!-- Show edit and delete buttons for active categories -->
+                                    <div th:if="${!viendoInactivos}" class="d-flex gap-2 justify-content-center">
+                                        <a th:href="@{/categorias(id=${cat.id}, nombre=${cat.nombre}, descripcion=${cat.descripcion})}"
+                                           class="btn btn-edit btn-custom btn-sm">
+                                            <i class="bi bi-pencil"></i> Editar
+                                        </a>
+                                        <form th:action="@{/categorias/eliminar}" method="post" class="d-inline"
+                                              th:onsubmit="return confirm('¿Estás seguro de eliminar esta categoría?');">
+                                            <input type="hidden" name="idEliminar" th:value="${cat.id}" />
+                                            <button type="submit" class="btn btn-delete btn-custom btn-sm">
+                                                <i class="bi bi-trash"></i> Eliminar
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr th:if="${categorias == null or #lists.isEmpty(categorias)}">
+                            <td th:colspan="${usuario != null and usuario.isAdministrador() ? 3 : 2}" class="empty-message">
+                                <i class="bi bi-info-circle"></i> No hay categorías registradas
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>        </div>
+    </div>
+</div>
+</div>
+
+<div th:replace="fragments/footer :: footer"></div>
+
+<!-- Script de seguridad para prevenir navegación hacia atrás después del logout -->
+<script th:src="@{/js/security.js}"></script>
+
+</body>
+</html>

@@ -1,0 +1,1014 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head th:replace="fragments/header :: header('Carga Masiva de Productos')">
+</head>
+<body>
+    <div th:replace="fragments/header :: navigation"></div>    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #3a506b 0%, #5d89ba 100%);
+            --secondary-gradient: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            --accent-gradient: linear-gradient(135deg, #48c9b0 0%, #58d68d 100%);
+            --card-shadow: 0 8px 25px rgba(58, 80, 107, 0.12);
+            --hover-shadow: 0 15px 35px rgba(58, 80, 107, 0.18);
+            --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --border-radius: 12px;
+            --primary-color: #3a506b;
+            --accent-color: #5d89ba;
+            --success-color: #28a745;
+            --danger-color: #dc3545;
+            --warning-color: #ffc107;
+            --info-color: #17a2b8;
+            --text-primary: #2c3e50;
+            --text-color: #495057;
+            --bg-light: #f8f9fa;
+            --border-light: rgba(58, 80, 107, 0.08);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, 
+                rgba(58, 80, 107, 0.03) 0%, 
+                rgba(93, 137, 186, 0.02) 50%,
+                rgba(241, 242, 246, 0.8) 100%);
+            font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+            color: var(--text-color);
+            animation: fadeInBackground 0.8s ease-out;
+            min-height: 100vh;            line-height: 1.6;
+        }
+
+        @keyframes fadeInBackground {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .main-content {
+            min-height: calc(100vh - 200px);
+            padding: 2rem 0;
+            animation: containerSlide 0.7s ease-out;
+        }
+
+        @keyframes containerSlide {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .card-custom {
+            border: none;
+            border-radius: var(--border-radius);
+            box-shadow: var(--card-shadow);
+            transition: var(--transition-smooth);
+            overflow: hidden;
+            animation: slideInUp 0.8s ease-out;
+            margin-bottom: 2.5rem;
+            background: rgba(255, 255, 255, 1) !important;
+        }
+
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(40px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .card-custom:hover {
+            box-shadow: var(--hover-shadow);
+            transform: translateY(-4px) scale(1.01);
+        }
+        
+        .card-header-custom {
+            background: var(--primary-gradient);
+            color: white;
+            padding: 2rem 2.5rem;
+            border-radius: var(--border-radius) var(--border-radius) 0 0 !important;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card-header-custom::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent);
+            transition: left 1s ease;
+        }
+
+        .card-custom:hover .card-header-custom::before {
+            left: 100%;
+        }
+
+        .card-header-custom::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #f39c12, #e74c3c, #9b59b6, #3498db, #1abc9c);
+            background-size: 300% 100%;
+            animation: shimmer 3s linear infinite;
+        }
+
+        @keyframes shimmer {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 100% 50%; }
+        }
+
+        .card-header-custom h3 {
+            margin: 0;
+            font-weight: 700;
+            font-size: 1.4rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-header-custom i {
+            font-size: 1.5rem;
+            animation: iconFloat 3s ease-in-out infinite;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+        }
+
+        @keyframes iconFloat {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-4px) rotate(5deg); }
+        }        
+        .card-body-custom {
+            padding: 2.5rem;
+            background: rgba(255, 255, 255, 1) !important;
+            position: relative;
+        }
+
+        .card-body-custom::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(52, 152, 219, 0.3), transparent);
+        }
+        
+        .alert-custom {
+            border-radius: 12px;
+            border: none;
+            padding: 1.5rem 2rem;
+            animation: slideInDown 0.6s ease-out;
+            font-weight: 500;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+            position: relative;
+            overflow: hidden;
+            color: inherit !important;
+        }
+
+        .alert-custom::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: currentColor;
+            opacity: 0.8;
+        }
+
+        @keyframes slideInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+        
+        .alert-success-custom {
+            background: linear-gradient(135deg, rgba(39, 174, 96, 0.08) 0%, rgba(46, 204, 113, 0.12) 100%);
+            color: #0f5132 !important;
+            border-left: 4px solid var(--success-color);
+        }
+        
+        .alert-danger-custom {
+            background: linear-gradient(135deg, rgba(231, 76, 60, 0.08) 0%, rgba(192, 57, 43, 0.12) 100%);
+            color: #842029 !important;
+            border-left: 4px solid var(--danger-color);
+        }
+        
+        .alert-info-custom {
+            background: linear-gradient(135deg, rgba(52, 152, 219, 0.08) 0%, rgba(23, 162, 184, 0.12) 100%);
+            color: #055160 !important;
+            border-left: 4px solid var(--info-color);
+        }        
+        .btn-custom {
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            padding: 0.875rem 2rem;
+            transition: var(--transition-smooth);
+            position: relative;
+            overflow: hidden;
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.625rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-custom::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.25), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .btn-custom:hover::before {
+            left: 100%;
+        }
+
+        .btn-custom::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            padding: 2px;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            mask-composite: xor;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .btn-custom:hover::after {
+            opacity: 1;
+        }
+        
+        .btn-custom i {
+            transition: var(--transition-smooth);
+            font-size: 1.1rem;
+        }
+
+        .btn-custom:hover i {
+            transform: scale(1.1) rotate(5deg);
+        }
+        
+        .btn-primary-custom {
+            background: var(--primary-gradient);
+            color: white;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+        }
+        
+        .btn-primary-custom:hover {
+            background: linear-gradient(135deg, #1e3a5f 0%, #2980b9 50%, #4ea5d9 100%);
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 8px 24px rgba(44, 62, 80, 0.25);
+            color: white;
+        }
+
+        .btn-primary-custom:active {
+            transform: translateY(-1px) scale(0.98);
+        }
+        
+        .btn-secondary-custom {
+            background: var(--secondary-gradient);
+            color: white;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+        }
+        
+        .btn-secondary-custom:hover {
+            background: linear-gradient(135deg, #2c3e50 0%, #7fb3d3 100%);
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 8px 24px rgba(52, 73, 94, 0.25);
+            color: white;
+        }
+        
+        .btn-outline-info-custom {
+            border: 2px solid var(--info-color);
+            color: var(--info-color);
+            background: rgba(23, 162, 184, 0.05);
+            backdrop-filter: blur(5px);
+        }        
+        .btn-outline-info-custom:hover {
+            background: var(--info-color);
+            border-color: var(--info-color);
+            color: white;
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 8px 24px rgba(23, 162, 184, 0.25);
+        }
+
+        .btn-info-custom {
+            background: linear-gradient(135deg, var(--info-color) 0%, #54a3ff 100%);
+            color: white;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-info-custom:hover {
+            background: linear-gradient(135deg, #138496 0%, #3d8bfd 100%);
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 8px 24px rgba(23, 162, 184, 0.25);
+            color: white;
+        }
+        
+        .table-custom {
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            background: white;
+            box-shadow: var(--card-shadow);
+            border: none;
+        }
+        
+        .table-custom thead {
+            background: var(--primary-gradient);
+            position: relative;
+        }
+
+        .table-custom thead::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #f39c12, #e74c3c, #9b59b6, #3498db, #1abc9c);
+            background-size: 300% 100%;
+            animation: shimmer 3s linear infinite;
+        }
+        
+        .table-custom th {
+            color: white;
+            border: none;
+            padding: 1.25rem 1rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 1px;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+        }
+
+        .table-custom tbody tr {
+            transition: var(--transition-smooth);
+            animation: fadeInRow 0.6s ease-out;
+            border: none;
+        }
+
+        @keyframes fadeInRow {
+            from {
+                opacity: 0;
+                transform: translateX(-30px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0) scale(1);
+            }
+        }
+
+        .table-custom tbody tr:hover {
+            background: linear-gradient(135deg, 
+                rgba(52, 152, 219, 0.06) 0%, 
+                rgba(155, 89, 182, 0.04) 50%,
+                rgba(46, 204, 113, 0.06) 100%);
+            transform: scale(1.005) translateX(4px);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+        }
+
+        .table-custom tbody td {
+            padding: 1.25rem 1rem;
+            border: none;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.03);
+            vertical-align: middle;
+            font-weight: 500;
+            color: var(--text-primary) !important;
+        }        
+        .form-control-custom {
+            border: 2px solid rgba(52, 152, 219, 0.15);
+            border-radius: 12px;
+            padding: 1rem 1.25rem;
+            transition: var(--transition-smooth);
+            background: rgba(255, 255, 255, 1) !important;
+            color: var(--text-primary) !important;
+            font-weight: 500;
+            font-size: 0.95rem;
+            backdrop-filter: blur(5px);
+        }
+        
+        .form-control-custom:focus {
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 0.25rem rgba(52, 152, 219, 0.15), 0 4px 16px rgba(52, 152, 219, 0.1);
+            background: white;
+            transform: translateY(-2px) scale(1.01);
+            outline: none;
+        }
+        
+        .form-text-custom {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            margin-top: 0.5rem;
+            font-weight: 500;
+        }
+        
+        .section-title {
+            color: var(--primary-color);
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-bottom: 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .section-title i {
+            color: var(--accent-color);
+            font-size: 1.25rem;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+        }
+        
+        .actions-container {
+            display: flex;
+            gap: 1.25rem;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 2.5rem;
+        }
+
+        .form-label {
+            font-weight: 700;
+            color: var(--primary-color) !important;
+            margin-bottom: 0.75rem;
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .container {
+            animation: containerSlide 1s ease-out;
+        }
+
+        @keyframes containerSlide {
+            from {
+                opacity: 0;
+                transform: translateY(30px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }        /* File upload styling */
+        .form-control[type="file"] {
+            border: 3px dashed rgba(93, 137, 186, 0.3);
+            border-radius: 16px;
+            padding: 2rem;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 249, 250, 0.98) 100%);
+            transition: var(--transition-smooth);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+        }
+        
+        .form-control[type="file"]:hover {
+            border-color: var(--accent-color);
+            background: linear-gradient(135deg, rgba(255, 255, 255, 1) 0%, rgba(240, 248, 255, 1) 100%);
+            transform: scale(1.02);
+            box-shadow: 0 8px 24px rgba(93, 137, 186, 0.15);
+        }.stats-card {
+            background: rgba(255, 255, 255, 0.98);
+            border: 2px solid var(--border-light);
+            border-radius: 16px;
+            padding: 2rem 1.5rem;
+            text-align: center;
+            transition: var(--transition-smooth);
+            margin-bottom: 1.5rem;
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+            box-shadow: var(--card-shadow);
+        }
+
+        .stats-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--primary-gradient);
+            transform: scaleX(0);
+            transition: transform 0.4s ease;
+        }
+
+        .stats-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .stats-card:hover {
+            transform: translateY(-8px) scale(1.05);
+            box-shadow: var(--hover-shadow);
+            border-color: var(--accent-color);
+        }
+
+        .stats-card .number {
+            font-size: 2.8rem;
+            font-weight: 800;
+            color: var(--primary-color);
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-bottom: 0.75rem;
+            display: block;
+            animation: numberPulse 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes numberPulse {
+            from { transform: scale(1); }
+            to { transform: scale(1.05); }
+        }
+
+        .stats-card .number.text-success { color: var(--success-color) !important; }
+        .stats-card .number.text-danger { color: var(--danger-color) !important; }
+        .stats-card .number.text-info { color: var(--info-color) !important; }
+
+        .stats-card .label {
+            color: var(--text-color);
+            font-size: 0.95rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+        }        /* Responsive design */
+        @media (max-width: 768px) {
+            .main-title {
+                font-size: 1.8rem;
+                text-align: center;
+                margin-bottom: 2rem;
+            }
+
+            .main-title i {
+                font-size: 1.6rem;
+            }
+            
+            .actions-container {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .card-custom {
+                margin: 1rem 0;
+            }
+            
+            .main-content {
+                padding: 1rem 0;
+            }
+
+            .card-header-custom {
+                padding: 1.5rem;
+            }
+
+            .card-body-custom {
+                padding: 2rem 1.5rem;
+            }
+
+            .btn-custom {
+                padding: 0.75rem 1.5rem;
+                font-size: 0.9rem;
+            }
+
+            .stats-card {
+                padding: 1.5rem 1rem;
+            }
+
+            .stats-card .number {
+                font-size: 2.2rem;
+            }
+
+            .d-flex.justify-content-center {
+                flex-direction: column;
+                align-items: stretch;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .main-title {
+                font-size: 1.5rem;
+                flex-direction: column;
+                text-align: center;
+                gap: 0.5rem;
+            }
+
+            .card-body-custom {
+                padding: 1.5rem 1rem;
+            }
+
+            .btn-custom {
+                padding: 0.625rem 1.25rem;
+                font-size: 0.85rem;
+            }
+
+            .stats-card .number {
+                font-size: 1.8rem;
+            }
+        }/* Título principal */
+        .main-title {
+            color: var(--primary-color);
+            font-weight: 800;
+            font-size: 2.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .main-title i {
+            color: var(--accent-color);
+            font-size: 2.2rem;
+            animation: iconGlow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes iconGlow {
+            from { filter: drop-shadow(0 0 5px rgba(93, 137, 186, 0.3)); }
+            to { filter: drop-shadow(0 0 15px rgba(93, 137, 186, 0.6)); }
+        }
+
+        /* Correcciones de contraste para carga masiva */
+        
+        /* Mejorar fondo para mejor contraste */
+        body {
+            background: linear-gradient(135deg, 
+                rgba(248, 249, 250, 1) 0%, 
+                rgba(241, 245, 249, 1) 25%,
+                rgba(236, 240, 241, 1) 50%,
+                rgba(245, 246, 250, 1) 75%,
+                rgba(253, 254, 255, 1) 100%) !important;
+        }
+
+        /* Asegurar fondos sólidos en cards */
+        .card-custom {
+            background: rgba(255, 255, 255, 1) !important;
+        }
+
+        .card-body-custom {
+            background: rgba(255, 255, 255, 1) !important;
+        }
+
+        /* Mejorar stats cards */
+        .stats-card {
+            background: rgba(255, 255, 255, 1) !important;
+            border: 2px solid rgba(52, 152, 219, 0.2) !important;
+        }
+
+        /* Asegurar visibilidad del texto */
+        .table-custom tbody td {
+            color: var(--text-primary) !important;
+        }
+
+        .table-custom tbody td strong {
+            color: var(--primary-color) !important;
+            font-weight: 700;
+        }
+
+        .text-success {
+            color: #198754 !important;
+            font-weight: 600;
+        }
+
+        .text-danger {
+            color: #dc3545 !important;
+            font-weight: 600;
+        }
+
+        .text-primary {
+            color: var(--primary-color) !important;
+            font-weight: 600;
+        }
+
+        .text-info {
+            color: #0dcaf0 !important;
+            font-weight: 600;
+        }
+
+        /* Mejorar formularios */
+        .form-control-custom {
+            background: rgba(255, 255, 255, 1) !important;
+            color: var(--text-primary) !important;
+        }
+
+        .form-label {
+            color: var(--primary-color) !important;
+        }
+
+        /* Mejorar alertas */
+        .alert-custom {
+            color: inherit !important;
+        }
+
+        .alert-success-custom {
+            color: #0f5132 !important;
+        }
+
+        .alert-danger-custom {
+            color: #842029 !important;
+        }    </style>
+</head>
+<body>
+
+<div class="main-content">
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">            <!-- Título -->
+            <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap">
+                <h1 class="main-title mb-0">
+                    <i class="bi bi-cloud-upload"></i>
+                    Carga Masiva de Productos
+                </h1>
+            </div>
+
+            <!-- Mensaje de error -->
+            <div th:if="${error}" class="alert alert-danger alert-custom alert-danger-custom mb-4">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                <span th:text="${error}"></span>
+            </div>
+
+            <!-- Mensaje de éxito -->
+            <div th:if="${mensaje}" class="alert alert-success alert-custom alert-success-custom mb-4">
+                <i class="bi bi-check-circle-fill me-2"></i>
+                <span th:text="${mensaje}"></span>
+            </div>
+
+            <!-- Resultados de la operación -->
+            <div th:if="${operacionCompletada}" class="card card-custom mb-4">
+                <div class="card-header card-header-custom">
+                    <h3>
+                        <i class="bi bi-clipboard-check me-2"></i>
+                        Resultado de la Carga Masiva
+                    </h3>
+                </div>
+                <div class="card-body card-body-custom">                    <div class="row" th:if="${operacion != null}">
+                        <div class="col-md-3 text-center">
+                            <div class="stats-card">
+                                <div class="number text-primary" th:text="${operacion.totalProductos}">0</div>
+                                <div class="label">Total Procesados</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 text-center">
+                            <div class="stats-card">
+                                <div class="number text-success" th:text="${operacion.productosExitosos}">0</div>
+                                <div class="label">Exitosos</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 text-center">
+                            <div class="stats-card">
+                                <div class="number text-danger" th:text="${operacion.productosFallidos}">0</div>
+                                <div class="label">Fallidos</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 text-center">
+                            <div class="stats-card">
+                                <div class="number text-info" th:text="${#numbers.formatDecimal(operacion.porcentajeExito, 1, 1)} + '%'">0%</div>
+                                <div class="label">Porcentaje de Éxito</div>
+                            </div>
+                        </div>
+                    </div>                    <!-- Botones de acción -->
+                    <div class="d-flex justify-content-center gap-3 flex-wrap mt-4">
+                        <a th:href="@{/historial/operacion/{id}(id=${operacion.id})}" 
+                           class="btn btn-info-custom btn-custom">
+                            <i class="bi bi-eye"></i>
+                            Ver Detalles Completos
+                        </a>
+                        <a href="/productos" class="btn btn-primary-custom btn-custom">
+                            <i class="bi bi-arrow-left"></i>
+                            Volver a Productos
+                        </a>
+                        <a href="/historial/movimientos" class="btn btn-secondary-custom btn-custom">
+                            <i class="bi bi-clock-history"></i>
+                            Ver Historial
+                        </a>
+                    </div>
+
+                    <!-- Errores detallados si los hay -->
+                    <div th:if="${detallesFallidos != null and !detallesFallidos.isEmpty()}" class="mt-4">
+                        <h5 class="text-danger">
+                            <i class="bi bi-exclamation-triangle me-2"></i>
+                            Productos que no pudieron procesarse:
+                        </h5>
+                        <div class="table-responsive">
+                            <table class="table table-custom">
+                                <thead>
+                                    <tr>
+                                        <th>Línea</th>
+                                        <th>Código</th>
+                                        <th>Nombre</th>
+                                        <th>Error</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="detalle : ${detallesFallidos}">
+                                        <td th:text="${detalle.lineaArchivo}"></td>
+                                        <td th:text="${detalle.codigoProducto}"></td>
+                                        <td th:text="${detalle.nombreProducto}"></td>
+                                        <td class="text-danger" th:text="${detalle.mensajeError}"></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Formulario de carga -->
+            <div class="card card-custom">
+                <div class="card-header card-header-custom">
+                    <h3>
+                        <i class="bi bi-cloud-upload me-2"></i>
+                        Subir Archivo CSV
+                    </h3>
+                </div>
+                <div class="card-body card-body-custom">
+                    <!-- Información sobre el formato -->
+                    <div class="alert alert-info alert-custom alert-info-custom mb-4">
+                        <h5 class="alert-heading">
+                            <i class="bi bi-info-circle me-2"></i>
+                            Formato del Archivo CSV
+                        </h5>
+                        <p class="mb-0">
+                            El archivo debe tener el siguiente formato de columnas (con encabezados):
+                            <br><strong>Código, Nombre, Descripción, Precio, Stock, Categoría, Unidad, IVA (opcional), Fecha Vencimiento (opcional)</strong>
+                        </p>
+                        <hr>
+                        <div class="d-flex">
+                            <a href="/productos/plantilla-csv" class="btn btn-outline-info-custom btn-custom">
+                                <i class="bi bi-download me-2"></i>
+                                Descargar Plantilla CSV
+                            </a>
+                        </div>
+                    </div>
+
+                    <form action="/productos/carga-masiva" method="post" enctype="multipart/form-data">
+                        <div class="mb-4">
+                            <label for="archivo" class="form-label section-title">
+                                <i class="bi bi-file-spreadsheet"></i>
+                                Seleccionar Archivo CSV
+                            </label>
+                            <input type="file" id="archivo" name="archivo" 
+                                   class="form-control form-control-custom" 
+                                   accept=".csv,.txt"
+                                   required>
+                            <div class="form-text-custom">
+                                Solo archivos CSV con separación por comas. Tamaño máximo: 10MB
+                            </div>
+                        </div>                        <div class="actions-container">
+                            <button type="submit" class="btn btn-primary-custom btn-custom">
+                                <i class="bi bi-upload"></i>
+                                Procesar Archivo
+                            </button>
+                            <a href="/productos" class="btn btn-secondary-custom btn-custom">
+                                <i class="bi bi-arrow-left"></i>
+                                Cancelar
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Instrucciones detalladas -->
+            <div class="card card-custom mt-4">
+                <div class="card-header card-header-custom">
+                    <h3>
+                        <i class="bi bi-question-circle me-2"></i>
+                        Instrucciones
+                    </h3>
+                </div>
+                <div class="card-body card-body-custom">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h5>Campos Obligatorios:</h5>
+                            <ul>
+                                <li><strong>Código:</strong> Único para cada producto</li>
+                                <li><strong>Nombre:</strong> Nombre del producto</li>
+                                <li><strong>Descripción:</strong> Descripción del producto</li>
+                                <li><strong>Precio:</strong> Precio unitario (número decimal)</li>
+                                <li><strong>Stock:</strong> Cantidad inicial (número entero)</li>
+                                <li><strong>Categoría:</strong> Nombre de la categoría (se crea si no existe)</li>
+                                <li><strong>Unidad:</strong> Nombre de la unidad (se crea si no existe)</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <h5>Campos Opcionales:</h5>
+                            <ul>
+                                <li><strong>IVA:</strong> Porcentaje de IVA (número decimal)</li>
+                                <li><strong>Fecha Vencimiento:</strong> Formato YYYY-MM-DD</li>
+                            </ul>
+                            <h5 class="mt-3">Notas Importantes:</h5>
+                            <ul>
+                                <li>Las categorías y unidades se crearán automáticamente si no existen</li>
+                                <li>Los códigos duplicados actualizarán el producto existente</li>
+                                <li>Se mantendrá un historial completo de todos los cambios</li>
+                                <li>Puedes ver el historial completo en la <a href="/historial/movimientos">página de historial</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+<div th:replace="fragments/footer :: footer"></div>
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script th:src="@{/js/security.js}"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Mejorar la experiencia de carga de archivos
+    const fileInput = document.getElementById('archivo');
+    const submitButton = document.querySelector('button[type="submit"]');
+    
+    if (fileInput && submitButton) {
+        fileInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const fileName = file.name;
+                const fileSize = (file.size / 1024 / 1024).toFixed(2); // MB
+                
+                // Validar tamaño del archivo
+                if (file.size > 10 * 1024 * 1024) { // 10MB
+                    alert('El archivo es demasiado grande. El tamaño máximo permitido es 10MB.');
+                    fileInput.value = '';
+                    return;
+                }
+                
+                // Validar extensión
+                const allowedExtensions = ['.csv', '.txt'];
+                const fileExtension = fileName.toLowerCase().substring(fileName.lastIndexOf('.'));
+                
+                if (!allowedExtensions.includes(fileExtension)) {
+                    alert('Formato de archivo no válido. Solo se permiten archivos CSV (.csv) o TXT (.txt).');
+                    fileInput.value = '';
+                    return;
+                }
+                
+                // Actualizar UI
+                submitButton.disabled = false;
+                console.log(`Archivo seleccionado: ${fileName} (${fileSize} MB)`);
+            } else {
+                submitButton.disabled = true;
+            }
+        });
+        
+        // Deshabilitar botón inicialmente si no hay archivo
+        submitButton.disabled = !fileInput.files.length;
+    }
+    
+    // Animaciones para las cards
+    const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+    };
+    
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.animationDelay = '0.1s';
+                entry.target.classList.add('animate-in');
+            }
+        });
+    }, observerOptions);
+    
+    // Observar todas las cards
+    document.querySelectorAll('.card-custom, .stats-card').forEach(card => {
+        observer.observe(card);
+    });
+    
+    // Inicializar tooltips si existen
+    const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+});
+</script>
+
+</body>
+</html>

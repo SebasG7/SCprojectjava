@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Stock History</title>
+    <script>
+        function testStockHistory() {
+            fetch('http://localhost:8080/productos/editar/1')
+                .then(response => response.text())
+                .then(html => {
+                    // Check if Ver Historial button exists
+                    if (html.includes('Ver Historial')) {
+                        console.log('✓ Ver Historial button found');
+                        document.getElementById('result').innerHTML += '<p>✓ Ver Historial button found</p>';
+                    } else {
+                        console.log('✗ Ver Historial button not found');
+                        document.getElementById('result').innerHTML += '<p>✗ Ver Historial button not found</p>';
+                    }
+                    
+                    // Check if stock history modal exists
+                    if (html.includes('modalHistorial')) {
+                        console.log('✓ Stock history modal found');
+                        document.getElementById('result').innerHTML += '<p>✓ Stock history modal found</p>';
+                    } else {
+                        console.log('✗ Stock history modal not found');
+                        document.getElementById('result').innerHTML += '<p>✗ Stock history modal not found</p>';
+                    }
+                    
+                    // Check if historial variable is being passed
+                    if (html.includes('th:each="movimiento : ${historial}"')) {
+                        console.log('✓ Historial variable template code found');
+                        document.getElementById('result').innerHTML += '<p>✓ Historial variable template code found</p>';
+                    } else {
+                        console.log('✗ Historial variable template code not found');
+                        document.getElementById('result').innerHTML += '<p>✗ Historial variable template code not found</p>';
+                    }
+                    
+                    // Check for stock movements
+                    if (html.includes('No hay movimientos de stock')) {
+                        console.log('- No stock movements message found (empty history)');
+                        document.getElementById('result').innerHTML += '<p>- No stock movements message found (empty history)</p>';
+                    } else if (html.includes('ENTRADA') || html.includes('SALIDA')) {
+                        console.log('✓ Stock movement data found');
+                        document.getElementById('result').innerHTML += '<p>✓ Stock movement data found</p>';
+                    } else {
+                        console.log('? Stock movement status unclear');
+                        document.getElementById('result').innerHTML += '<p>? Stock movement status unclear</p>';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    document.getElementById('result').innerHTML += '<p>✗ Error: ' + error.message + '</p>';
+                });
+        }
+    </script>
+</head>
+<body>
+    <h1>Stock History Test</h1>
+    <button onclick="testStockHistory()">Test Stock History Functionality</button>
+    <div id="result"></div>
+</body>
+</html>

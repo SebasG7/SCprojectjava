@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head th:replace="fragments/header :: header('Historial de Movimientos')">
+</head>
+<body>
+    <div th:replace="fragments/header :: navigation"></div>
+
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #3a506b 0%, #5d89ba 100%);
+            --card-shadow: 0 4px 20px rgba(58, 80, 107, 0.1);
+            --hover-shadow: 0 10px 30px rgba(58, 80, 107, 0.2);
+            --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --border-radius: 12px;
+            --primary-color: #3a506b;
+            --accent-color: #5d89ba;
+            --success-color: #28a745;
+            --warning-color: #ffc107;
+            --danger-color: #dc3545;
+            --info-color: #17a2b8;
+            --text-color: #495057;
+        }
+
+        body {
+            background: linear-gradient(135deg, rgba(58, 80, 107, 0.02) 0%, rgba(93, 137, 186, 0.02) 100%);
+            font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+            color: var(--text-color);
+            animation: fadeInBackground 1s ease-out;
+        }
+
+        @keyframes fadeInBackground {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .main-content {
+            min-height: calc(100vh - 200px);
+            padding: 2rem 0;
+            animation: containerSlide 0.6s ease-out;
+        }
+
+        @keyframes containerSlide {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .main-title {
+            color: var(--primary-color);
+            font-weight: 700;
+            font-size: 2.25rem;
+            text-align: center;
+            margin-bottom: 2.5rem;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+        }
+
+        .main-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 3px;
+            background: var(--primary-gradient);
+            border-radius: 2px;
+        }
+
+        .main-title i {
+            color: var(--accent-color);
+            font-size: 2rem;
+        }
+
+        .card-custom {
+            border: none;
+            border-radius: var(--border-radius);
+            box-shadow: var(--card-shadow);
+            transition: var(--transition-smooth);
+            overflow: hidden;
+            margin-bottom: 2rem;
+            position: relative;
+            animation: slideInUp 0.6s ease-out;
+        }
+
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .card-custom:hover {
+            box-shadow: var(--hover-shadow);
+            transform: translateY(-5px);
+        }
+
+        .card-header-custom {
+            background: var(--primary-gradient);
+            color: white;
+            padding: 1.5rem 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card-header-custom::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: left 0.8s;
+        }
+
+        .card-custom:hover .card-header-custom::before {
+            left: 100%;
+        }
+
+        .card-header-custom h5 {
+            margin: 0;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.2rem;
+        }
+
+        .card-header-custom i {
+            font-size: 1.25rem;
+        }
+
+        .card-body-custom {
+            padding: 2rem;
+        }
+
+        /* Estadísticas Cards */
+        .stats-card {
+            background: white;
+            border: 1px solid rgba(58, 80, 107, 0.1);
+            border-radius: var(--border-radius);
+            padding: 2rem 1.5rem;
+            text-align: center;
+            transition: var(--transition-smooth);
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--card-shadow);
+            margin-bottom: 1.5rem;
+            animation: fadeInStats 0.8s ease-out;
+        }
+
+        @keyframes fadeInStats {
+            from {
+                opacity: 0;
+                transform: translateY(20px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .stats-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--hover-shadow);
+        }
+
+        .stats-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            transition: all 0.3s ease;
+        }
+
+        .stats-card:nth-child(1)::before { background: var(--primary-color); }
+        .stats-card:nth-child(2)::before { background: var(--success-color); }
+        .stats-card:nth-child(3)::before { background: var(--warning-color); }
+        .stats-card:nth-child(4)::before { background: var(--danger-color); }
+
+        .stats-card .number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .stats-card:nth-child(1) .number { color: var(--primary-color); }
+        .stats-card:nth-child(2) .number { color: var(--success-color); }
+        .stats-card:nth-child(3) .number { color: var(--warning-color); }
+        .stats-card:nth-child(4) .number { color: var(--danger-color); }
+
+        .stats-card .label {
+            color: var(--text-color);
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Formularios */
+        .form-control-custom {
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            font-weight: 500;
+            color: var(--text-color);
+            background: white;
+            transition: all 0.3s ease;
+        }
+
+        .form-control-custom:focus {
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 0.2rem rgba(93, 137, 186, 0.25);
+            background: white;
+            color: var(--text-color);
+        }
+
+        .form-control-custom::placeholder {
+            color: #6c757d;
+            opacity: 0.7;
+        }
+
+        .form-label {
+            color: var(--text-color);
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Tablas */
+        .table-custom {
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            background: white;
+            box-shadow: var(--card-shadow);
+            border: none;
+        }
+
+        .table-custom thead {
+            background: var(--primary-gradient);
+            border-radius: var(--border-radius) var(--border-radius) 0 0;
+        }
+
+        .table-custom th {
+            color: white;
+            border: none;
+            padding: 1.25rem 1rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 0.5px;
+            vertical-align: middle;
+            text-align: center;
+        }
+
+        .table-custom tbody tr {
+            transition: var(--transition-smooth);
+            animation: fadeInRow 0.6s ease-out;
+        }
+
+        @keyframes fadeInRow {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .table-custom tbody tr:hover {
+            background: rgba(58, 80, 107, 0.05);
+            transform: translateX(4px);
+        }
+
+        .table-custom tbody td {
+            padding: 1rem;
+            border: none;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            vertical-align: middle;
+            font-weight: 500;
+            color: var(--text-color);
+            text-align: center;
+        }
+
+        .table-custom tbody td strong {
+            color: var(--primary-color);
+            font-weight: 700;
+        }
+
+        .table-custom tbody td small {
+            color: #6c757d;
+            font-weight: 400;
+        }
+
+        .text-success {
+            color: var(--success-color) !important;
+            font-weight: 600;
+        }
+
+        .text-danger {
+            color: var(--danger-color) !important;
+            font-weight: 600;
+        }
+
+        .text-info {
+            color: var(--info-color) !important;
+            font-weight: 600;
+        }
+
+        /* Pestañas */
+        .nav-tabs-custom {
+            border-bottom: 2px solid var(--primary-color);
+            margin-bottom: 2rem;
+            background: white;
+            border-radius: var(--border-radius) var(--border-radius) 0 0;
+            padding: 0.5rem;
+            box-shadow: var(--card-shadow);
+        }
+
+        .nav-tabs-custom .nav-link {
+            border: none;
+            color: var(--primary-color);
+            font-weight: 600;
+            padding: 1rem 1.5rem;
+            transition: var(--transition-smooth);
+            border-radius: 8px;
+            margin-right: 0.5rem;
+            background: rgba(58, 80, 107, 0.05);
+        }
+
+        .nav-tabs-custom .nav-link:hover {
+            background: rgba(58, 80, 107, 0.1);
+            color: var(--primary-color);
+        }
+
+        .nav-tabs-custom .nav-link.active {
+            background: var(--primary-gradient);
+            color: white;
+            border: none;
+        }
+
+        /* Botones */
+        .btn-custom {
+            border-radius: 8px;
+            padding: 0.75rem 1.5rem;
+            font-weight: 600;
+            transition: var(--transition-smooth);
+            border: none;
+        }
+
+        .btn-primary-custom {
+            background: var(--primary-gradient);
+            color: white;
+        }
+
+        .btn-primary-custom:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(58, 80, 107, 0.3);
+        }
+
+        .btn-info-custom {
+            background: var(--info-color);
+            color: white;
+        }
+
+        .btn-info-custom:hover {
+            background: #138496;
+            transform: translateY(-1px);
+        }
+
+        .btn-danger-custom {
+            background: var(--danger-color);
+            color: white;
+        }
+
+        .btn-danger-custom:hover {
+            background: #c82333;
+            transform: translateY(-1px);
+        }
+
+        /* Badges */
+        .badge-estado {
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .badge-completado {
+            background: rgba(40, 167, 69, 0.15);
+            color: var(--success-color);
+            border: 1px solid rgba(40, 167, 69, 0.3);
+        }
+
+        .badge-parcial {
+            background: rgba(255, 193, 7, 0.15);
+            color: #e67e22;
+            border: 1px solid rgba(255, 193, 7, 0.3);
+        }
+
+        .badge-fallido {
+            background: rgba(220, 53, 69, 0.15);
+            color: var(--danger-color);
+            border: 1px solid rgba(220, 53, 69, 0.3);
+        }
+
+        .badge-movimiento {
+            padding: 0.4rem 0.8rem;
+            border-radius: 15px;
+            font-weight: 600;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .badge-entrada {
+            background: rgba(40, 167, 69, 0.15);
+            color: var(--success-color);
+            border: 1px solid rgba(40, 167, 69, 0.3);
+        }
+
+        .badge-salida {
+            background: rgba(220, 53, 69, 0.15);
+            color: var(--danger-color);
+            border: 1px solid rgba(220, 53, 69, 0.3);
+        }
+
+        .badge-ajuste {
+            background: rgba(23, 162, 184, 0.15);
+            color: var(--info-color);
+            border: 1px solid rgba(23, 162, 184, 0.3);
+        }
+
+        .badge-venta {
+            background: rgba(111, 66, 193, 0.15);
+            color: #6f42c1;
+            border: 1px solid rgba(111, 66, 193, 0.3);
+        }
+
+        /* Estado vacío */
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: #6c757d;
+        }
+
+        .empty-state i {
+            font-size: 4rem;
+            margin-bottom: 1.5rem;
+            opacity: 0.5;
+            color: var(--accent-color);
+            animation: floatIcon 3s ease-in-out infinite;
+        }
+
+        @keyframes floatIcon {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .empty-state h5 {
+            color: var(--primary-color);
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .empty-state p {
+            color: #6c757d;
+            font-weight: 400;
+        }
+
+        /* Alertas */
+        .alert-custom {
+            border-radius: var(--border-radius);
+            border: none;
+            padding: 1.5rem 2rem;
+            animation: slideInDown 0.6s ease-out;
+            font-weight: 500;
+            box-shadow: var(--card-shadow);
+            position: relative;
+            overflow: hidden;
+        }
+
+        @keyframes slideInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .alert-custom::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: currentColor;
+            opacity: 0.8;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .main-title {
+                font-size: 1.8rem;
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .card-header-custom {
+                padding: 1rem;
+            }
+
+            .card-body-custom {
+                padding: 1rem;
+            }
+
+            .table-responsive {
+                font-size: 0.85rem;
+            }
+
+            .stats-card {
+                margin-bottom: 1rem;
+            }
+
+            .stats-card .number {
+                font-size: 2rem;
+            }
+        }
+    </style>
+
+    <div class="main-content">
+        <div class="container-fluid">
+            <!-- Título Principal -->
+            <div class="row">
+                <div class="col-12">
+                    <h1 class="main-title">
+                        <i class="bi bi-clock-history"></i>
+                        Historial de Movimientos
+                    </h1>
+                </div>
+            </div>
+
+            <!-- Estadísticas -->
+            <div class="row mb-4" th:if="${estadisticas != null}">
+                <div class="col-md-3 col-sm-6 mb-3">
+                    <div class="stats-card">
+                        <div class="number" th:text="${estadisticas.totalOperaciones}">0</div>
+                        <div class="label">Total Operaciones</div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-6 mb-3">
+                    <div class="stats-card">
+                        <div class="number text-success" th:text="${estadisticas.operacionesCompletadas}">0</div>
+                        <div class="label">Completadas</div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-6 mb-3">
+                    <div class="stats-card">
+                        <div class="number text-warning" th:text="${estadisticas.operacionesParciales}">0</div>
+                        <div class="label">Parciales</div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-6 mb-3">
+                    <div class="stats-card">
+                        <div class="number text-danger" th:text="${estadisticas.operacionesFallidas}">0</div>
+                        <div class="label">Fallidas</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Filtros de búsqueda -->
+            <div class="card card-custom mb-4">
+                <div class="card-header card-header-custom">
+                    <h5 class="mb-0">
+                        <i class="bi bi-search me-2"></i>
+                        Filtros de Búsqueda
+                    </h5>
+                </div>
+                <div class="card-body card-body-custom">
+                    <form action="/historial/buscar" method="get">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <label for="fechaInicio" class="form-label">Fecha Inicio</label>
+                                <input type="date" id="fechaInicio" name="fechaInicio" 
+                                       class="form-control form-control-custom"
+                                       th:value="${fechaInicio}">
+                            </div>
+                            <div class="col-md-3">
+                                <label for="fechaFin" class="form-label">Fecha Fin</label>
+                                <input type="date" id="fechaFin" name="fechaFin" 
+                                       class="form-control form-control-custom"
+                                       th:value="${fechaFin}">
+                            </div>
+                            <div class="col-md-3">
+                                <label for="usuario" class="form-label">Usuario</label>
+                                <input type="text" id="usuario" name="usuario" 
+                                       class="form-control form-control-custom"
+                                       placeholder="Nombre de usuario"
+                                       th:value="${usuarioBusqueda}">
+                            </div>
+                            <div class="col-md-3">
+                                <label for="tipoMovimiento" class="form-label">Tipo Movimiento</label>
+                                <select id="tipoMovimiento" name="tipoMovimiento" class="form-control form-control-custom">
+                                    <option value="">Todos</option>
+                                    <option value="ENTRADA" th:selected="${tipoMovimiento == 'ENTRADA'}">Entrada</option>
+                                    <option value="SALIDA" th:selected="${tipoMovimiento == 'SALIDA'}">Salida</option>
+                                    <option value="AJUSTE" th:selected="${tipoMovimiento == 'AJUSTE'}">Ajuste</option>
+                                    <option value="VENTA" th:selected="${tipoMovimiento == 'VENTA'}">Venta</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row mt-3">
+                            <div class="col-12 text-center">
+                                <button type="submit" class="btn btn-primary-custom btn-custom">
+                                    <i class="bi bi-search me-2"></i>
+                                    Buscar
+                                </button>
+                                <a href="/historial/movimientos" class="btn btn-outline-secondary btn-custom ms-2">
+                                    <i class="bi bi-arrow-clockwise me-2"></i>
+                                    Limpiar
+                                </a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Pestañas -->
+            <ul class="nav nav-tabs nav-tabs-custom" id="historialTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="operaciones-tab" data-bs-toggle="tab" 
+                            data-bs-target="#operaciones" type="button" role="tab">
+                        <i class="bi bi-upload me-2"></i>
+                        Operaciones de Carga Masiva
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="movimientos-tab" data-bs-toggle="tab" 
+                            data-bs-target="#movimientos" type="button" role="tab">
+                        <i class="bi bi-arrow-left-right me-2"></i>
+                        Movimientos de Stock
+                    </button>
+                </li>
+            </ul>
+
+            <!-- Contenido de las pestañas -->
+            <div class="tab-content" id="historialTabsContent">
+                <!-- Operaciones de Carga Masiva -->
+                <div class="tab-pane fade show active" id="operaciones" role="tabpanel">
+                    <div class="card card-custom">
+                        <div class="card-body card-body-custom">
+                            <div th:if="${operaciones != null and !operaciones.isEmpty()}" class="table-responsive">
+                                <table class="table table-custom">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Archivo</th>
+                                            <th>Usuario</th>
+                                            <th>Fecha</th>
+                                            <th>Total</th>
+                                            <th>Exitosos</th>
+                                            <th>Fallidos</th>
+                                            <th>Estado</th>
+                                            <th>Acciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr th:each="operacion : ${operaciones}">
+                                            <td th:text="${operacion.id}"></td>
+                                            <td th:text="${operacion.nombreArchivo}"></td>
+                                            <td th:text="${operacion.usuario}"></td>
+                                            <td th:text="${#temporals.format(operacion.fechaOperacion, 'dd/MM/yyyy HH:mm')}"></td>
+                                            <td th:text="${operacion.totalProductos}"></td>
+                                            <td class="text-success" th:text="${operacion.productosExitosos}"></td>
+                                            <td class="text-danger" th:text="${operacion.productosFallidos}"></td>
+                                            <td>
+                                                <span th:class="'badge badge-estado badge-' + ${#strings.toLowerCase(operacion.estado)}" 
+                                                      th:text="${operacion.estado}"></span>
+                                            </td>
+                                            <td>
+                                                <div class="d-flex gap-2 justify-content-center">
+                                                    <a th:href="@{/historial/operacion/{id}(id=${operacion.id})}" 
+                                                       class="btn btn-info-custom btn-sm">
+                                                        <i class="bi bi-eye me-1"></i>
+                                                        Ver
+                                                    </a>
+                                                    <a th:if="${usuario.isAdministrador() and (operacion.estado == 'COMPLETADO' or operacion.estado == 'PARCIAL') and !#strings.contains(operacion.observaciones, 'REVERTIDO')}"
+                                                       th:href="@{/historial/confirmar-reversion/{id}(id=${operacion.id})}" 
+                                                       class="btn btn-danger-custom btn-sm"
+                                                       title="Revertir operación">
+                                                        <i class="bi bi-arrow-counterclockwise me-1"></i>
+                                                        Revertir
+                                                    </a>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div th:if="${operaciones == null or operaciones.isEmpty()}" class="empty-state">
+                                <i class="bi bi-inbox"></i>
+                                <h5>No hay operaciones de carga masiva registradas</h5>
+                                <p>Las operaciones de carga masiva aparecerán aquí una vez que se realicen.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Movimientos de Stock -->
+                <div class="tab-pane fade" id="movimientos" role="tabpanel">
+                    <div class="card card-custom">
+                        <div class="card-body card-body-custom">
+                            <div th:if="${historialReciente != null and !historialReciente.isEmpty()}" class="table-responsive">
+                                <table class="table table-custom">
+                                    <thead>
+                                        <tr>
+                                            <th>Producto</th>
+                                            <th>Tipo</th>
+                                            <th>Stock Anterior</th>
+                                            <th>Stock Nuevo</th>
+                                            <th>Cantidad</th>
+                                            <th>Motivo</th>
+                                            <th>Usuario</th>
+                                            <th>Fecha</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr th:each="movimiento : ${historialReciente}">
+                                            <td style="text-align: left;">
+                                                <strong th:text="${movimiento.producto.nombre}"></strong><br>
+                                                <small class="text-muted" th:text="${movimiento.producto.codigo}"></small>
+                                            </td>
+                                            <td>
+                                                <span th:class="'badge badge-movimiento badge-' + ${#strings.toLowerCase(movimiento.tipoMovimiento)}" 
+                                                      th:text="${movimiento.tipoMovimiento}"></span>
+                                            </td>
+                                            <td th:text="${movimiento.stockAnterior}"></td>
+                                            <td th:text="${movimiento.stockNuevo}"></td>
+                                            <td>
+                                                <span th:class="${movimiento.isIncremento()} ? 'text-success' : 'text-danger'"
+                                                      th:text="${movimiento.isIncremento()} ? '+' + ${movimiento.cantidad} : '-' + ${movimiento.cantidad}"></span>
+                                            </td>
+                                            <td th:text="${movimiento.motivo}"></td>
+                                            <td th:text="${movimiento.usuario}"></td>
+                                            <td th:text="${#temporals.format(movimiento.fechaMovimiento, 'dd/MM/yyyy HH:mm')}"></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div th:if="${historialReciente == null or historialReciente.isEmpty()}" class="empty-state">
+                                <i class="bi bi-graph-down"></i>
+                                <h5>No hay movimientos de stock registrados</h5>
+                                <p>Los movimientos de stock aparecerán aquí cuando se realicen cambios en el inventario.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div th:replace="fragments/footer :: footer"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script th:src="@{/js/security.js}"></script>
+
+    <script>
+        // Establecer fechas por defecto si están vacías
+        document.addEventListener('DOMContentLoaded', function() {
+            const fechaInicio = document.getElementById('fechaInicio');
+            const fechaFin = document.getElementById('fechaFin');
+            
+            if (!fechaInicio.value) {
+                const hace30Dias = new Date();
+                hace30Dias.setDate(hace30Dias.getDate() - 30);
+                fechaInicio.value = hace30Dias.toISOString().split('T')[0];
+            }
+            
+            if (!fechaFin.value) {
+                const hoy = new Date();
+                fechaFin.value = hoy.toISOString().split('T')[0];
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,903 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head th:replace="fragments/header :: header('Confirmar Reversión')">
+</head>
+<body>
+    <div th:replace="fragments/header :: navigation"></div>    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #3a506b 0%, #5d89ba 100%);
+            --secondary-gradient: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            --warning-gradient: linear-gradient(135deg, #ffc107 0%, #ff8c00 100%);
+            --danger-gradient: linear-gradient(135deg, #dc3545 0%, #e74c3c 100%);
+            --card-shadow: 0 8px 25px rgba(58, 80, 107, 0.12);
+            --hover-shadow: 0 15px 35px rgba(58, 80, 107, 0.18);
+            --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --border-radius: 12px;
+            --primary-color: #3a506b;
+            --accent-color: #5d89ba;
+            --warning-color: #ffc107;
+            --danger-color: #dc3545;
+            --success-color: #28a745;
+            --text-color: #495057;
+            --text-primary: #2c3e50;
+            --bg-light: #f8f9fa;
+            --border-light: rgba(58, 80, 107, 0.08);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, 
+                rgba(58, 80, 107, 0.03) 0%, 
+                rgba(93, 137, 186, 0.02) 50%,
+                rgba(241, 242, 246, 0.8) 100%);
+            font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+            color: var(--text-color);
+            animation: fadeInBackground 0.8s ease-out;
+            min-height: 100vh;
+            line-height: 1.6;
+        }        @keyframes fadeInBackground {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .main-content {
+            min-height: calc(100vh - 200px);
+            padding: 2rem 0;
+            animation: containerSlide 0.7s ease-out;
+        }
+
+        @keyframes containerSlide {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .card-custom {
+            border: none;
+            border-radius: var(--border-radius);
+            box-shadow: var(--card-shadow);
+            transition: var(--transition-smooth);
+            overflow: hidden;
+            animation: slideInUp 0.7s ease-out;
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(10px);
+        }        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(40px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .card-custom:hover {
+            box-shadow: var(--hover-shadow);
+            transform: translateY(-5px) scale(1.01);
+        }
+
+        .card-header-custom {
+            background: var(--primary-gradient);
+            color: white;
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card-header-custom::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, 
+                transparent, 
+                rgba(255, 255, 255, 0.15), 
+                transparent);
+            transition: left 0.8s ease;
+        }
+
+        .card-custom:hover .card-header-custom::before {
+            left: 100%;
+        }
+
+        .card-header-warning {
+            background: var(--warning-gradient);
+            color: white;
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .card-header-warning::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, 
+                transparent, 
+                rgba(255, 255, 255, 0.2), 
+                transparent);
+            transition: left 0.8s ease;
+        }
+
+        .card-custom:hover .card-header-warning::before {
+            left: 100%;
+        }
+
+        .card-header-warning::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, 
+                #ff6b35, #f7931e, #ffcc02, #fff200);
+            background-size: 400% 100%;
+            animation: shimmer 3s linear infinite;
+        }
+
+        @keyframes shimmer {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 400% 50%; }
+        }        .btn-custom {
+            border-radius: 12px;
+            padding: 0.875rem 2rem;
+            font-weight: 700;
+            font-size: 0.95rem;
+            transition: var(--transition-smooth);
+            border: none;
+            position: relative;
+            overflow: hidden;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+            text-decoration: none;
+        }
+
+        .btn-custom::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, 
+                transparent, 
+                rgba(255, 255, 255, 0.3), 
+                transparent);
+            transition: left 0.6s ease;
+        }
+
+        .btn-custom:hover::before {
+            left: 100%;
+        }
+
+        .btn-custom i {
+            transition: var(--transition-smooth);
+            font-size: 1.1rem;
+        }
+
+        .btn-custom:hover i {
+            transform: scale(1.15) rotate(3deg);
+        }        .btn-danger-custom {
+            background: var(--danger-gradient);
+            color: white;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-danger-custom:hover {
+            background: linear-gradient(135deg, #c82333, #bd2130);
+            transform: translateY(-4px) scale(1.05);
+            box-shadow: 0 12px 30px rgba(220, 53, 69, 0.3);
+            color: white;
+        }
+
+        .btn-secondary-custom {
+            background: var(--secondary-gradient);
+            color: white;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+        }        .btn-secondary-custom:hover {
+            background: linear-gradient(135deg, #5a6268, #3d4449);
+            transform: translateY(-4px) scale(1.05);
+            box-shadow: 0 12px 30px rgba(108, 117, 125, 0.3);
+            color: white;
+        }
+
+        /* Estilos para opciones de motivo */
+        .motivo-options {
+            background: rgba(248, 249, 250, 0.6);
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            border: 1px solid var(--border-light);
+        }
+
+        .form-check {
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            transition: var(--transition-smooth);
+            border: 1px solid transparent;
+        }
+
+        .form-check:hover {
+            background: rgba(58, 80, 107, 0.05);
+            border-color: rgba(58, 80, 107, 0.15);
+            transform: translateX(5px);
+        }
+
+        .form-check-input:checked + .form-check-label {
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        .form-check-label {
+            cursor: pointer;
+            font-size: 1rem;
+            line-height: 1.4;
+            display: flex;
+            align-items: center;
+            transition: var(--transition-smooth);
+        }
+
+        .form-check-input {
+            transform: scale(1.2);
+            margin-right: 0.75rem;
+        }
+
+        /* Estilos mejorados para botones */
+        .actions-container {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 2rem;
+            padding: 1.5rem 0;
+        }
+
+        .btn-custom {
+            min-width: 180px;
+            padding: 0.75rem 1.5rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 8px;
+            transition: var(--transition-smooth);
+            position: relative;
+            overflow: hidden;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }.alert-custom {
+            border: none;
+            border-radius: var(--border-radius);
+            padding: 1.5rem 2rem;
+            animation: slideInDown 0.6s ease-out;
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        @keyframes slideInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .warning-box {
+            background: linear-gradient(135deg, 
+                rgba(255, 193, 7, 0.12) 0%, 
+                rgba(255, 140, 0, 0.08) 100%);
+            border: 2px solid rgba(255, 193, 7, 0.3);
+            border-left: 6px solid var(--warning-color);
+            padding: 2rem;
+            border-radius: var(--border-radius);
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .warning-box::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--warning-gradient);
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.7; }
+            50% { opacity: 1; }
+        }
+
+        .info-section {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+            border-left: 4px solid var(--accent-color);
+            box-shadow: var(--card-shadow);
+            transition: var(--transition-smooth);
+        }
+
+        .info-section:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--hover-shadow);
+        }
+
+        .info-section h5 {
+            color: var(--primary-color);
+            font-weight: 700;
+            font-size: 1.2rem;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+        }        .product-list {
+            max-height: 350px;
+            overflow-y: auto;
+            border: 2px solid var(--border-light);
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            background: rgba(248, 249, 250, 0.8);
+            backdrop-filter: blur(5px);
+        }
+
+        .product-list::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .product-list::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.05);
+            border-radius: 10px;
+        }
+
+        .product-list::-webkit-scrollbar-thumb {
+            background: var(--primary-gradient);
+            border-radius: 10px;
+        }
+
+        .product-item {
+            padding: 1rem;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: var(--transition-smooth);
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+        }
+
+        .product-item:hover {
+            background: rgba(58, 80, 107, 0.05);
+            transform: translateX(5px);
+        }
+
+        .product-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+
+        .product-item strong {
+            color: var(--primary-color);
+            font-weight: 700;
+            font-family: 'Courier New', monospace;
+        }        .badge-action {
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+            transition: var(--transition-smooth);
+        }
+
+        .badge-action:hover {
+            transform: scale(1.1);
+        }
+
+        .badge-created {
+            background: linear-gradient(135deg, var(--success-color), #20c997);
+            color: white;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+        }
+
+        .badge-updated {
+            background: linear-gradient(135deg, var(--accent-color), #3498db);
+            color: white;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+        }
+
+        .icon-warning {
+            color: var(--warning-color);
+            font-size: 4rem;
+            margin-bottom: 1.5rem;
+            animation: warningPulse 2s ease-in-out infinite;
+            filter: drop-shadow(0 4px 8px rgba(255, 193, 7, 0.3));
+        }
+
+        @keyframes warningPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .text-center {
+            text-align: center;
+        }        .actions-container {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+            margin-top: 2.5rem;
+            padding-top: 2rem;
+            border-top: 2px solid var(--border-light);
+        }
+
+        @media (max-width: 768px) {
+            .actions-container {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .btn-custom {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .card-header-warning {
+                padding: 1.5rem;
+            }
+
+            .info-section {
+                padding: 1.5rem;
+            }
+
+            .product-list {
+                max-height: 250px;
+                padding: 1rem;
+            }
+
+            .icon-warning {
+                font-size: 3rem;
+            }
+        }
+
+        .form-control {
+            border: 2px solid var(--border-light);
+            border-radius: var(--border-radius);
+            padding: 1rem;
+            transition: var(--transition-smooth);
+            font-size: 1rem;
+            font-weight: 500;
+            background: rgba(255, 255, 255, 0.9);
+            resize: vertical;
+        }        .form-control:focus {
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 0.3rem rgba(93, 137, 186, 0.25);
+            outline: none;
+            background: white;
+        }
+
+        .form-control:invalid {
+            border-color: var(--danger-color);
+            box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.15);
+        }
+
+        .form-control:valid {
+            border-color: var(--success-color);
+            box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.15);
+        }
+
+        .form-label {
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 0.75rem;
+            font-size: 1rem;
+        }
+
+        .form-text {
+            color: var(--text-color);
+            font-size: 0.9rem;
+            font-weight: 500;
+            margin-top: 0.5rem;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        /* Mejoras adicionales */
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .info-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .info-item strong {
+            color: var(--primary-color);
+            font-weight: 700;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .info-item span {
+            color: var(--text-color);
+            font-weight: 500;
+            font-size: 1rem;
+        }
+    </style>
+
+    <div class="main-content">
+        <div class="container py-4">
+            <!-- Mensaje de error -->
+            <div th:if="${error}" class="alert alert-danger alert-custom mb-4">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                <span th:text="${error}"></span>
+            </div>
+
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="card card-custom">
+                        <div class="card-header card-header-warning text-center">
+                            <i class="bi bi-exclamation-triangle icon-warning"></i>
+                            <h3 class="mb-0">
+                                <i class="bi bi-arrow-counterclockwise me-2"></i>
+                                Confirmar Reversión de Carga Masiva
+                            </h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="warning-box">
+                                <h5 class="text-warning mb-3">
+                                    <i class="bi bi-exclamation-triangle me-2"></i>
+                                    ¡ATENCIÓN! Esta acción no se puede deshacer
+                                </h5>
+                                <p class="mb-0">
+                                    Está a punto de revertir la operación de carga masiva. Esto afectará los productos que fueron creados o modificados durante esta operación.
+                                </p>
+                            </div>                            <!-- Información de la operación -->
+                            <div class="info-section">
+                                <h5 class="mb-3">
+                                    <i class="bi bi-info-circle me-2"></i>
+                                    Información de la Operación
+                                </h5>
+                                <div class="info-grid">
+                                    <div class="info-item">
+                                        <strong>Nombre del Archivo</strong>
+                                        <span th:text="${operacion.nombreArchivo}">-</span>
+                                    </div>
+                                    <div class="info-item">
+                                        <strong>Fecha de Operación</strong>
+                                        <span th:text="${#temporals.format(operacion.fechaOperacion, 'dd/MM/yyyy HH:mm')}">-</span>
+                                    </div>
+                                    <div class="info-item">
+                                        <strong>Usuario Responsable</strong>
+                                        <span th:text="${operacion.usuario}">-</span>
+                                    </div>
+                                    <div class="info-item">
+                                        <strong>Estado Actual</strong>
+                                        <span th:text="${operacion.estado}" class="fw-bold text-primary">-</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Productos que serán afectados -->
+                            <div th:if="${productosCreados.size() > 0}" class="info-section">
+                                <h5 class="mb-3">
+                                    <i class="bi bi-plus-circle text-success me-2"></i>
+                                    Productos que serán ELIMINADOS (<span th:text="${productosCreados.size()}"></span>)
+                                </h5>
+                                <p class="text-muted mb-3">Los siguientes productos fueron creados en esta operación y serán marcados como inactivos:</p>
+                                <div class="product-list">
+                                    <div th:each="producto : ${productosCreados}" class="product-item">
+                                        <div>
+                                            <strong th:text="${producto.codigoProducto}"></strong> - 
+                                            <span th:text="${producto.nombreProducto}"></span>
+                                        </div>
+                                        <span class="badge badge-action badge-created">CREADO</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div th:if="${productosActualizados.size() > 0}" class="info-section">
+                                <h5 class="mb-3">
+                                    <i class="bi bi-pencil-square text-primary me-2"></i>
+                                    Productos que serán RESTAURADOS (<span th:text="${productosActualizados.size()}"></span>)
+                                </h5>
+                                <p class="text-muted mb-3">Los siguientes productos fueron actualizados y se intentará restaurar su estado anterior:</p>
+                                <div class="product-list">
+                                    <div th:each="producto : ${productosActualizados}" class="product-item">
+                                        <div>
+                                            <strong th:text="${producto.codigoProducto}"></strong> - 
+                                            <span th:text="${producto.nombreProducto}"></span>
+                                        </div>
+                                        <span class="badge badge-action badge-updated">ACTUALIZADO</span>
+                                    </div>
+                                </div>
+                            </div>                            <!-- Campo de motivo -->
+                            <div class="info-section">
+                                <h5 class="mb-3">
+                                    <i class="bi bi-chat-left-text text-warning me-2"></i>
+                                    Motivo de la Reversión
+                                </h5>
+                                <form th:action="@{'/historial/revertir/' + ${operacion.id}}" method="post" id="formReversion">
+                                    <!-- Opciones predefinidas -->
+                                    <div class="form-group mb-4">
+                                        <label class="form-label">
+                                            <strong>Seleccione el motivo de la reversión:</strong>
+                                            <span class="text-danger">*</span>
+                                        </label>
+                                        <div class="motivo-options">
+                                            <div class="form-check mb-2">
+                                                <input class="form-check-input" type="radio" name="motivoOption" id="motivo1" value="Error en precios de productos">
+                                                <label class="form-check-label" for="motivo1">
+                                                    <i class="bi bi-currency-dollar text-danger me-2"></i>
+                                                    Error en precios de productos
+                                                </label>
+                                            </div>
+                                            <div class="form-check mb-2">
+                                                <input class="form-check-input" type="radio" name="motivoOption" id="motivo2" value="Productos duplicados o incorrectos">
+                                                <label class="form-check-label" for="motivo2">
+                                                    <i class="bi bi-files text-warning me-2"></i>
+                                                    Productos duplicados o incorrectos
+                                                </label>
+                                            </div>
+                                            <div class="form-check mb-2">
+                                                <input class="form-check-input" type="radio" name="motivoOption" id="motivo3" value="Archivo CSV con datos erróneos">
+                                                <label class="form-check-label" for="motivo3">
+                                                    <i class="bi bi-file-earmark-excel text-info me-2"></i>
+                                                    Archivo CSV con datos erróneos
+                                                </label>
+                                            </div>
+                                            <div class="form-check mb-2">
+                                                <input class="form-check-input" type="radio" name="motivoOption" id="motivo4" value="Categorías o unidades creadas incorrectamente">
+                                                <label class="form-check-label" for="motivo4">
+                                                    <i class="bi bi-tags text-secondary me-2"></i>
+                                                    Categorías o unidades creadas incorrectamente
+                                                </label>
+                                            </div>
+                                            <div class="form-check mb-2">
+                                                <input class="form-check-input" type="radio" name="motivoOption" id="motivo5" value="Carga masiva ejecutada por error">
+                                                <label class="form-check-label" for="motivo5">
+                                                    <i class="bi bi-exclamation-triangle text-warning me-2"></i>
+                                                    Carga masiva ejecutada por error
+                                                </label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="motivoOption" id="motivoOtro" value="otro">
+                                                <label class="form-check-label" for="motivoOtro">
+                                                    <i class="bi bi-pencil text-primary me-2"></i>
+                                                    Otro motivo (especificar)
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Campo de texto personalizado -->
+                                    <div class="form-group" id="motivoPersonalizado" style="display: none;">
+                                        <label for="motivoReversion" class="form-label">
+                                            <strong>Describa el motivo específico:</strong>
+                                            <span class="text-danger">*</span>
+                                        </label>
+                                        <textarea class="form-control" id="motivoReversion" name="motivoTexto" rows="4" 
+                                                  placeholder="Describa detalladamente el motivo de la reversión..."
+                                                  maxlength="500"></textarea>
+                                        <div class="form-text">
+                                            <i class="bi bi-info-circle me-1"></i>
+                                            Este motivo quedará registrado permanentemente en el historial de la operación.
+                                            <span class="text-muted">(Mínimo 10 caracteres)</span>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Campo oculto para el motivo final -->
+                                    <input type="hidden" id="motivoFinal" name="motivo" required>
+                                </form>
+                            </div>                            <!-- Acciones -->
+                            <div class="actions-container">
+                                <button type="submit" class="btn btn-danger-custom btn-custom" id="btnConfirmar" form="formReversion">
+                                    <i class="bi bi-arrow-counterclockwise"></i>
+                                    Confirmar Reversión
+                                </button>
+                                
+                                <a th:href="@{'/historial/operacion/' + ${operacion.id}}" class="btn btn-secondary-custom btn-custom">
+                                    <i class="bi bi-x-circle"></i>
+                                    Cancelar
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>    <div th:replace="fragments/footer :: footer"></div>
+
+    <!-- Script de seguridad para prevenir navegación hacia atrás después del logout -->
+    <script th:src="@{/js/security.js}"></script>    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('formReversion');
+            const motivoPersonalizado = document.getElementById('motivoPersonalizado');
+            const motivoReversion = document.getElementById('motivoReversion');
+            const motivoFinal = document.getElementById('motivoFinal');
+            const btnConfirmar = document.getElementById('btnConfirmar');
+            const motivoOptions = document.querySelectorAll('input[name="motivoOption"]');
+            
+            // Manejar cambios en las opciones de motivo
+            motivoOptions.forEach(option => {
+                option.addEventListener('change', function() {
+                    if (this.value === 'otro') {
+                        // Mostrar campo personalizado
+                        motivoPersonalizado.style.display = 'block';
+                        motivoReversion.required = true;
+                        motivoFinal.value = '';
+                    } else {
+                        // Ocultar campo personalizado y usar motivo predefinido
+                        motivoPersonalizado.style.display = 'none';
+                        motivoReversion.required = false;
+                        motivoReversion.value = '';
+                        motivoFinal.value = this.value;
+                    }
+                    validarFormulario();
+                });
+            });
+            
+            // Validación del motivo personalizado
+            if (motivoReversion) {
+                motivoReversion.addEventListener('input', function() {
+                    if (document.getElementById('motivoOtro').checked) {
+                        motivoFinal.value = this.value.trim();
+                    }
+                    validarFormulario();
+                });
+            }
+            
+            // Función para validar el formulario
+            function validarFormulario() {
+                const motivoSeleccionado = document.querySelector('input[name="motivoOption"]:checked');
+                let esValido = false;
+                
+                if (motivoSeleccionado) {
+                    if (motivoSeleccionado.value === 'otro') {
+                        // Validar motivo personalizado
+                        const textoPersonalizado = motivoReversion.value.trim();
+                        esValido = textoPersonalizado.length >= 10;
+                        
+                        if (textoPersonalizado.length < 10 && textoPersonalizado.length > 0) {
+                            motivoReversion.setCustomValidity('El motivo debe tener al menos 10 caracteres');
+                        } else {
+                            motivoReversion.setCustomValidity('');
+                        }
+                    } else {
+                        // Motivo predefinido seleccionado
+                        esValido = true;
+                    }
+                }
+                
+                btnConfirmar.disabled = !esValido;
+                btnConfirmar.style.opacity = esValido ? '1' : '0.6';
+            }
+            
+            // Validar al enviar el formulario
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const motivoSeleccionado = document.querySelector('input[name="motivoOption"]:checked');
+                
+                if (!motivoSeleccionado) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Seleccione un motivo',
+                        text: 'Debe seleccionar un motivo para la reversión.',
+                        confirmButtonText: 'Entendido',
+                        confirmButtonColor: '#ffc107'
+                    });
+                    return false;
+                }
+                
+                let motivoTexto = motivoFinal.value.trim();
+                
+                if (motivoSeleccionado.value === 'otro' && motivoTexto.length < 10) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Motivo insuficiente',
+                        text: 'El motivo personalizado debe tener al menos 10 caracteres.',
+                        confirmButtonText: 'Entendido',
+                        confirmButtonColor: '#ffc107'
+                    });
+                    motivoReversion.focus();
+                    return false;
+                }
+                
+                // Confirmación final con SweetAlert2
+                Swal.fire({
+                    title: '¿Está completamente seguro?',
+                    html: `
+                        <div class="text-start">
+                            <p class="mb-3">¿Desea revertir esta operación de carga masiva?</p>
+                            <div class="alert alert-warning mb-3">
+                                <strong>Motivo seleccionado:</strong><br>
+                                <em>${motivoTexto}</em>
+                            </div>
+                            <div class="alert alert-danger mb-0">
+                                <i class="bi bi-exclamation-triangle me-2"></i>
+                                <strong>Esta acción NO se puede deshacer.</strong><br>
+                                Se eliminarán productos, categorías y unidades creadas en esta operación.
+                            </div>
+                        </div>
+                    `,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#dc3545',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: '<i class="bi bi-arrow-repeat me-2"></i>Sí, revertir operación',
+                    cancelButtonText: '<i class="bi bi-x-circle me-2"></i>Cancelar',
+                    customClass: {
+                        confirmButton: 'btn btn-danger px-4 me-3',
+                        cancelButton: 'btn btn-secondary px-4'
+                    },
+                    buttonsStyling: false,
+                    allowOutsideClick: false,
+                    allowEscapeKey: false,
+                    width: '600px'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // Deshabilitar el botón y mostrar estado de procesamiento
+                        btnConfirmar.disabled = true;
+                        btnConfirmar.innerHTML = '<i class="bi bi-arrow-repeat me-2"></i>Procesando...';
+                        
+                        // Mostrar modal de procesamiento
+                        Swal.fire({
+                            title: 'Procesando reversión...',
+                            text: 'Por favor espere mientras se procesa la operación.',
+                            icon: 'info',
+                            allowOutsideClick: false,
+                            allowEscapeKey: false,
+                            showConfirmButton: false,
+                            didOpen: () => {
+                                Swal.showLoading();
+                            }
+                        });
+                        
+                        // Enviar el formulario
+                        form.submit();
+                    }
+                });
+                
+                return false;
+            });
+            
+            // Inicializar validación
+            validarFormulario();
+        });
+    </script>
+</body>
+</html>

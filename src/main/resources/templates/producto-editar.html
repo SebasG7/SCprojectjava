@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head th:replace="fragments/header :: header('Editar Producto')">
+</head>
+<body>
+    <div th:replace="fragments/header :: navigation"></div>
+
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #3a506b 0%, #5d89ba 100%);
+            --card-shadow: 0 4px 20px rgba(58, 80, 107, 0.1);
+            --hover-shadow: 0 10px 30px rgba(58, 80, 107, 0.2);
+            --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --border-radius: 12px;
+            --primary-color: #3a506b;
+            --success-color: #28a745;
+            --warning-color: #ffc107;
+            --danger-color: #dc3545;
+            --info-color: #17a2b8;
+        }
+
+        .main-content {
+            min-height: calc(100vh - 200px);
+            background: linear-gradient(135deg, rgba(58, 80, 107, 0.02) 0%, rgba(93, 137, 186, 0.02) 100%);
+            animation: fadeInBackground 1s ease-out;
+        }
+
+        @keyframes fadeInBackground {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .card-custom {
+            border: none;
+            border-radius: var(--border-radius);
+            box-shadow: var(--card-shadow);
+            transition: var(--transition-smooth);
+            overflow: hidden;
+            position: relative;
+            animation: slideInUp 0.6s ease-out;
+        }
+
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .card-header-custom {
+            background: var(--primary-gradient);
+            color: white;
+            padding: 1.5rem;
+            border: none;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stock-management {
+            background: linear-gradient(135deg, rgba(40, 167, 69, 0.1) 0%, rgba(23, 162, 184, 0.1) 100%);
+            border: 2px solid #e9ecef;
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        .stock-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .btn-stock {
+            border-radius: 8px;
+            font-weight: 500;
+            padding: 0.75rem 1.5rem;
+            transition: var(--transition-smooth);
+            position: relative;
+            overflow: hidden;
+            border: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            justify-content: center;
+        }
+
+        .btn-stock-in {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+        }
+
+        .btn-stock-in:hover {
+            background: linear-gradient(135deg, #218838 0%, #1ca085 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(40, 167, 69, 0.3);
+            color: white;
+        }
+
+        .btn-stock-out {
+            background: linear-gradient(135deg, #dc3545 0%, #e83e8c 100%);
+            color: white;
+        }
+
+        .btn-stock-out:hover {
+            background: linear-gradient(135deg, #c82333 0%, #d91a72 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(220, 53, 69, 0.3);
+            color: white;
+        }
+
+        .stock-info {
+            background: white;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-left: 4px solid var(--info-color);
+        }
+
+        .form-control, .form-select {
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            padding: 0.75rem;
+            transition: var(--transition-smooth);
+            background: rgba(255, 255, 255, 0.9);
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.2rem rgba(58, 80, 107, 0.25);
+            background: white;
+        }
+
+        .btn-primary {
+            background: var(--primary-gradient);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 0.75rem 1.5rem;
+            transition: var(--transition-smooth);
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #2e4057 0%, #4a7ba7 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(58, 80, 107, 0.3);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 0.75rem 1.5rem;
+            transition: var(--transition-smooth);
+        }
+
+        .btn-secondary:hover {
+            background: linear-gradient(135deg, #5a6268 0%, #3d4449 100%);
+            transform: translateY(-2px);
+            color: white;
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .form-text {
+            font-size: 0.875rem;
+            color: #6c757d;
+        }
+
+        /* Modal styles */
+        .modal-content {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-header {
+            background: var(--primary-gradient);
+            color: white;
+            border: none;
+            border-radius: 12px 12px 0 0;
+        }
+
+        .current-stock {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary-color);
+        }        .historial-item {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            transition: var(--transition-smooth);
+            border-left: 4px solid #e9ecef;
+        }
+
+        .historial-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.12);
+        }
+
+        .historial-entrada {
+            border-left-color: var(--success-color) !important;
+        }
+
+        .historial-salida {
+            border-left-color: var(--danger-color) !important;
+        }
+
+        .historial-venta {
+            border-left-color: var(--info-color) !important;
+        }
+
+        .historial-ajuste {
+            border-left-color: var(--warning-color) !important;
+        }
+    </style>
+
+<div class="main-content">
+<div class="container py-4">
+
+    <!-- Mensaje de error/éxito -->
+    <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+        <span th:text="${error}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+
+    <div th:if="${mensaje}" class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="bi bi-check-circle-fill me-2"></i>
+        <span th:text="${mensaje}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+
+    <!-- Información del producto -->
+    <div class="card card-custom mb-4">
+        <div class="card-header card-header-custom">
+            <h3 class="mb-0">
+                <i class="bi bi-pencil-square"></i> 
+                Editar Producto: <span th:text="${producto.nombre}"></span>
+            </h3>
+        </div>
+        <div class="card-body">
+            <form th:action="@{/productos/actualizar}" method="post">
+                <input type="hidden" name="id" th:value="${producto.id}" />
+                
+                <div class="row g-3 mb-3">
+                    <div class="col-md-3">
+                        <label for="codigo" class="form-label">Código</label>
+                        <input type="text" name="codigo" class="form-control" th:value="${producto.codigo}" required />
+                    </div>
+                    <div class="col-md-4">
+                        <label for="nombre" class="form-label">Nombre</label>
+                        <input type="text" name="nombre" class="form-control" th:value="${producto.nombre}" required />
+                    </div>
+                    <div class="col-md-3">
+                        <label for="precio" class="form-label">Precio</label>
+                        <input type="number" name="precio" step="0.01" class="form-control" th:value="${producto.precio}" required />
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label">Stock Actual</label>
+                        <div class="current-stock" th:text="${producto.stock}"></div>
+                        <small class="form-text">Gestionar abajo</small>
+                    </div>
+                </div>
+
+                <div class="row g-3 mb-3">
+                    <div class="col-md-12">
+                        <label for="descripcion" class="form-label">Descripción</label>
+                        <textarea name="descripcion" class="form-control" rows="2" th:text="${producto.descripcion}"></textarea>
+                    </div>
+                </div>
+
+                <div class="row g-3 mb-3">
+                    <div class="col-md-6">
+                        <label for="iva" class="form-label">IVA (%)</label>
+                        <input type="number" name="iva" step="0.01" min="0" max="100" class="form-control" 
+                               th:value="${producto.iva}" />
+                    </div>
+                    <div class="col-md-6">
+                        <label for="fechaVencimiento" class="form-label">Fecha de Vencimiento</label>
+                        <input type="date" name="fechaVencimiento" class="form-control" 
+                               th:value="${producto.fechaVencimiento}" />
+                    </div>
+                </div>
+
+                <div class="row g-3">
+                    <div class="col-md-5">
+                        <label for="categoria_id" class="form-label">Categoría</label>
+                        <select name="categoria_id" class="form-select" required>
+                            <option th:each="cat : ${categorias}" 
+                                    th:value="${cat.id}" 
+                                    th:text="${cat.nombre}"
+                                    th:selected="${producto.categoria.id == cat.id}">
+                            </option>
+                        </select>
+                    </div>
+                    <div class="col-md-5">
+                        <label for="unidad_id" class="form-label">Unidad</label>
+                        <select name="unidad_id" class="form-select" required>
+                            <option th:each="uni : ${unidades}" 
+                                    th:value="${uni.id}" 
+                                    th:text="${uni.nombre}"
+                                    th:selected="${producto.unidad.id == uni.id}">
+                            </option>
+                        </select>
+                    </div>
+                    <div class="col-md-2 d-flex align-items-end">
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="bi bi-save"></i> Actualizar
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Gestión de Stock -->
+    <div class="card card-custom mb-4">
+        <div class="card-header card-header-custom">
+            <h4 class="mb-0">
+                <i class="bi bi-box"></i> Gestión de Stock
+            </h4>
+        </div>
+        <div class="card-body">
+            <div class="stock-management">
+                <div class="stock-info">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <strong>Stock Actual:</strong> 
+                            <span class="current-stock" th:text="${producto.stock}"></span>
+                            <span class="text-muted" th:text="${producto.unidad.nombre}"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <strong>Categoría:</strong> <span th:text="${producto.categoria.nombre}"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="stock-actions">
+                    <button type="button" class="btn btn-stock btn-stock-in" data-bs-toggle="modal" data-bs-target="#modalIngreso">
+                        <i class="bi bi-plus-circle"></i> Ingreso de Stock
+                    </button>
+                    <button type="button" class="btn btn-stock btn-stock-out" data-bs-toggle="modal" data-bs-target="#modalEgreso">
+                        <i class="bi bi-dash-circle"></i> Egreso de Stock
+                    </button>
+                    <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#modalHistorial">
+                        <i class="bi bi-clock-history"></i> Ver Historial
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Botón volver -->
+    <div class="text-center">
+        <a th:href="@{/productos}" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> Volver a Productos
+        </a>
+    </div>
+</div>
+</div>
+
+<!-- Modal para Ingreso de Stock -->
+<div class="modal fade" id="modalIngreso" tabindex="-1" aria-labelledby="modalIngresoLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalIngresoLabel">
+                    <i class="bi bi-plus-circle"></i> Ingreso de Stock
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form th:action="@{/productos/stock/ingreso}" method="post">
+                <input type="hidden" name="productoId" th:value="${producto.id}" />
+                <div class="modal-body">
+                    <div class="alert alert-info">
+                        <strong>Producto:</strong> <span th:text="${producto.nombre}"></span><br>
+                        <strong>Stock Actual:</strong> <span th:text="${producto.stock}"></span>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="cantidad" class="form-label">Cantidad a Ingresar</label>
+                        <input type="number" id="cantidad" name="cantidad" class="form-control" min="1" required />
+                        <div class="form-text">Ingrese la cantidad que desea agregar al stock</div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="motivo" class="form-label">Motivo</label>
+                        <select id="motivo" name="motivo" class="form-select" required>
+                            <option value="">Seleccionar motivo...</option>
+                            <option value="Compra">Compra de mercadería</option>
+                            <option value="Devolución">Devolución de cliente</option>
+                            <option value="Ajuste por inventario">Ajuste por inventario</option>
+                            <option value="Producción">Producción interna</option>
+                            <option value="Donación">Donación recibida</option>
+                            <option value="Otro">Otro motivo</option>
+                        </select>
+                    </div>
+                    
+                    <div class="mb-3" id="motivoPersonalizado" style="display: none;">
+                        <label for="motivoDetalle" class="form-label">Especificar motivo</label>
+                        <input type="text" id="motivoDetalle" name="motivoDetalle" class="form-control" 
+                               placeholder="Describa el motivo específico" />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-stock-in">
+                        <i class="bi bi-plus-circle"></i> Registrar Ingreso
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para Egreso de Stock -->
+<div class="modal fade" id="modalEgreso" tabindex="-1" aria-labelledby="modalEgresoLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalEgresoLabel">
+                    <i class="bi bi-dash-circle"></i> Egreso de Stock
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form th:action="@{/productos/stock/egreso}" method="post">
+                <input type="hidden" name="productoId" th:value="${producto.id}" />
+                <div class="modal-body">
+                    <div class="alert alert-warning">
+                        <strong>Producto:</strong> <span th:text="${producto.nombre}"></span><br>
+                        <strong>Stock Actual:</strong> <span th:text="${producto.stock}"></span>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="cantidadEgreso" class="form-label">Cantidad a Retirar</label>
+                        <input type="number" id="cantidadEgreso" name="cantidad" class="form-control" 
+                               min="1" th:max="${producto.stock}" required />
+                        <div class="form-text">Máximo disponible: <span th:text="${producto.stock}"></span></div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="motivoEgreso" class="form-label">Motivo</label>
+                        <select id="motivoEgreso" name="motivo" class="form-select" required>
+                            <option value="">Seleccionar motivo...</option>
+                            <option value="Producto dañado">Producto dañado</option>
+                            <option value="Producto vencido">Producto vencido</option>
+                            <option value="Muestra gratuita">Muestra gratuita</option>
+                            <option value="Uso interno">Uso interno</option>
+                            <option value="Ajuste por inventario">Ajuste por inventario</option>
+                            <option value="Pérdida">Pérdida o robo</option>
+                            <option value="Otro">Otro motivo</option>
+                        </select>
+                    </div>
+                    
+                    <div class="mb-3" id="motivoPersonalizadoEgreso" style="display: none;">
+                        <label for="motivoDetalleEgreso" class="form-label">Especificar motivo</label>
+                        <input type="text" id="motivoDetalleEgreso" name="motivoDetalle" class="form-control" 
+                               placeholder="Describa el motivo específico" />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-stock-out">
+                        <i class="bi bi-dash-circle"></i> Registrar Egreso
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para Historial de Stock -->
+<div class="modal fade" id="modalHistorial" tabindex="-1" aria-labelledby="modalHistorialLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalHistorialLabel">
+                    <i class="bi bi-clock-history"></i> Historial de Movimientos de Stock
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>            </div>
+            <div class="modal-body" style="max-height: 500px; overflow-y: auto;">
+                <div th:if="${#lists.isEmpty(historial)}" class="text-center text-muted py-4">
+                    <i class="bi bi-info-circle fs-1"></i>
+                    <p>No hay movimientos de stock registrados para este producto.</p>
+                </div>
+                
+                <div th:each="movimiento : ${historial}" class="border p-3 mb-2 bg-light">
+                    <div class="mb-2">
+                        <strong>Fecha:</strong> 
+                        <span th:text="${#temporals.format(movimiento.fechaMovimiento, 'dd/MM/yyyy HH:mm')}">Fecha</span>
+                    </div>
+                    <div class="mb-2">
+                        <strong>Tipo:</strong> 
+                        <span class="badge bg-primary" th:text="${movimiento.tipoMovimiento}">Tipo</span>
+                    </div>
+                    <div class="mb-2">
+                        <strong>Cantidad:</strong> 
+                        <span th:text="${movimiento.cantidad}">0</span>
+                    </div>
+                    <div class="mb-2">
+                        <strong>Stock:</strong> 
+                        <span th:text="${movimiento.stockAnterior}">0</span> → 
+                        <span th:text="${movimiento.stockNuevo}">0</span>
+                    </div>
+                    <div class="mb-2">
+                        <strong>Usuario:</strong> 
+                        <span th:text="${movimiento.usuario}">Usuario</span>
+                    </div>
+                    <div class="mb-2" th:if="${movimiento.motivo}">
+                        <strong>Motivo:</strong> 
+                        <span th:text="${movimiento.motivo}">Motivo</span>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div th:replace="fragments/footer :: footer"></div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Mostrar campo personalizado cuando se selecciona "Otro" en ingreso
+    const motivoSelect = document.getElementById('motivo');
+    const motivoPersonalizado = document.getElementById('motivoPersonalizado');
+    
+    if (motivoSelect && motivoPersonalizado) {
+        motivoSelect.addEventListener('change', function() {
+            if (this.value === 'Otro') {
+                motivoPersonalizado.style.display = 'block';
+                document.getElementById('motivoDetalle').required = true;
+            } else {
+                motivoPersonalizado.style.display = 'none';
+                document.getElementById('motivoDetalle').required = false;
+            }
+        });
+    }
+    
+    // Mostrar campo personalizado cuando se selecciona "Otro" en egreso
+    const motivoEgresoSelect = document.getElementById('motivoEgreso');
+    const motivoPersonalizadoEgreso = document.getElementById('motivoPersonalizadoEgreso');
+    
+    if (motivoEgresoSelect && motivoPersonalizadoEgreso) {
+        motivoEgresoSelect.addEventListener('change', function() {
+            if (this.value === 'Otro') {
+                motivoPersonalizadoEgreso.style.display = 'block';
+                document.getElementById('motivoDetalleEgreso').required = true;
+            } else {
+                motivoPersonalizadoEgreso.style.display = 'none';
+                document.getElementById('motivoDetalleEgreso').required = false;
+            }
+        });
+    }
+    
+    // Validar cantidad máxima en egreso
+    const cantidadEgresoInput = document.getElementById('cantidadEgreso');
+    const stockActual = parseInt([[${producto.stock}]]);
+    
+    if (cantidadEgresoInput) {
+        cantidadEgresoInput.addEventListener('input', function() {
+            if (parseInt(this.value) > stockActual) {
+                this.value = stockActual;
+            }
+        });
+    }
+});
+</script>
+
+<!-- Script de seguridad para prevenir navegación hacia atrás después del logout -->
+<script th:src="@{/js/security.js}"></script>
+
+</body>
+</html>

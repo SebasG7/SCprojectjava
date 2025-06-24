@@ -1,0 +1,947 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head th:replace="fragments/header :: header('Gestión de Productos')">
+</head>
+<body>
+    <div th:replace="fragments/header :: navigation"></div>
+
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #3a506b 0%, #5d89ba 100%);
+            --card-shadow: 0 4px 20px rgba(58, 80, 107, 0.1);
+            --hover-shadow: 0 10px 30px rgba(58, 80, 107, 0.2);
+            --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --border-radius: 12px;
+            --primary-color: #3a506b;
+            --accent-color: #5d89ba;
+            --info-color: #17a2b8;
+            --success-color: #28a745;
+            --warning-color: #ffc107;
+            --danger-color: #dc3545;
+        }
+
+        .main-content {
+            min-height: calc(100vh - 200px);
+            background: linear-gradient(135deg, rgba(58, 80, 107, 0.02) 0%, rgba(93, 137, 186, 0.02) 100%);
+            animation: fadeInBackground 1s ease-out;
+        }
+
+        @keyframes fadeInBackground {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .alert-custom {
+            border: none;
+            border-radius: var(--border-radius);
+            padding: 1rem 1.5rem;
+            animation: slideInDown 0.5s ease-out;
+        }
+
+        @keyframes slideInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .card-custom {
+            border: none;
+            border-radius: var(--border-radius);
+            box-shadow: var(--card-shadow);
+            transition: var(--transition-smooth);
+            overflow: hidden;
+            position: relative;
+            animation: slideInUp 0.6s ease-out;
+        }
+
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .card-custom:hover {
+            box-shadow: var(--hover-shadow);
+            transform: translateY(-5px);
+        }
+
+        .card-header-custom {
+            background: var(--primary-gradient);
+            color: white;
+            padding: 1.5rem;
+            border: none;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card-header-custom::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: left 0.8s;
+        }
+
+        .card-custom:hover .card-header-custom::before {
+            left: 100%;
+        }
+
+        .card-header-custom h3 {
+            margin: 0;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .card-header-custom i {
+            font-size: 1.2rem;
+            animation: iconPulse 2s infinite;
+        }
+
+        @keyframes iconPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .form-control, .form-select {
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            padding: 0.75rem;
+            transition: var(--transition-smooth);
+            background: rgba(255, 255, 255, 0.9);
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 0.2rem rgba(93, 137, 186, 0.25);
+            background: white;
+            transform: translateY(-2px);
+        }
+
+        .btn-custom {
+            border-radius: 8px;
+            font-weight: 500;
+            padding: 0.75rem 1.5rem;
+            transition: var(--transition-smooth);
+            position: relative;
+            overflow: hidden;
+            border: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            justify-content: center;
+        }
+
+        .btn-custom::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn-custom:hover::before {
+            left: 100%;
+        }
+
+        .btn-primary {
+            background: var(--primary-gradient);
+            color: white;
+            border: none;
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #2e4057 0%, #4a7ba7 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(58, 80, 107, 0.3);
+            color: white;
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            border: none;
+        }
+
+        .btn-success:hover {
+            background: linear-gradient(135deg, #218838 0%, #1ca085 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(40, 167, 69, 0.3);
+            color: white;
+        }
+
+        .btn-info {
+            background: linear-gradient(135deg, #17a2b8 0%, #6f42c1 100%);
+            color: white;
+            border: none;
+        }
+
+        .btn-info:hover {
+            background: linear-gradient(135deg, #138496 0%, #5a2d91 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(23, 162, 184, 0.3);
+            color: white;
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #dc3545 0%, #e83e8c 100%);
+            color: white;
+            border: none;
+        }
+
+        .btn-danger:hover {
+            background: linear-gradient(135deg, #c82333 0%, #d91a72 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(220, 53, 69, 0.3);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+            color: white;
+            border: none;
+        }
+
+        .btn-secondary:hover {
+            background: linear-gradient(135deg, #5a6268 0%, #3d4449 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(108, 117, 125, 0.3);
+            color: white;
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%);
+            color: #212529;
+            border: none;
+        }
+
+        .btn-warning:hover {
+            background: linear-gradient(135deg, #e0a800 0%, #e8650e 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 193, 7, 0.3);
+            color: #212529;
+        }
+
+        .table-custom {
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            background: white;
+        }
+
+        .table-custom thead th {
+            background: var(--primary-gradient);
+            color: white;
+            border: none;
+            padding: 1rem;
+            font-weight: 600;
+            position: relative;
+        }
+
+        .table-custom tbody tr {
+            transition: var(--transition-smooth);
+            animation: fadeInRow 0.5s ease-out;
+        }
+
+        @keyframes fadeInRow {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .table-custom tbody tr:hover {
+            background: linear-gradient(135deg, rgba(58, 80, 107, 0.05) 0%, rgba(93, 137, 186, 0.05) 100%);
+            transform: scale(1.01);
+        }
+
+        .table-custom tbody td {
+            padding: 1rem;
+            border: none;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            vertical-align: middle;
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .container {
+            animation: containerSlide 0.8s ease-out;
+        }
+
+        @keyframes containerSlide {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }        /* Responsive animations */
+        @media (max-width: 768px) {
+            .card-custom {
+                margin: 0.5rem 0;
+            }
+        }
+
+        /* Estilos para botones de exportar */
+        .btn-export {
+            background: linear-gradient(135deg, #fd7e14 0%, #e83e8c 100%);
+            color: white;
+            border: none;
+        }
+
+        .btn-export:hover {
+            background: linear-gradient(135deg, #e8650e 0%, #d91a72 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(253, 126, 20, 0.3);
+            color: white;
+        }
+
+        /* Espaciado para botones de acciones principales */
+        .header-actions {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+            align-items: center;
+        }
+
+        .header-actions .btn {
+            white-space: nowrap;
+        }        @media (max-width: 768px) {
+            .header-actions {
+                gap: 0.5rem;
+                justify-content: center;
+            }
+            
+            .header-actions .btn {
+                font-size: 0.875rem;
+                padding: 0.5rem 1rem;
+            }
+        }
+
+        /* Estilos para botones de editar */
+        .btn-edit {
+            background: linear-gradient(135deg, #17a2b8 0%, #6f42c1 100%);
+            color: white;
+            border: none;
+        }
+
+        .btn-edit:hover {
+            background: linear-gradient(135deg, #138496 0%, #5a2d91 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(23, 162, 184, 0.3);
+            color: white;
+        }
+
+        /* Estilos para contenedor de botones de acción en tablas */
+        .action-buttons {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .btn-sm {
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem;
+        }        .empty-message {
+            text-align: center;
+            padding: 3rem;
+            color: #6c757d;
+            font-style: italic;
+        }
+
+        /* Estilos para productos vencidos */
+        .expired-product-row {
+            background: linear-gradient(135deg, rgba(220, 53, 69, 0.1) 0%, rgba(255, 193, 7, 0.1) 100%) !important;
+            border-left: 4px solid var(--danger-color) !important;
+            animation: expiredPulse 2s ease-in-out infinite;
+        }
+
+        .expired-product-row:hover {
+            background: linear-gradient(135deg, rgba(220, 53, 69, 0.15) 0%, rgba(255, 193, 7, 0.15) 100%) !important;
+            transform: scale(1.02);
+            box-shadow: 0 4px 15px rgba(220, 53, 69, 0.3);
+        }
+
+        /* Estilos para productos agotados */
+        .out-of-stock-row {
+            background: linear-gradient(135deg, rgba(255, 193, 7, 0.1) 0%, rgba(253, 126, 20, 0.1) 100%) !important;
+            border-left: 4px solid var(--warning-color) !important;
+            animation: outOfStockPulse 2s ease-in-out infinite;
+        }
+
+        .out-of-stock-row:hover {
+            background: linear-gradient(135deg, rgba(255, 193, 7, 0.15) 0%, rgba(253, 126, 20, 0.15) 100%) !important;
+            transform: scale(1.02);
+            box-shadow: 0 4px 15px rgba(255, 193, 7, 0.3);
+        }
+
+        @keyframes expiredPulse {
+            0%, 100% {
+                background: linear-gradient(135deg, rgba(220, 53, 69, 0.1) 0%, rgba(255, 193, 7, 0.1) 100%);
+            }
+            50% {
+                background: linear-gradient(135deg, rgba(220, 53, 69, 0.2) 0%, rgba(255, 193, 7, 0.2) 100%);
+            }
+        }
+
+        @keyframes outOfStockPulse {
+            0%, 100% {
+                background: linear-gradient(135deg, rgba(255, 193, 7, 0.1) 0%, rgba(253, 126, 20, 0.1) 100%);
+            }
+            50% {
+                background: linear-gradient(135deg, rgba(255, 193, 7, 0.2) 0%, rgba(253, 126, 20, 0.2) 100%);
+            }
+        }
+
+        .empty-message i {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            display: block;
+            opacity: 0.5;
+        }        /* Estilos adicionales para campos de IVA y vencimiento */
+        .badge-iva {
+            background-color: var(--info-color) !important;
+        }
+        
+        .badge-vencido {
+            background-color: var(--danger-color) !important;
+            animation: blink 1.5s infinite;
+        }
+        
+        .badge-proximo-vencer {
+            background-color: var(--warning-color) !important;
+            color: #000 !important;
+        }
+        
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0.5; }
+        }
+        
+        .precio-con-iva {
+            font-weight: bold;
+            color: var(--success-color);
+        }
+        
+        .form-text {
+            font-size: 0.875rem;
+            color: #6c757d;
+        }
+        
+        /* Mejoras para campos de fecha */
+        input[type="date"] {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M5 1v3m6-3v3M1 7h14M3 5h10a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2z'/%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 0.75rem center;
+            background-size: 16px 12px;
+        }        /* Fin de estilos adicionales */
+          /* Estilos específicos para modal - sin transformaciones problemáticas */
+        .modal .btn-custom {
+            transform: none !important;
+            transition: background-color 0.3s ease, box-shadow 0.3s ease !important;
+        }
+
+        .modal .btn-custom:hover {
+            transform: none !important;
+        }
+
+        .modal .form-control:focus {
+            transform: none !important;
+        }
+
+        .modal-content {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+        }
+
+        .modal-backdrop {
+            backdrop-filter: blur(5px);
+        }
+
+        /* Remover efectos problemáticos en el modal */
+        .modal .btn:hover {
+            transform: none !important;
+        }
+
+        .modal .form-control:focus, .modal .form-select:focus {
+            transform: none !important;
+        }        /* SOLUCIÓN DEFINITIVA: Desactivar TODAS las transformaciones globales cuando hay un modal abierto */
+        body.modal-open * {
+            animation: none !important;
+            transition: none !important;
+            transform: none !important;
+        }
+
+        /* Desactivar hover effects globales cuando hay modal abierto */
+        body.modal-open .card-custom:hover {
+            transform: none !important;
+            box-shadow: var(--card-shadow) !important;
+        }
+
+        body.modal-open .btn:hover {
+            transform: none !important;
+        }
+
+        body.modal-open .btn-primary:hover,
+        body.modal-open .btn-success:hover,
+        body.modal-open .btn-info:hover,
+        body.modal-open .btn-danger:hover,
+        body.modal-open .btn-warning:hover,
+        body.modal-open .btn-secondary:hover {
+            transform: none !important;
+        }
+
+        /* Permitir solo transiciones necesarias para el modal */
+        body.modal-open .modal.fade {
+            transition: opacity 0.15s linear !important;
+        }
+
+        body.modal-open .modal.fade .modal-dialog {
+            transition: transform 0.15s ease-out !important;
+            transform: translate(0, -50px) !important;
+        }
+
+        body.modal-open .modal.show .modal-dialog {
+            transform: none !important;
+        }
+
+        /* Aislamiento completo del modal */
+        .modal {
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            z-index: 1055 !important;
+            width: 100% !important;
+            height: 100% !important;
+            overflow-x: hidden !important;
+            overflow-y: auto !important;
+            outline: 0 !important;
+        }
+
+        .modal-backdrop {
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            z-index: 1050 !important;
+            width: 100vw !important;
+            height: 100vh !important;
+            background-color: #000 !important;
+            opacity: 0.5 !important;
+        }
+
+        /* Estilos básicos para botones del modal sin efectos */
+        .modal .btn {
+            transition: background-color 0.2s ease !important;
+            transform: none !important;
+        }
+
+        .modal .btn:hover {
+            transform: none !important;
+        }        /* Eliminar todos los efectos ::before problemáticos en el modal */
+        .modal .btn-custom::before {
+            display: none !important;
+        }
+
+        /* Desactivar la variable CSS problemática en el modal */
+        .modal * {
+            --transition-smooth: none !important;
+        }
+
+        /* Estabilizar el modal completamente */
+        .modal-dialog {
+            transform: none !important;
+            transition: none !important;
+        }
+
+        .modal.fade .modal-dialog {
+            transform: none !important;
+            transition: none !important;
+        }
+
+        .modal.show .modal-dialog {
+            transform: none !important;
+        }
+    </style>
+
+<div class="main-content">
+<div class="container py-4">
+
+    <!-- Mensaje de error -->
+    <div th:if="${error}" class="alert alert-danger alert-custom mb-4">
+        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+        <span th:text="${error}"></span>
+    </div>    <!-- Formulario de productos - Solo para administradores -->
+    <div th:if="${usuario != null and usuario.isAdministrador()}" class="card card-custom mb-4">
+        <div class="card-header card-header-custom">
+            <h3 class="mb-0"><i class="bi bi-box-seam"></i> Gestión de Productos</h3>
+        </div>
+        <div class="card-body">
+            <form th:action="@{/productos}" method="post">
+                <input type="hidden" name="accion" th:value="${productoEditar != null} ? 'actualizar' : ''" />
+                <input type="hidden" name="id" th:value="${productoEditar != null} ? ${productoEditar.id} : ''" />                <div class="row g-3 mb-3">
+                    <div class="col-md-3">
+                        <label for="codigo" class="form-label">Código</label>
+                        <input type="text" name="codigo" class="form-control form-control-custom" placeholder="Ej: PROD-001" required
+                               th:value="${productoEditar != null} ? ${productoEditar.codigo} : ''" />
+                        <small class="form-text text-muted">Código único del producto</small>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="nombre" class="form-label">Nombre</label>
+                        <input type="text" name="nombre" class="form-control form-control-custom" placeholder="Ej: Laptop HP" required
+                               th:value="${productoEditar != null} ? ${productoEditar.nombre} : ''" />
+                    </div>
+                    <div class="col-md-3">
+                        <label for="precio" class="form-label">Precio</label>
+                        <input type="number" name="precio" step="0.01" class="form-control form-control-custom" min="0" placeholder="Ej: 999.99" required
+                               th:value="${productoEditar != null} ? ${productoEditar.precio} : ''" />
+                    </div>                    <div th:if="${productoEditar == null}" class="col-md-2">
+                        <label for="stock" class="form-label">Stock Inicial</label>
+                        <input type="number" name="stock" class="form-control form-control-custom" placeholder="Ej: 50" min="0" required />
+                        <small class="form-text text-muted">Solo para productos nuevos</small>
+                    </div>
+                </div>
+
+                <div class="row g-3 mb-3">
+                    <div class="col-md-12">
+                        <label for="descripcion" class="form-label">Descripción</label>
+                        <textarea name="descripcion" class="form-control form-control-custom" rows="2" placeholder="Descripción del producto (opcional)"
+                                 th:text="${productoEditar != null} ? ${productoEditar.descripcion} : ''"></textarea>
+                    </div>
+                </div>
+
+                <div class="row g-3 mb-3">
+                    <div class="col-md-6">
+                        <label for="iva" class="form-label">IVA (%)</label>
+                        <input type="number" name="iva" step="0.01" min="0" max="100" class="form-control form-control-custom" 
+                               placeholder="Ej: 16.00" 
+                               th:value="${productoEditar != null and productoEditar.iva != null} ? ${productoEditar.iva} : ''" />
+                        <small class="form-text text-muted">Porcentaje de IVA (opcional). Ejemplo: 16 para 16%</small>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="fechaVencimiento" class="form-label">Fecha de Vencimiento</label>
+                        <input type="date" name="fechaVencimiento" class="form-control form-control-custom" 
+                               th:value="${productoEditar != null and productoEditar.fechaVencimiento != null} ? ${productoEditar.fechaVencimiento} : ''" />
+                        <small class="form-text text-muted">Fecha de vencimiento del producto (opcional)</small>
+                    </div>
+                </div>
+
+                <div class="row g-3">
+                    <div class="col-md-5">
+                        <label for="categoria_id" class="form-label">Categoría</label>                        <select name="categoria_id" class="form-select form-control-custom" required>
+                            <option value="">Seleccionar Categoría</option>
+                            <option th:each="cat : ${categorias}" 
+                                    th:value="${cat.id}" 
+                                    th:text="${cat.nombre}" 
+                                    th:selected="${productoEditar != null and productoEditar.categoria != null} ? (${productoEditar.categoria.id} == ${cat.id}) : false">
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-5">
+                        <label for="unidad_id" class="form-label">Unidad</label>                        <select name="unidad_id" class="form-select form-control-custom" required>
+                            <option value="">Seleccionar Unidad</option>
+                            <option th:each="uni : ${unidades}" 
+                                    th:value="${uni.id}" 
+                                    th:text="${uni.nombre}" 
+                                    th:selected="${productoEditar != null and productoEditar.unidad != null} ? (${productoEditar.unidad.id} == ${uni.id}) : false">>
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-2 d-flex align-items-end">
+                        <button type="submit" class="btn btn-save btn-custom w-100">
+                            <i class="bi bi-save"></i> <span th:text="${productoEditar != null} ? 'Actualizar' : 'Guardar'"></span>
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Tabla de productos -->
+    <div class="card card-custom">        <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h4 class="mb-0">
+                    <i class="bi bi-list-ul"></i> 
+                    <span th:if="${usuario != null and usuario.isAdministrador()}">Listado de Productos</span>
+                    <span th:if="${usuario != null and usuario.isCajero()}">Consulta de Productos</span>
+                </h4>                <div th:if="${usuario != null and usuario.isAdministrador()}" class="header-actions">
+                    <a th:href="@{/productos/carga-masiva}" class="btn btn-info btn-custom">
+                        <i class="bi bi-upload"></i> Carga Masiva
+                    </a>
+                    <a th:href="@{/productos/reporte}" class="btn btn-export btn-custom">
+                        <i class="bi bi-file-earmark-pdf"></i> Exportar PDF
+                    </a>                    <button type="button" class="btn btn-secondary btn-custom" data-bs-toggle="modal" data-bs-target="#reporteFechasModal">
+                        <i class="bi bi-calendar-range"></i> Reporte por Fechas
+                    </button>
+                </div>
+            </div>            <!-- Modal para reporte por fechas - Solo para administradores -->
+            <div th:if="${usuario != null and usuario.isAdministrador()}" class="modal fade" id="reporteFechasModal" tabindex="-1" aria-labelledby="reporteFechasModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="reporteFechasModalLabel">Generar Reporte de Stock por Fechas</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <form action="/productos/reporte-fechas" method="get">
+                            <div class="modal-body">
+                                <div class="alert alert-info">
+                                    <i class="bi bi-info-circle"></i>
+                                    Este reporte muestra el historial de stock de los productos entre las fechas seleccionadas, 
+                                    incluyendo stock inicial, entradas, salidas y stock final.
+                                </div>                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <label for="fechaInicio" class="form-label">Fecha Inicio</label>
+                                        <input type="date" class="form-control" id="fechaInicio" name="fechaInicio" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="fechaFin" class="form-label">Fecha Fin</label>
+                                        <input type="date" class="form-control" id="fechaFin" name="fechaFin" required>
+                                    </div>
+                                </div>
+                                <small class="form-text text-muted mt-2">
+                                    Seleccione el rango de fechas para generar el reporte histórico de stock.
+                                </small>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="bi bi-file-earmark-pdf"></i> Generar Reporte
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table table-custom table-hover">                    <thead>
+                        <tr>
+                            <th>Código</th>
+                            <th>Nombre</th>
+                            <th>Precio</th>
+                            <th>IVA (%)</th>
+                            <th>Precio + IVA</th>
+                            <th>Stock</th>
+                            <th>Categoría</th>
+                            <th>Unidad</th>
+                            <th>Vencimiento</th>
+                            <th th:if="${usuario != null and usuario.isAdministrador()}">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>                        <tr th:if="${#lists.isEmpty(productos)}">
+                            <td th:colspan="${usuario != null and usuario.isAdministrador()} ? 10 : 9" class="empty-message">
+                                <i class="bi bi-info-circle"></i> No hay productos registrados
+                            </td>
+                        </tr>                        <tr th:each="p : ${productos}" 
+                            th:classappend="${p.vencido} ? 'table-danger expired-product-row' : (${p.agotado} ? 'table-warning out-of-stock-row' : '')">
+                            <td th:text="${p.codigo}" class="fw-bold text-primary"></td>
+                            <td th:text="${p.nombre}"></td>
+                            <td th:text="'S/. ' + ${#numbers.formatDecimal(p.precio, 1, 'COMMA', 2, 'POINT')}"></td>
+                            <td>
+                                <span th:if="${p.iva != null}" th:text="${#numbers.formatDecimal(p.iva, 1, 'COMMA', 2, 'POINT')} + '%'" class="badge bg-info"></span>
+                                <span th:if="${p.iva == null}" class="text-muted">N/A</span>
+                            </td>
+                            <td>
+                                <span th:if="${p.iva != null}" th:text="'S/. ' + ${#numbers.formatDecimal(p.precioConIva, 1, 'COMMA', 2, 'POINT')}" class="fw-bold"></span>
+                                <span th:if="${p.iva == null}" th:text="'S/. ' + ${#numbers.formatDecimal(p.precio, 1, 'COMMA', 2, 'POINT')}" class="text-muted"></span>
+                            </td>
+                            <td>
+                                <span th:if="${p.stock > 0}" th:text="${p.stock}" class="fw-bold"></span>
+                                <span th:if="${p.stock == 0}" class="badge bg-warning text-dark">
+                                    <i class="bi bi-exclamation-triangle"></i> AGOTADO
+                                </span>
+                            </td>
+                            <td th:text="${p.categoria.nombre}"></td>
+                            <td th:text="${p.unidad.nombre}"></td>
+                            <td>
+                                <span th:if="${p.fechaVencimiento != null}">
+                                    <span th:if="${p.vencido}" th:text="${#temporals.format(p.fechaVencimiento, 'dd/MM/yyyy')}" class="badge bg-danger" title="Producto vencido">
+                                        <i class="bi bi-exclamation-triangle"></i> 
+                                    </span>
+                                    <span th:if="${p.proximoAVencer and !p.vencido}" th:text="${#temporals.format(p.fechaVencimiento, 'dd/MM/yyyy')}" class="badge bg-warning" title="Próximo a vencer">
+                                        <i class="bi bi-clock"></i> 
+                                    </span>
+                                    <span th:if="${!p.vencido and !p.proximoAVencer}" th:text="${#temporals.format(p.fechaVencimiento, 'dd/MM/yyyy')}" class="badge bg-success">
+                                    </span>
+                                </span>
+                                <span th:if="${p.fechaVencimiento == null}" class="text-muted">N/A</span>
+                            </td>
+                            <td th:if="${usuario != null and usuario.isAdministrador()}">
+                                <div class="action-buttons">
+                                    <a th:href="@{'/productos/editar/' + ${p.id}}" class="btn btn-edit btn-custom btn-sm">
+                                        <i class="bi bi-pencil"></i>Editar
+                                    </a>
+                                    <button type="button" onclick="confirmDelete(this)" th:data-id="${p.id}" class="btn btn-delete btn-custom btn-sm">
+                                        <i class="bi bi-trash"></i>Eliminar
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+<div th:replace="fragments/footer :: footer"></div>
+
+<script>
+function confirmDelete(button) {
+    const productId = button.getAttribute('data-id');
+    
+    if (!productId) {
+        console.error('No se pudo obtener el ID del producto');
+        return;
+    }
+    
+    Swal.fire({
+        title: '¿Estás seguro?',
+        text: "¡No podrás revertir esta acción!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#dc3545',
+        cancelButtonColor: '#6c757d',
+        confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'Cancelar'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Crear y enviar formulario dinámicamente
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '/productos/eliminar';
+            
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = 'id';
+            input.value = productId;
+            
+            form.appendChild(input);
+            document.body.appendChild(form);
+            form.submit();
+        }
+    });
+}
+
+// Validación y configuración del modal de reporte por fechas
+document.addEventListener('DOMContentLoaded', function() {
+    const modal = document.getElementById('reporteFechasModal');
+    const fechaInicioInput = document.getElementById('fechaInicio');
+    const fechaFinInput = document.getElementById('fechaFin');
+    
+    if (modal && fechaInicioInput && fechaFinInput) {
+        // Establecer fecha por defecto (último mes)
+        const hoy = new Date();
+        const hace30Dias = new Date();
+        hace30Dias.setDate(hoy.getDate() - 30);
+        
+        fechaInicioInput.value = hace30Dias.toISOString().split('T')[0];
+        fechaFinInput.value = hoy.toISOString().split('T')[0];
+        
+        // Validar que fecha inicio no sea mayor que fecha fin
+        function validarFechas() {
+            const fechaInicio = new Date(fechaInicioInput.value);
+            const fechaFin = new Date(fechaFinInput.value);
+            
+            if (fechaInicio > fechaFin) {
+                fechaFinInput.setCustomValidity('La fecha fin debe ser posterior a la fecha de inicio');
+            } else {
+                fechaFinInput.setCustomValidity('');
+            }
+        }
+        
+        fechaInicioInput.addEventListener('change', validarFechas);
+        fechaFinInput.addEventListener('change', validarFechas);
+        
+        // SOLUCIÓN DEFINITIVA: Gestión completa del estado del modal
+        const modalElement = document.getElementById('reporteFechasModal');
+        if (modalElement) {
+            // Event listeners para gestionar la clase modal-open del body
+            modalElement.addEventListener('show.bs.modal', function () {
+                document.body.classList.add('modal-open');
+                
+                // Desactivar completamente todos los hover effects
+                const style = document.createElement('style');
+                style.id = 'modal-override-styles';
+                style.textContent = `
+                    body.modal-open * {
+                        pointer-events: auto !important;
+                    }
+                    body.modal-open .card-custom:hover,
+                    body.modal-open .btn:hover,
+                    body.modal-open .btn-primary:hover,
+                    body.modal-open .btn-success:hover,
+                    body.modal-open .btn-info:hover,
+                    body.modal-open .btn-danger:hover,
+                    body.modal-open .btn-warning:hover,
+                    body.modal-open .btn-secondary:hover {
+                        transform: none !important;
+                        animation: none !important;
+                        transition: none !important;
+                    }
+                `;
+                document.head.appendChild(style);
+            });
+            
+            modalElement.addEventListener('hidden.bs.modal', function () {
+                document.body.classList.remove('modal-open');
+                
+                // Remover el estilo agregado
+                const style = document.getElementById('modal-override-styles');
+                if (style) {
+                    style.remove();
+                }
+            });
+            
+            // Verificar si Bootstrap está disponible
+            if (typeof bootstrap !== 'undefined') {
+                // Inicializar el modal con configuraciones específicas
+                const modalInstance = new bootstrap.Modal(modalElement, {
+                    backdrop: 'static',
+                    keyboard: true,
+                    focus: true
+                });
+            }
+        }
+    }
+});
+</script>
+
+<!-- Script de seguridad para prevenir navegación hacia atrás después del logout -->
+<script th:src="@{/js/security.js}"></script>
+
+</body>
+</html>

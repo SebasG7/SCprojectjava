@@ -1,0 +1,11 @@
+codigo,nombre,descripcion,precio,stock,categoria,unidad,iva,fecha_vencimiento
+PROD-001,Arroz Premium,Arroz de grano largo premium calidad,4.50,100,Granos,kilogramo,16.00,2025-12-31
+PROD-002,Aceite Vegetal,Aceite vegetal comestible 1L,3.75,50,Aceites,litro,5.00,2026-06-15
+PROD-003,Detergente Líquido,Detergente líquido para ropa 2L,8.99,25,Limpieza,litro,16.00,
+PROD-004,Papel Higiénico,Papel higiénico doble hoja x12 rollos,15.50,80,Higiene,paquete,16.00,
+PROD-005,Leche Entera,Leche entera pasteurizada 1L,2.25,60,Lácteos,litro,0.00,2025-06-25
+PROD-006,Pan Integral,Pan integral artesanal 500g,2.80,40,Panadería,unidad,16.00,2025-06-20
+PROD-007,Manzanas Rojas,Manzanas rojas frescas,1.99,120,Frutas,kilogramo,5.00,
+PROD-008,Jabón Antibacterial,Jabón líquido antibacterial 500ml,4.25,35,Higiene,botella,16.00,2027-03-10
+PROD-009,Shampoo Herbal,Shampoo con extractos herbales naturales,12.50,20,Cuidado Personal,frasco,16.00,2026-08-15
+PROD-010,Cereal Nutritivo,Cereal integral con vitaminas 400g,6.75,45,Desayuno,caja,5.00,2025-09-30
