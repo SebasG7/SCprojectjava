@@ -1,0 +1,12 @@
+{
+  "name": "scprojectjava2",
+  "version": "1.0.0",
+  "description": "Sistema de puntos de venta",
+  "scripts": {
+    "build": "./build.sh",
+    "start": "./start.sh"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

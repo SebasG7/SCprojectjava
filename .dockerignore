@@ -1,0 +1,37 @@
+# Archivos y directorios a ignorar en Docker
+target/
+.mvn/wrapper/maven-wrapper.jar
+.mvn/wrapper/maven-wrapper.properties
+
+# Archivos de IDE
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+
+# Archivos de sistema
+.DS_Store
+Thumbs.db
+
+# Archivos de entorno
+.env
+.env.local
+.env.production
+
+# Logs
+logs/
+*.log
+
+# Archivos temporales
+temp/
+tmp/
+
+# Archivos de prueba específicos del proyecto
+debug-*.html
+test-*.html
+temp_*.html
+TestAbreviaturaUnica.java
+funciones-principales.js
+ventas-script-simplificado.js
+vista-mejorada-mis-ventas.html
