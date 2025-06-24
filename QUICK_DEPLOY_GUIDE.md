@@ -48,7 +48,26 @@ SPRING_PROFILES_ACTIVE=production
 - El primer deploy tomará ~5-10 minutos
 - Los siguientes serán más rápidos
 
-## 🔧 Troubleshooting
+## � Acceso a la Aplicación
+
+### Usuarios de Prueba (Creados Automáticamente)
+
+La aplicación crea automáticamente usuarios de prueba al iniciar:
+
+**Administrador:**
+- Usuario: `admin`
+- Contraseña: `admin123`
+
+**Cajero:**
+- Usuario: `cajero`
+- Contraseña: `cajero123`
+
+### Primera Conexión
+1. Ve a tu URL de Render (ej: `https://tu-app.onrender.com`)
+2. Serás redirigido a `/login`
+3. Usa las credenciales del administrador para acceder
+
+## �🔧 Troubleshooting
 
 ### "Communications link failure"
 ✅ **Solucionado**: Usa `SPRING_PROFILES_ACTIVE=h2` para una solución rápida
@@ -59,5 +78,11 @@ SPRING_PROFILES_ACTIVE=production
 ### "No open ports detected"
 ✅ **Normal**: Render necesita unos segundos para detectar el puerto 8080
 
+### "No puedo iniciar sesión"
+- Verifica credenciales: `admin` / `admin123`
+- Revisa logs para confirmar que se crearon los usuarios
+- Si es necesario, haz un "Manual Deploy" para reiniciar
+
 ## 📞 Soporte
-Si algo falla, revisa los logs en Render Dashboard → tu servicio → "Logs"
+- Revisa `LOGIN_CREDENTIALS.md` para detalles completos
+- Logs en Render Dashboard → tu servicio → "Logs"
