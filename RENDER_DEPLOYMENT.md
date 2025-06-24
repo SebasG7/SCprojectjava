@@ -10,22 +10,28 @@
 
 ### Configuración de Build:
 - **Build Command**: `bash render-build.sh`
-- **Start Command**: `java -jar target/scprojectjava2-0.0.1-SNAPSHOT.jar`
-- **Dockerfile**: `Dockerfile` (o `Dockerfile.simple` si hay problemas con Maven wrapper)
+- **Start Command**: `java -Dspring.profiles.active=production -jar target/scprojectjava2-0.0.1-SNAPSHOT.jar`
+- **Dockerfile**: `Dockerfile.simple` (recomendado para evitar problemas con Maven wrapper)
 
 ### Variables de Entorno Requeridas:
 
-#### Base de Datos (si usas una base de datos externa):
+#### ✅ Configuración Mínima (H2 en memoria):
+```
+SPRING_PROFILES_ACTIVE=h2
+```
+
+#### 🐘 Con PostgreSQL (Render Database):
+```
+DATABASE_URL=postgresql://user:pass@host:5432/database
+SPRING_PROFILES_ACTIVE=postgres
+```
+
+#### 🐬 Con MySQL Externa:
 ```
 DATABASE_URL=jdbc:mysql://tu-host:3306/tu-base-de-datos
 DATABASE_USERNAME=tu-usuario
 DATABASE_PASSWORD=tu-contraseña
-```
-
-#### Configuración de la Aplicación:
-```
 SPRING_PROFILES_ACTIVE=production
-PORT=8080
 ```
 
 #### Configuración de Correo (opcional):
@@ -38,13 +44,41 @@ SPRING_MAIL_PASSWORD=tu-password-de-aplicacion
 
 ## 🗄️ Configuración de Base de Datos
 
-### Opción 1: Base de Datos Externa (Recomendado)
-- Usar un servicio como PlanetScale, AWS RDS, o similar
-- Configurar las variables de entorno con los datos de conexión
+### ✅ Solución Rápida - H2 en Memoria (Para Pruebas)
+Si solo quieres probar el despliegue rápidamente:
 
-### Opción 2: Base de Datos en el mismo servicio (No recomendado para producción)
-- Usar SQLite o H2 para desarrollo/pruebas
-- Modificar application-production.properties para usar una base de datos en memoria
+**Variables de Entorno**:
+```
+SPRING_PROFILES_ACTIVE=h2
+```
+
+No necesitas configurar ninguna base de datos externa. La aplicación usará H2 en memoria.
+
+### 🐘 Opción 1: PostgreSQL en Render (Recomendado)
+1. **Crear PostgreSQL Database en Render**:
+   - Dashboard → "New" → "PostgreSQL"
+   - Copiar la "Internal Database URL"
+
+2. **Variables de Entorno**:
+   ```
+   DATABASE_URL=postgresql://user:pass@host:5432/database
+   SPRING_PROFILES_ACTIVE=postgres
+   ```
+
+### 🐬 Opción 2: MySQL Externa (Avanzado)
+- Usar PlanetScale, AWS RDS, o cualquier MySQL hosting
+- Variables de entorno:
+   ```
+   DATABASE_URL=jdbc:mysql://host:3306/database
+   DATABASE_USERNAME=tu-usuario
+   DATABASE_PASSWORD=tu-contraseña
+   SPRING_PROFILES_ACTIVE=production
+   ```
+
+### 📊 Perfiles Disponibles
+- **`h2`** - Base de datos en memoria (pruebas)
+- **`postgres`** - PostgreSQL (recomendado para producción)
+- **`production`** - MySQL (requiere configuración externa)
 
 ## 🚀 Pasos para Desplegar en Render
 
@@ -108,7 +142,56 @@ docker run -p 8080:8080 scprojectjava2
 
 ### Problemas Comunes de Build
 
-#### Error: "cannot open ./.mvn/wrapper/maven-wrapper.properties"
+#### ✅ Build exitoso pero app no conecta a base de datos
+Tu aplicación se está construyendo correctamente, pero necesitas:
+
+**1. Configurar variables de entorno de base de datos**:
+```
+DATABASE_URL=jdbc:mysql://tu-host:3306/tu-database
+DATABASE_USERNAME=tu-usuario  
+DATABASE_PASSWORD=tu-contraseña
+SPRING_PROFILES_ACTIVE=production
+```
+
+**2. Opciones de base de datos**:
+- **Render Database**: Crear una instancia MySQL en Render
+- **PlanetScale**: Base de datos MySQL gratuita y escalable
+- **AWS RDS**: Para producción seria
+- **Railway**: Alternativa simple y gratuita
+
+**3. Start Command corregido**:
+```
+java -Dspring.profiles.active=production -jar target/scprojectjava2-0.0.1-SNAPSHOT.jar
+```
+
+#### Error: "No active profile set"
+**Solución**: Agregar variable de entorno:
+```
+SPRING_PROFILES_ACTIVE=production
+```
+
+#### Error: "Communications link failure"
+**Problema**: No hay base de datos configurada
+**Solución**: Configurar una de estas opciones:
+
+**Opción 1 - Render Database** (Recomendado):
+1. En Render Dashboard → "New" → "PostgreSQL" 
+2. Copiar la DATABASE_URL
+3. Modificar application-production.properties para PostgreSQL:
+```properties
+spring.datasource.url=${DATABASE_URL}
+spring.datasource.driver-class-name=org.postgresql.Driver
+spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect
+```
+
+**Opción 2 - Base de datos en memoria** (Solo para pruebas):
+```properties
+spring.datasource.url=jdbc:h2:mem:testdb
+spring.datasource.driver-class-name=org.h2.Driver
+spring.jpa.hibernate.ddl-auto=create-drop
+```
+
+#### Error: "Connection refused" o "Cannot connect to database"
 **Solución 1**: Usar Dockerfile.simple
 - En Render, cambiar el Dockerfile a `Dockerfile.simple`
 - Este usa Maven directo en lugar del wrapper

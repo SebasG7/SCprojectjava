@@ -36,9 +36,17 @@ git push origin main
 
 #### Configuración del Servicio
 - **Environment**: `Docker`
-- **Dockerfile**: `Dockerfile.simple` (recomendado) o `Dockerfile`
+- **Dockerfile**: `Dockerfile.simple` (recomendado)
 - **Build Command**: `bash render-build.sh`
-- **Start Command**: `bash start.sh` o `java -jar app.jar`
+- **Start Command**: `bash start.sh`
+
+#### Variables de Entorno Esenciales:
+```
+SPRING_PROFILES_ACTIVE=h2    # Para prueba rápida
+# O para PostgreSQL:
+# DATABASE_URL=postgresql://...
+# SPRING_PROFILES_ACTIVE=postgres
+```
 
 #### Variables de Entorno Requeridas
 ```
