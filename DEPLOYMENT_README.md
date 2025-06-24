@@ -1,5 +1,20 @@
 # 🚀 Despliegue en Render - Guía Rápida
 
+## ✅ ¡Tu aplicación YA se compila correctamente!
+
+**Problema identificado:** Solo falta configurar la variable de entorno del perfil.
+
+### 🚨 SOLUCIÓN INMEDIATA
+
+En Render Dashboard → Environment → Agregar:
+```
+SPRING_PROFILES_ACTIVE=h2
+```
+
+¡Tu aplicación funcionará inmediatamente con base de datos en memoria!
+
+---
+
 ## Archivos Docker Creados
 
 He creado todos los archivos necesarios para desplegar tu proyecto Spring Boot en Render:

@@ -15,10 +15,11 @@
 
 ### Variables de Entorno Requeridas:
 
-#### ✅ Configuración Mínima (H2 en memoria):
+#### ✅ SOLUCIÓN INMEDIATA (H2 en memoria):
 ```
 SPRING_PROFILES_ACTIVE=h2
 ```
+**¡Tu aplicación funcionará inmediatamente!**
 
 #### 🐘 Con PostgreSQL (Render Database):
 ```
@@ -32,6 +33,14 @@ DATABASE_URL=jdbc:mysql://tu-host:3306/tu-base-de-datos
 DATABASE_USERNAME=tu-usuario
 DATABASE_PASSWORD=tu-contraseña
 SPRING_PROFILES_ACTIVE=production
+```
+
+#### 🤖 Auto-detección (Recomendado):
+```
+# No configurar SPRING_PROFILES_ACTIVE
+# El script detectará automáticamente:
+# - Si hay DATABASE_URL → usa el perfil apropiado
+# - Si no hay DATABASE_URL → usa H2 automáticamente
 ```
 
 #### Configuración de Correo (opcional):
@@ -143,7 +152,35 @@ docker run -p 8080:8080 scprojectjava2
 ### Problemas Comunes de Build
 
 #### ✅ Build exitoso pero app no conecta a base de datos
-Tu aplicación se está construyendo correctamente, pero necesitas:
+**ESTE ES TU PROBLEMA ACTUAL** - La aplicación se construye y ejecuta perfectamente, pero falla en la base de datos.
+
+**Síntomas:**
+- ✅ Build exitoso
+- ✅ "Starting Scprojectjava2Application"
+- ✅ "Tomcat initialized with port 8080"  
+- ❌ "No active profile set, falling back to 1 default profile: 'default'"
+- ❌ "Communications link failure"
+
+**SOLUCIÓN INMEDIATA:**
+En Render Dashboard → Environment → Agregar:
+```
+SPRING_PROFILES_ACTIVE=h2
+```
+
+**¿Por qué pasa esto?**
+- Tu aplicación intenta usar el perfil "default"
+- El perfil "default" usa la configuración de `application.properties` (MySQL localhost)
+- En Render no hay MySQL localhost, por eso falla
+
+**Resultado después del fix:**
+```
+INFO: Starting with profile: h2
+INFO: Using H2 database  
+INFO: Tomcat started on port 8080
+INFO: Application started successfully
+```
+
+...existing code...
 
 **1. Configurar variables de entorno de base de datos**:
 ```

@@ -3,11 +3,7 @@
 # Script de inicio para Render
 echo "🚀 Iniciando aplicación Spring Boot..."
 
-# Configurar variables de entorno por defecto si no están definidas
-export SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE:-production}
-export SERVER_PORT=${PORT:-8080}
-
-# Determinar el perfil a usar basado en la configuración de base de datos
+# Determinar el perfil a usar basado en las variables de entorno disponibles
 if [[ -n "$DATABASE_URL" ]]; then
     if [[ "$DATABASE_URL" == *"postgres"* ]]; then
         echo "🐘 Detectado PostgreSQL, usando perfil postgres"
@@ -15,11 +11,19 @@ if [[ -n "$DATABASE_URL" ]]; then
     elif [[ "$DATABASE_URL" == *"mysql"* ]]; then
         echo "🐬 Detectado MySQL, usando perfil production"
         export SPRING_PROFILES_ACTIVE="production"
+    else
+        echo "🗄️  Base de datos detectada, usando perfil por defecto"
+        export SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE:-"production"}
     fi
 else
-    echo "⚠️  No se detectó base de datos, usando H2 en memoria"
-    export SPRING_PROFILES_ACTIVE="h2"
+    # Si no hay DATABASE_URL, usar H2 por defecto
+    echo "⚡ No se detectó configuración de base de datos externa"
+    echo "🗄️  Usando H2 en memoria para pruebas rápidas"
+    export SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE:-"h2"}
 fi
+
+# Configurar puerto
+export SERVER_PORT=${PORT:-8080}
 
 # Buscar el archivo JAR
 JAR_FILE=""
