@@ -1,0 +1,40 @@
+# Dockerfile alternativo para Render - usando Maven directo
+FROM maven:3.9.6-openjdk-21-slim AS build
+
+# Crear directorio de trabajo
+WORKDIR /app
+
+# Copiar pom.xml y descargar dependencias
+COPY pom.xml .
+RUN mvn dependency:go-offline -B
+
+# Copiar código fuente y compilar
+COPY src ./src
+RUN mvn clean package -DskipTests
+
+# Etapa final con imagen más ligera
+FROM openjdk:21-jdk-slim
+
+# Instalar curl para health checks
+RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
+
+# Crear directorio de trabajo
+WORKDIR /app
+
+# Copiar el JAR compilado desde la etapa de build
+COPY --from=build /app/target/scprojectjava2-0.0.1-SNAPSHOT.jar app.jar
+
+# Crear usuario no-root para seguridad
+RUN groupadd -r spring && useradd -r -g spring spring
+RUN chown spring:spring app.jar
+USER spring
+
+# Exponer puerto
+EXPOSE 8080
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=3s --start-period=60s --retries=3 \
+  CMD curl -f http://localhost:8080/actuator/health || exit 1
+
+# Ejecutar aplicación con optimizaciones para contenedores
+CMD ["java", "-XX:+UseContainerSupport", "-XX:MaxRAMPercentage=80.0", "-jar", "app.jar"]

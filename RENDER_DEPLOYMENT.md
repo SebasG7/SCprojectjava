@@ -9,9 +9,9 @@
 - **Rama**: main (o la rama que prefieras)
 
 ### Configuración de Build:
-- **Build Command**: `./build.sh`
-- **Start Command**: `./start.sh`
-- **Dockerfile**: `Dockerfile` (en la raíz del proyecto)
+- **Build Command**: `bash render-build.sh`
+- **Start Command**: `java -jar target/scprojectjava2-0.0.1-SNAPSHOT.jar`
+- **Dockerfile**: `Dockerfile` (o `Dockerfile.simple` si hay problemas con Maven wrapper)
 
 ### Variables de Entorno Requeridas:
 
@@ -105,6 +105,35 @@ docker run -p 8080:8080 scprojectjava2
 5. **Logs**: Los logs están disponibles en el dashboard de Render
 
 ## 🐛 Troubleshooting
+
+### Problemas Comunes de Build
+
+#### Error: "cannot open ./.mvn/wrapper/maven-wrapper.properties"
+**Solución 1**: Usar Dockerfile.simple
+- En Render, cambiar el Dockerfile a `Dockerfile.simple`
+- Este usa Maven directo en lugar del wrapper
+
+**Solución 2**: Verificar .dockerignore
+- Asegurarse de que `.mvn/wrapper/` no esté excluido
+- Los archivos del wrapper deben estar incluidos
+
+**Solución 3**: Build Command alternativo
+- Usar: `mvn clean package -DskipTests && cp target/*.jar app.jar`
+- Start Command: `java -jar app.jar`
+
+#### Error de permisos en mvnw
+**Solución**: Usar el build script
+- Build Command: `bash render-build.sh`
+- Este script maneja permisos automáticamente
+
+#### Build muy lento o timeout
+**Solución**: Usar multi-stage build
+- El `Dockerfile.simple` usa multi-stage para optimizar
+
+### Archivos Dockerfile Disponibles
+1. **`Dockerfile`** - Versión estándar con Maven wrapper
+2. **`Dockerfile.simple`** - Versión con Maven directo (recomendado para Render)
+3. **`Dockerfile.render`** - Versión optimizada con todas las características
 
 - **Error de conexión a base de datos**: Verificar variables de entorno DATABASE_*
 - **Error 404**: Verificar que las rutas estén configuradas correctamente

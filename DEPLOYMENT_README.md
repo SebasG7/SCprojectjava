@@ -5,12 +5,13 @@
 He creado todos los archivos necesarios para desplegar tu proyecto Spring Boot en Render:
 
 ### 📁 Archivos Principales
-- `Dockerfile` - Imagen Docker principal
+- `Dockerfile` - Imagen Docker estándar con Maven wrapper
+- `Dockerfile.simple` - **RECOMENDADO** - Usa Maven directo, más compatible con Render
 - `Dockerfile.render` - Optimizado específicamente para Render
 - `docker-compose.yml` - Para desarrollo local
 - `build.sh` - Script de construcción
-- `start.sh` - Script de inicio
-- `render-build.sh` - Script específico para Render
+- `start.sh` - Script de inicio flexible
+- `render-build.sh` - Script específico para Render con fallbacks
 
 ### ⚙️ Archivos de Configuración
 - `application-production.properties` - Configuración para producción
@@ -35,8 +36,9 @@ git push origin main
 
 #### Configuración del Servicio
 - **Environment**: `Docker`
+- **Dockerfile**: `Dockerfile.simple` (recomendado) o `Dockerfile`
 - **Build Command**: `bash render-build.sh`
-- **Start Command**: `java -jar target/scprojectjava2-0.0.1-SNAPSHOT.jar`
+- **Start Command**: `bash start.sh` o `java -jar app.jar`
 
 #### Variables de Entorno Requeridas
 ```
@@ -79,6 +81,23 @@ docker build -t scprojectjava2 .
 # Ejecutar
 docker run -p 8080:8080 scprojectjava2
 ```
+
+### Solución Rápida para el Error del Maven Wrapper
+
+Si encuentras el error `cannot open ./.mvn/wrapper/maven-wrapper.properties`:
+
+1. **Usar Dockerfile.simple (Recomendado)**:
+   ```bash
+   # Construir con el Dockerfile alternativo
+   docker build -f Dockerfile.simple -t scprojectjava2 .
+   ```
+
+2. **O verificar archivos del wrapper**:
+   ```bash
+   # Verificar que existan los archivos
+   ls -la .mvn/wrapper/
+   git status  # Ver si están siendo ignorados
+   ```
 
 ## 📋 Checklist Pre-Despliegue
 
