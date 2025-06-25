@@ -85,7 +85,7 @@ public class DataInitializer implements CommandLineRunner {
         try {
             String cajeroUsername = "cajero";
             String cajeroPassword = "cajero123";
-            String cajeroName = "Cajero de Prueba";
+            String cajeroName = "Cajero 1";
 
             if (usuarioService.existeNombreUsuario(cajeroUsername)) {
                 logger.warn("Ya existe un usuario con el nombre '{}'. No se creará duplicado.", cajeroUsername);

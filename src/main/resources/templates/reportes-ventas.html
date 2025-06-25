@@ -415,11 +415,70 @@
             color: var(--text-color);
             animation: fadeInBackground 0.8s ease-out;
         }
-          .empty-state i {
+        
+        .empty-state i {
             font-size: 3rem;
             color: var(--accent-color);
             margin-bottom: 1rem;
             animation: iconPulse 2s ease-in-out infinite;
+        }
+        
+        /* Estilos específicos para empty-state en tablas */
+        .empty-state-table {
+            vertical-align: middle;
+            height: 200px;
+            position: relative;
+        }
+        
+        .empty-state-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+        }
+        
+        .empty-state-text {
+            margin-top: 1rem;
+            font-size: 1.1rem;
+            font-weight: 500;
+            color: var(--text-color);
+        }
+        
+        /* Responsive para empty state en tablas */
+        @media (max-width: 768px) {
+            .empty-state-table {
+                height: 150px;
+                padding: 2rem 1rem;
+            }
+            
+            .empty-state-content i {
+                font-size: 2.5rem;
+            }
+            
+            .empty-state-text {
+                font-size: 1rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .empty-state-table {
+                height: 120px;
+                padding: 1.5rem 0.5rem;
+            }
+            
+            .empty-state-content i {
+                font-size: 2rem;
+            }
+            
+            .empty-state-text {
+                font-size: 0.9rem;
+            }
         }
         
         /* Estilos para detalles de ventas */
@@ -694,6 +753,251 @@
                 margin-bottom: 1rem;
             }
         }
+
+        /* Mejoras responsive específicas para móviles */
+        @media (max-width: 768px) {
+            body {
+                overflow-x: hidden;
+            }
+            
+            .main-container {
+                padding-left: 0.75rem !important;
+                padding-right: 0.75rem !important;
+                max-width: 100vw;
+            }
+            
+            .page-title {
+                font-size: 1.75rem;
+                text-align: center;
+                margin-bottom: 1.5rem;
+            }
+            
+            /* Cards de estadísticas responsive */
+            .stats-cards .row {
+                margin: 0;
+            }
+            
+            .stats-cards .col-md-3 {
+                padding: 0.5rem;
+            }
+            
+            .stat-card {
+                padding: 1rem;
+                margin-bottom: 0.75rem;
+                border-radius: 8px;
+            }
+            
+            .stat-icon {
+                font-size: 2rem !important;
+            }
+            
+            .stat-value {
+                font-size: 1.5rem !important;
+            }
+            
+            .stat-label {
+                font-size: 0.8rem !important;
+            }
+            
+            /* Secciones de reportes */
+            .report-section {
+                padding: 1rem;
+                margin-bottom: 1.5rem;
+                border-radius: 8px;
+            }
+            
+            .section-title {
+                font-size: 1.25rem;
+                text-align: center;
+                margin-bottom: 1rem;
+            }
+            
+            /* Filtros responsive */
+            .filter-section {
+                padding: 1rem;
+                margin-bottom: 1rem;
+                border-radius: 8px;
+            }
+            
+            .filter-section h5 {
+                font-size: 1rem;
+                text-align: center;
+                margin-bottom: 1rem;
+            }
+            
+            /* Formularios responsive */
+            .form-control-custom,
+            .form-select-custom {
+                font-size: 0.9rem;
+                padding: 0.75rem;
+            }
+            
+            .form-label {
+                font-size: 0.85rem;
+                margin-bottom: 0.5rem;
+            }
+            
+            /* Botones responsive */
+            .btn-custom {
+                width: 100%;
+                margin-bottom: 0.75rem;
+                padding: 0.75rem;
+                font-size: 0.85rem;
+            }
+            
+            /* Grid de botones responsive */
+            .row.g-2 .col-md-2 {
+                margin-bottom: 0.5rem;
+            }
+            
+            /* Cards de reportes responsive */
+            .card {
+                margin-bottom: 1rem;
+                border-radius: 8px;
+            }
+            
+            .card-body {
+                padding: 1rem;
+            }
+            
+            .card-title {
+                font-size: 1rem;
+            }
+            
+            .card-text {
+                font-size: 0.85rem;
+            }
+            
+            .d-flex.gap-2 {
+                flex-direction: column;
+                gap: 0.5rem !important;
+            }
+            
+            .d-flex.gap-2 .btn {
+                width: 100%;
+                margin-bottom: 0.25rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .main-container {
+                padding-left: 0.5rem !important;
+                padding-right: 0.5rem !important;
+            }
+            
+            .page-title {
+                font-size: 1.5rem;
+            }
+            
+            /* Estadísticas más compactas */
+            .stats-cards .col-md-3 {
+                padding: 0.25rem;
+            }
+            
+            .stat-card {
+                padding: 0.75rem;
+                border-radius: 6px;
+            }
+            
+            .stat-icon {
+                font-size: 1.75rem !important;
+            }
+            
+            .stat-value {
+                font-size: 1.25rem !important;
+            }
+            
+            .stat-label {
+                font-size: 0.75rem !important;
+            }
+            
+            /* Filtros más compactos */
+            .filter-section {
+                padding: 0.75rem;
+            }
+            
+            .form-control-custom,
+            .form-select-custom {
+                font-size: 0.85rem;
+                padding: 0.625rem;
+            }
+            
+            /* Botones más compactos */
+            .btn-custom {
+                padding: 0.625rem;
+                font-size: 0.8rem;
+            }
+            
+            /* Tablas responsive */
+            .table-responsive {
+                font-size: 0.75rem;
+                border-radius: 6px;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+            
+            .table th,
+            .table td {
+                padding: 0.5rem 0.25rem;
+                white-space: nowrap;
+            }
+            
+            /* Cards más compactas */
+            .card-body {
+                padding: 0.75rem;
+            }
+            
+            .card-title {
+                font-size: 0.9rem;
+            }
+            
+            .card-text {
+                font-size: 0.8rem;
+            }
+        }
+
+        /* Mejoras para scroll horizontal en tablas */
+        .table-responsive {
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: thin;
+            scrollbar-color: var(--accent-color) #f1f1f1;
+        }
+
+        .table-responsive::-webkit-scrollbar {
+            height: 8px;
+        }
+
+        .table-responsive::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        .table-responsive::-webkit-scrollbar-thumb {
+            background: var(--accent-color);
+            border-radius: 10px;
+        }
+
+        .table-responsive::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-color);
+        }
+
+        /* Mejoras para viewport en móviles */
+        @media (max-width: 768px) {
+            html {
+                overflow-x: hidden;
+            }
+            
+            body {
+                overflow-x: hidden;
+                width: 100vw;
+                position: relative;
+            }
+            
+            * {
+                max-width: 100%;
+                box-sizing: border-box;
+            }
+        }
     </style>
 
     <div class="main-content">
@@ -711,28 +1015,28 @@
             <!-- Estadísticas Generales -->
             <div class="stats-cards">
                 <div class="row g-4">
-                    <div class="col-md-3">
+                    <div class="col-6 col-md-3">
                         <div class="stat-card">
                             <i class="bi bi-receipt stat-icon"></i>
                             <div class="stat-value" th:text="${totalVentas}">0</div>
                             <div class="stat-label">Total Ventas</div>
                         </div>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-6 col-md-3">
                         <div class="stat-card">
                             <i class="bi bi-currency-dollar stat-icon"></i>
                             <div class="stat-value" th:text="'$' + ${#numbers.formatDecimal(totalIngresos, 1, 2)}">$0.00</div>
                             <div class="stat-label">Ingresos Totales</div>
                         </div>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-6 col-md-3">
                         <div class="stat-card">
                             <i class="bi bi-calendar-month stat-icon"></i>
                             <div class="stat-value" th:text="${ventasDelMes}">0</div>
                             <div class="stat-label">Ventas del Mes</div>
                         </div>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-6 col-md-3">
                         <div class="stat-card">
                             <i class="bi bi-cash-stack stat-icon"></i>
                             <div class="stat-value" th:text="'$' + ${#numbers.formatDecimal(ingresosDelMes, 1, 2)}">$0.00</div>
@@ -753,19 +1057,19 @@
                         <i class="bi bi-funnel"></i> Filtros de Fecha
                     </h5>
                     <div class="row g-3 mb-3">
-                        <div class="col-md-4">
+                        <div class="col-12 col-md-4">
                             <label for="fechaInicio" class="form-label fw-semibold">
                                 <i class="bi bi-calendar-event me-1"></i>Fecha Inicio
                             </label>
                             <input type="date" id="fechaInicio" class="form-control form-control-custom">
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-12 col-md-4">
                             <label for="fechaFin" class="form-label fw-semibold">
                                 <i class="bi bi-calendar-check me-1"></i>Fecha Fin
                             </label>
                             <input type="date" id="fechaFin" class="form-control form-control-custom">
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-12 col-md-4">
                             <label for="limite" class="form-label fw-semibold">
                                 <i class="bi bi-list-ol me-1"></i>Límite de Resultados
                             </label>
@@ -780,7 +1084,7 @@
                     
                     <!-- Botón para limpiar filtros de fecha -->
                     <div class="row">
-                        <div class="col-12 d-flex justify-content-end">
+                        <div class="col-12 d-flex justify-content-center">
                             <button type="button" class="btn btn-outline-secondary btn-sm" onclick="limpiarFiltrosFecha()">
                                 <i class="bi bi-arrow-clockwise"></i> Limpiar Filtros de Fecha
                             </button>
@@ -810,34 +1114,40 @@
                     </div>
                       <!-- Botones de Acción -->
                     <div class="row g-2">
-                        <div class="col-md-2">
+                        <div class="col-6 col-md-2">
                             <button type="button" class="btn btn-info-custom w-100" onclick="filtrarVentasPorUsuario()">
-                                <i class="bi bi-filter"></i> Filtrar
+                                <i class="bi bi-filter"></i> 
+                                <span class="d-none d-sm-inline">Filtrar</span>
                             </button>
                         </div>
-                        <div class="col-md-2">
+                        <div class="col-6 col-md-2">
                             <button type="button" class="btn btn-export w-100" onclick="mostrarEstadisticasUsuario()">
-                                <i class="bi bi-graph-up"></i> Estadísticas
+                                <i class="bi bi-graph-up"></i> 
+                                <span class="d-none d-sm-inline">Estadísticas</span>
                             </button>
                         </div>
-                        <div class="col-md-2">
+                        <div class="col-6 col-md-2">
                             <button type="button" class="btn btn-success w-100" onclick="exportarReporteUsuario('pdf')">
-                                <i class="bi bi-file-pdf"></i> PDF
+                                <i class="bi bi-file-pdf"></i> 
+                                <span class="d-none d-sm-inline">PDF</span>
                             </button>
                         </div>
-                        <div class="col-md-2">
+                        <div class="col-6 col-md-2">
                             <button type="button" class="btn btn-primary w-100" onclick="exportarReporteUsuario('excel')">
-                                <i class="bi bi-file-excel"></i> Excel
+                                <i class="bi bi-file-excel"></i> 
+                                <span class="d-none d-sm-inline">Excel</span>
                             </button>
                         </div>
-                        <div class="col-md-2">
+                        <div class="col-6 col-md-2">
                             <button type="button" class="btn btn-warning w-100" onclick="abrirModalCorreoUsuario()">
-                                <i class="bi bi-envelope"></i> Enviar
+                                <i class="bi bi-envelope"></i> 
+                                <span class="d-none d-sm-inline">Enviar</span>
                             </button>
                         </div>
-                        <div class="col-md-2">
+                        <div class="col-6 col-md-2">
                             <button type="button" class="btn btn-outline-secondary w-100" onclick="limpiarFiltrosUsuario()">
-                                <i class="bi bi-arrow-clockwise"></i> Limpiar
+                                <i class="bi bi-arrow-clockwise"></i> 
+                                <span class="d-none d-sm-inline">Limpiar</span>
                             </button>
                         </div>
                     </div>
@@ -845,77 +1155,93 @@
 
                 <!-- Botones de Reportes -->
                 <div class="row g-3">
-                    <div class="col-md-6">
+                    <div class="col-12 col-md-6">
                         <div class="card h-100 border-0" style="background: linear-gradient(135deg, rgba(40, 167, 69, 0.1) 0%, rgba(32, 201, 151, 0.1) 100%);">
                             <div class="card-body text-center">
                                 <i class="bi bi-trophy text-success" style="font-size: 3rem;"></i>
                                 <h5 class="card-title mt-3">Productos Más Vendidos</h5>
-                                <p class="card-text text-muted">Ranking de productos con mayor volumen de ventas</p>                                <div class="d-flex gap-2 justify-content-center">
+                                <p class="card-text text-muted">Ranking de productos con mayor volumen de ventas</p>
+                                <div class="d-flex gap-2 justify-content-center flex-column flex-md-row">
                                     <button class="btn btn-export" onclick="exportarReporte('productos-mas-vendidos', 'pdf')">
-                                        <i class="bi bi-file-earmark-pdf"></i> PDF
+                                        <i class="bi bi-file-earmark-pdf"></i> 
+                                        <span class="d-none d-sm-inline">PDF</span>
                                     </button>
                                     <button class="btn btn-info-custom" onclick="exportarReporte('productos-mas-vendidos', 'excel')">
-                                        <i class="bi bi-file-earmark-spreadsheet"></i> Excel
+                                        <i class="bi bi-file-earmark-spreadsheet"></i> 
+                                        <span class="d-none d-sm-inline">Excel</span>
                                     </button>
                                     <button class="btn btn-warning" onclick="abrirModalCorreo('productos-mas-vendidos')">
-                                        <i class="bi bi-envelope"></i> Enviar
+                                        <i class="bi bi-envelope"></i> 
+                                        <span class="d-none d-sm-inline">Enviar</span>
                                     </button>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-12 col-md-6">
                         <div class="card h-100 border-0" style="background: linear-gradient(135deg, rgba(23, 162, 184, 0.1) 0%, rgba(32, 201, 151, 0.1) 100%);">
                             <div class="card-body text-center">
                                 <i class="bi bi-calendar-range text-info" style="font-size: 3rem;"></i>
                                 <h5 class="card-title mt-3">Ventas por Fecha</h5>
-                                <p class="card-text text-muted">Reporte de ventas en un período específico</p>                                <div class="d-flex gap-2 justify-content-center">
+                                <p class="card-text text-muted">Reporte de ventas en un período específico</p>
+                                <div class="d-flex gap-2 justify-content-center flex-column flex-md-row">
                                     <button class="btn btn-export" onclick="exportarReporte('ventas-por-fecha', 'pdf')">
-                                        <i class="bi bi-file-earmark-pdf"></i> PDF
+                                        <i class="bi bi-file-earmark-pdf"></i> 
+                                        <span class="d-none d-sm-inline">PDF</span>
                                     </button>
                                     <button class="btn btn-info-custom" onclick="exportarReporte('ventas-por-fecha', 'excel')">
-                                        <i class="bi bi-file-earmark-spreadsheet"></i> Excel
+                                        <i class="bi bi-file-earmark-spreadsheet"></i> 
+                                        <span class="d-none d-sm-inline">Excel</span>
                                     </button>
                                     <button class="btn btn-warning" onclick="abrirModalCorreo('ventas-por-fecha')">
-                                        <i class="bi bi-envelope"></i> Enviar
+                                        <i class="bi bi-envelope"></i> 
+                                        <span class="d-none d-sm-inline">Enviar</span>
                                     </button>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-12 col-md-6">
                         <div class="card h-100 border-0" style="background: linear-gradient(135deg, rgba(255, 193, 7, 0.1) 0%, rgba(255, 152, 0, 0.1) 100%);">
                             <div class="card-body text-center">
                                 <i class="bi bi-cash-coin text-warning" style="font-size: 3rem;"></i>
                                 <h5 class="card-title mt-3">Ingresos por Producto</h5>
-                                <p class="card-text text-muted">Productos que generan mayores ingresos</p>                                <div class="d-flex gap-2 justify-content-center">
+                                <p class="card-text text-muted">Productos que generan mayores ingresos</p>
+                                <div class="d-flex gap-2 justify-content-center flex-column flex-md-row">
                                     <button class="btn btn-export" onclick="exportarReporte('ingresos-por-producto', 'pdf')">
-                                        <i class="bi bi-file-earmark-pdf"></i> PDF
+                                        <i class="bi bi-file-earmark-pdf"></i> 
+                                        <span class="d-none d-sm-inline">PDF</span>
                                     </button>
                                     <button class="btn btn-info-custom" onclick="exportarReporte('ingresos-por-producto', 'excel')">
-                                        <i class="bi bi-file-earmark-spreadsheet"></i> Excel
+                                        <i class="bi bi-file-earmark-spreadsheet"></i> 
+                                        <span class="d-none d-sm-inline">Excel</span>
                                     </button>
                                     <button class="btn btn-warning" onclick="abrirModalCorreo('ingresos-por-producto')">
-                                        <i class="bi bi-envelope"></i> Enviar
+                                        <i class="bi bi-envelope"></i> 
+                                        <span class="d-none d-sm-inline">Enviar</span>
                                     </button>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-12 col-md-6">
                         <div class="card h-100 border-0" style="background: linear-gradient(135deg, rgba(220, 53, 69, 0.1) 0%, rgba(255, 99, 132, 0.1) 100%);">
                             <div class="card-body text-center">
                                 <i class="bi bi-graph-up-arrow text-danger" style="font-size: 3rem;"></i>
                                 <h5 class="card-title mt-3">Resumen General</h5>
-                                <p class="card-text text-muted">Reporte completo con estadísticas generales</p>                                <div class="d-flex gap-2 justify-content-center">
+                                <p class="card-text text-muted">Reporte completo con estadísticas generales</p>
+                                <div class="d-flex gap-2 justify-content-center flex-column flex-md-row">
                                     <button class="btn btn-export" onclick="exportarReporte('resumen-general', 'pdf')">
-                                        <i class="bi bi-file-earmark-pdf"></i> PDF
+                                        <i class="bi bi-file-earmark-pdf"></i> 
+                                        <span class="d-none d-sm-inline">PDF</span>
                                     </button>
                                     <button class="btn btn-info-custom" onclick="exportarReporte('resumen-general', 'excel')">
-                                        <i class="bi bi-file-earmark-spreadsheet"></i> Excel
+                                        <i class="bi bi-file-earmark-spreadsheet"></i> 
+                                        <span class="d-none d-sm-inline">Excel</span>
                                     </button>
                                     <button class="btn btn-warning" onclick="abrirModalCorreo('resumen-general')">
-                                        <i class="bi bi-envelope"></i> Enviar
+                                        <i class="bi bi-envelope"></i> 
+                                        <span class="d-none d-sm-inline">Enviar</span>
                                     </button>
                                 </div>
                             </div>
@@ -934,28 +1260,28 @@
                     Estadísticas del Usuario: <span id="nombreUsuarioSeleccionado">-</span>
                 </h4>
                 <div class="row g-4" id="estadisticasUsuarioCards">
-                    <div class="col-md-3">
+                    <div class="col-6 col-md-3">
                         <div class="stat-card">
                             <i class="bi bi-receipt-cutoff stat-icon"></i>
                             <div class="stat-value" id="totalVentasUsuario">0</div>
                             <div class="stat-label">Total Ventas</div>
                         </div>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-6 col-md-3">
                         <div class="stat-card">
                             <i class="bi bi-currency-dollar stat-icon"></i>
                             <div class="stat-value" id="totalIngresosUsuario">$0.00</div>
                             <div class="stat-label">Ingresos Totales</div>
                         </div>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-6 col-md-3">
                         <div class="stat-card">
                             <i class="bi bi-calendar-month stat-icon"></i>
                             <div class="stat-value" id="ventasDelMesUsuario">0</div>
                             <div class="stat-label">Ventas del Mes</div>
                         </div>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-6 col-md-3">
                         <div class="stat-card">
                             <i class="bi bi-calendar-day stat-icon"></i>
                             <div class="stat-value" id="ventasDelDiaUsuario">0</div>
@@ -1180,9 +1506,11 @@
                             
                             <!-- Mensaje si no hay ventas -->
                             <tr th:if="${#lists.isEmpty(ultimasVentas)}">
-                                <td colspan="5" class="empty-state">
-                                    <i class="bi bi-inbox"></i>
-                                    <div>No hay ventas registradas</div>
+                                <td colspan="6" class="empty-state empty-state-table">
+                                    <div class="empty-state-content">
+                                        <i class="bi bi-inbox"></i>
+                                        <div class="empty-state-text">No hay ventas registradas</div>
+                                    </div>
                                 </td>
                             </tr>
                         </tbody>

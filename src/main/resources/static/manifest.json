@@ -1,0 +1,26 @@
+{
+  "name": "SCProject",
+  "short_name": "SCProject",
+  "description": "Sistema de Control de Proyecto",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#3a506b",
+  "theme_color": "#3a506b",
+  "icons": [
+    {
+      "src": "/icons/favicon-16x16.png",
+      "sizes": "16x16",
+      "type": "image/png"
+    },
+    {
+      "src": "/icons/favicon-32x32.png",
+      "sizes": "32x32",
+      "type": "image/png"
+    },
+    {
+      "src": "/icons/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}

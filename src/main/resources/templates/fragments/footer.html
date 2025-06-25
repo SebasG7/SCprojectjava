@@ -4,24 +4,28 @@
     <footer th:fragment="footer" class="footer mt-auto py-4 modern-footer">
         <div class="container">
             <div class="row align-items-center">
-                <div class="col-md-6">
+                <div class="col-12 col-md-6 mb-3 mb-md-0">
                     <div class="footer-brand">
-                        <i class="bi bi-box-seam me-2"></i>
-                        <span class="brand-text">SCProject</span>
-                        <small class="brand-subtitle">Sistema de Puntos de Venta</small>
+                        <div class="brand-main d-flex align-items-center justify-content-center justify-content-md-start">
+                            <i class="bi bi-box-seam me-2"></i>
+                            <span class="brand-text">SCProject</span>
+                        </div>
+                        <div class="brand-subtitle-container text-center text-md-start mt-2 mt-md-0">
+                            <small class="brand-subtitle">Sistema de Puntos de Venta</small>
+                        </div>
                     </div>
                 </div>
-                <div class="col-md-6 text-md-end text-center mt-3 mt-md-0">
-                    <div class="footer-info">
+                <div class="col-12 col-md-6">
+                    <div class="footer-info text-center text-md-end">
                         <span class="version-badge">v2.1</span>
-                        <small class="copyright-text">© 2025 Todos los derechos reservados</small>
+                        <small class="copyright-text d-block mt-2">© 2025 Todos los derechos reservados</small>
                     </div>
                 </div>
             </div>
-            <div class="row mt-3">
+            <div class="row mt-3 d-none d-md-block">
                 <div class="col-12">
                     <div class="footer-divider"></div>
-
+                </div>
             </div>
         </div>
         
@@ -53,9 +57,11 @@
         }
         
         .footer-brand {
-            display: flex;
-            align-items: center;
-            flex-wrap: wrap;
+            width: 100%;
+        }
+        
+        .brand-main {
+            width: 100%;
         }
         
         .footer-brand i {
@@ -72,14 +78,16 @@
         .brand-text {
             font-weight: 700;
             font-size: 1.25rem;
-            margin-right: 0.75rem;
             color: #ffffff;
+        }
+        
+        .brand-subtitle-container {
+            width: 100%;
         }
         
         .brand-subtitle {
             color: rgba(255, 255, 255, 0.8);
             font-size: 0.875rem;
-            margin-left: auto;
         }
         
         .footer-info {
@@ -191,22 +199,64 @@
         /* Responsive adjustments */
         @media (max-width: 768px) {
             .modern-footer {
-                text-align: center;
+                padding: 1.5rem 0 !important;
             }
             
             .footer-brand {
-                justify-content: center;
-                margin-bottom: 1rem;
+                text-align: center;
+            }
+            
+            .brand-main {
+                justify-content: center !important;
+            }
+            
+            .brand-text {
+                font-size: 1.1rem;
             }
             
             .brand-subtitle {
-                margin-left: 0;
-                margin-top: 0.25rem;
-                flex-basis: 100%;
+                font-size: 0.8rem;
+            }
+            
+            .footer-info {
+                align-items: center !important;
+                margin-top: 0 !important;
+            }
+            
+            .version-badge {
+                margin-bottom: 0.75rem;
+            }
+            
+            .copyright-text {
+                font-size: 0.75rem;
+                margin-top: 0.5rem !important;
             }
             
             .floating-shape {
                 display: none;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .modern-footer {
+                padding: 1rem 0 !important;
+            }
+            
+            .brand-text {
+                font-size: 1rem;
+            }
+            
+            .brand-subtitle {
+                font-size: 0.75rem;
+            }
+            
+            .footer-brand i {
+                font-size: 1.25rem;
+            }
+            
+            .version-badge {
+                padding: 0.2rem 0.6rem;
+                font-size: 0.7rem;
             }
         }
     </style>
