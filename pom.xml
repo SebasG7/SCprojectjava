@@ -27,7 +27,7 @@
 		<url/>
 	</scm>
 	<properties>
-    <java.version>21</java.version>
+    <java.version>17</java.version>
     <start-class>com.scprojectjava2.Scprojectjava2Application</start-class> <!-- ✅ Línea correcta -->
 </properties>
 	<dependencies>
