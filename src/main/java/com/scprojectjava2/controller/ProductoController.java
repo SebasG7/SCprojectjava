@@ -177,8 +177,41 @@ public class ProductoController {
             return "productos";
         }
         
-        // Verificar si es una actualización o un nuevo registro
+        // Validar que el stock inicial no sea 0 para productos nuevos
         Integer id = producto.getId();
+        if (id == null || id == 0) {
+            // Es un nuevo producto - validar stock inicial
+            if (producto.getStock() <= 0) {
+                model.addAttribute("error", "El stock inicial debe ser mayor a 0 para productos nuevos");
+                model.addAttribute("usuario", usuario);
+                
+                // Asignar categoría y unidad al producto para mostrar correctamente en el formulario
+                if (categoriaId != null) {
+                    Categoria categoria = categoriaService.obtenerPorId(categoriaId);
+                    producto.setCategoria(categoria);
+                }
+                if (unidadId != null) {
+                    Unidad unidad = unidadService.obtenerPorId(unidadId);
+                    producto.setUnidad(unidad);
+                }
+                
+                model.addAttribute("productoEditar", producto);
+                
+                // Recargar datos para el formulario
+                List<Producto> productos = productoService.listarActivos();
+                List<Categoria> categorias = categoriaService.listarActivas();
+                List<Unidad> unidades = unidadService.listarActivas();
+                model.addAttribute("productos", productos);
+                model.addAttribute("categorias", categorias);
+                model.addAttribute("unidades", unidades);
+                model.addAttribute("viendoInactivos", false);
+                
+                return "productos";
+            }
+        }
+        
+        // Verificar si es una actualización o un nuevo registro
+        // Integer id = producto.getId(); // Ya declarado arriba
         
         // Validar unicidad del código
         if (id != null && id > 0) {
